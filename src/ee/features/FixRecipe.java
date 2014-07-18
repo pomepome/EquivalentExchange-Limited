@@ -28,11 +28,6 @@ public class FixRecipe implements IRecipe {
         this.recipeItems = par2List;
     }
 
-    public ItemStack getRecipeOutput()
-    {
-        return this.recipeOutput;
-    }
-
     /**
      * Used to check if a recipe matches current crafting inventory
      */
@@ -54,6 +49,11 @@ public class FixRecipe implements IRecipe {
                     while (var8.hasNext())
                     {
                         ItemStack var9 = (ItemStack)var8.next();
+
+                        if(var9==null)
+                        {
+                        	return false;
+                        }
 
                         if (var6.itemID == var9.itemID && ((var9.getItemDamage() == -1 && var6.getItemDamage() != 0)|| var6.getItemDamage() == var9.getItemDamage()))
                         {
@@ -99,6 +99,10 @@ public class FixRecipe implements IRecipe {
     			is.addEnchantment(Enchantment.enchantmentsList[id],level);
     		}
     	}
+    	if(!is.getHasSubtypes())
+    	{
+    		is.setItemDamage(0);
+    	}
         return is;
     }
 
@@ -109,5 +113,10 @@ public class FixRecipe implements IRecipe {
     {
         return this.recipeItems.size();
     }
+
+	@Override
+	public ItemStack getRecipeOutput() {
+		return this.recipeOutput;
+	}
 
 }

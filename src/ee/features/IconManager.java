@@ -31,10 +31,16 @@ public class IconManager {
 		add(INameRegistry.Eternalisfuel,38);
 		add(INameRegistry.covalanceLow,41);
 		add(INameRegistry.diamondPowder,108);
+		add(INameRegistry.DMshovel,25);
+		add(INameRegistry.DMAxe,27);
+		add(INameRegistry.DMHoe,28);
+		add(INameRegistry.DMShears,29);
 		add(INameRegistry.AlchChest+"front",0);
 		add(INameRegistry.AlchChest+"side",1);
 		add(INameRegistry.AlchChest+"top",2);
 		add(INameRegistry.TorchEE,16);
+		add(INameRegistry.DMB,13);
+		add(INameRegistry.DD,92);
 	}
 
 	public static void add(String str,int i)

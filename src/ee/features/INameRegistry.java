@@ -22,6 +22,7 @@ public interface INameRegistry {
 	String DMAxe = "DMAxe";
 	String DMHoe = "DMHoe";
 	String DMShears = "DMShears";
+	String DD = "DamageDisabler";
 	String AlchemicCoal = "EEFuel0";
 	String MobiusFuel = "EEFuel1";
 	String Eternalisfuel = "EFuel2";
@@ -32,6 +33,7 @@ public interface INameRegistry {
 
 	String AlchChest = "EEAlch";
 	String TorchEE = "EETorch";
+	String DMB = "DarkmatterBlock";
 
 	String IngotRed = "ingotRed";
 	String IngotBlue = "ingotBlue";
@@ -41,4 +43,21 @@ public interface INameRegistry {
 	String WaferBlue = "waferBlue";
 	String WaferRed = "waferRed";
 	String Tinplate = "tinplate";
+
+	String treetap = "treetap";
+	String wrench = "wrench";
+	String cutter = "cutter";
+	String CFSplayewr = "constructionFoamSprayer";
+
+	String bronzePickaxe = "bronzePickaxe";
+	String bronzeAxe = "blonzeAxe";
+	String bronzeSword = "bronzeSword";
+	String bronzeShovel = "bronzeShovel";
+	String bronzeHoe = "blonzeHoe";
+	String rubberBoots = "rubberBoots";
+	String bronzeHelmet = "bronzeHelmet";
+	String bronzeChestplate  = "bronzeChestplate";
+	String bronzeLeggings = "bronzeLeggings";
+	String bronzeBoots = "bronzeBoots";
+
 }

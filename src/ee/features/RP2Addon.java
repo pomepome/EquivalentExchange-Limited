@@ -60,7 +60,6 @@ public class RP2Addon {
             rp2HandsawDiamond = (Item)Class.forName(rp2Name+"RedPowerBase").getField("itemHandsawDiamond").get((Object)null);
             rp2IndigoDye = (Item)Class.forName(rp2Name+"RedPowerBase").getField("itemDyeIndigo").get((Object)null);
             rp2Alloy = ((ItemStack)(Class.forName(rp2Name+"RedPowerBase").getField("itemIngotRed").get((Object)null))).getItem();
-            rp2Nikolite = ((ItemStack)(Class.forName(rp2Name+"RedPowerBase").getField("itemNikolite").get((Object)null))).getItem();
             rp2BaseIsInstalled = true;
             OreDictionary.registerOre(INameRegistry.IngotRed,gs(rp2Alloy,1,0));
     		OreDictionary.registerOre(INameRegistry.IngotBlue,gs(rp2Alloy,1,1));
@@ -88,16 +87,17 @@ public class RP2Addon {
             rp2Logs = (Block)Class.forName(rp2Name+"RedPowerWorld").getField("blockLogs").get((Object)null);
             rp2Stone = (Block)Class.forName(rp2Name+"RedPowerWorld").getField("blockStone").get((Object)null);
             rp2Plants = (Block)Class.forName(rp2Name+"RedPowerWorld").getField("blockPlants").get((Object)null);
+            rp2Leaves = (Block)Class.forName(rp2Name+"RedPowerWorld").getField("blockLeaves").get(null);
             rp2Seeds = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemSeeds").get((Object)null);
             rp2PickaxeRuby = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemPickaxeRuby").get((Object)null);
             rp2PickaxeSapphire = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemPickaxeSapphire").get((Object)null);
             rp2PickaxeEmerald = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemPickaxeEmerald").get((Object)null);
             rp2ShovelRuby = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemShovelRuby").get((Object)null);
             rp2ShovelSapphire = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemShovelSapphire").get((Object)null);
-            rp2ShovelEmerald = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemShovelEmerald").get((Object)null);
+            rp2ShovelEmerald = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemShovelGreenSapphire").get((Object)null);
             rp2AxeRuby = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemAxeRuby").get((Object)null);
             rp2AxeSapphire = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemAxeSapphire").get((Object)null);
-            rp2AxeEmerald = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemAxeEmerald").get((Object)null);
+            rp2AxeEmerald = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemAxeGreenSapphire").get((Object)null);
             rp2SwordRuby = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemSwordRuby").get((Object)null);
             rp2SwordSapphire = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemSwordSapphire").get((Object)null);
             rp2SwordEmerald = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemSwordGreenSapphire").get((Object)null);
@@ -116,12 +116,12 @@ public class RP2Addon {
             rp2HandsawRuby = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemHandsawRuby").get((Object)null);
             rp2HandsawEmerald = (Item)Class.forName(rp2Name+"RedPowerWorld").getField("itemHandsawGreenSapphire").get((Object)null);
             rp2WorldIsInstalled = true;
-            ModLoader.getLogger().fine("[EE2] Loaded EE2-RP2 World Addon");
+            ModLoader.getLogger().fine("[EELimited] Loaded EE2-RP2 World Addon");
         }
         catch (Exception var1)
         {
             rp2WorldIsInstalled = false;
-            ModLoader.getLogger().warning("[EE2] Could not load EE2-RP2 World Addon");
+            ModLoader.getLogger().warning("[EELimited] Could not load EE2-RP2 World Addon");
             var1.printStackTrace(System.err);
         }
     }
