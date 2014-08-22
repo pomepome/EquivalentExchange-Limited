@@ -1,12 +1,77 @@
 package ee.features;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
-public class ItemEE extends Item {
+import com.google.common.collect.Multimap;
 
-	public ItemEE(int id,String name) {
-		super(id - 256);
-		this.setIconIndex(IconManager.get(name)).setItemName(name).setTextureFile("/ee/splites/eqexsheet.png").setCreativeTab(EELimited.TabEE);
-	}
+import cpw.mods.fml.common.registry.GameRegistry;
 
+public class ItemEE extends Item
+{
+    int toolDamage = 0;
+
+    public ItemEE(int par1, String name)
+    {
+        super(par1 - 256);
+        this.setUnlocalizedName(name).setTextureName("ee:" + name).setCreativeTab(EELimited.TabEE);
+        GameRegistry.registerItem(this, name);
+    }
+
+    public ItemEE(int par1, String name, int damage)
+    {
+        super(par1 - 256);
+        this.setFull3D().setUnlocalizedName(name).setTextureName("ee:" + name).setMaxDamage(200).setCreativeTab(EELimited.TabEE).setMaxStackSize(1);
+        GameRegistry.registerItem(this, name);
+        toolDamage = damage;
+    }
+
+    public boolean isWood(int blockId)
+    {
+        Block b = Block.blocksList[blockId];
+
+        if (b == null)
+        {
+            return false;
+        }
+
+        String name = b.getUnlocalizedName();
+        return name.toLowerCase().contains("wood") || name.toLowerCase().contains("log");
+    }
+
+    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
+    {
+        onActivated(par1ItemStack);
+        return true;
+    }
+
+    public ItemStack onItemRightClick(ItemStack var1, World var2, EntityPlayer var3)
+    {
+        onActivated(var1);
+        return var1;
+    }
+
+    public void onActivated(ItemStack is)
+    {
+        if (is.getHasSubtypes() || is.getMaxDamage() > 0)
+        {
+            is.setItemDamage(1 - is.getItemDamage());
+        }
+    }
+    public Multimap getItemAttributeModifiers()
+    {
+        if (toolDamage == 0)
+        {
+            return super.getItemAttributeModifiers();
+        }
+
+        Multimap multimap = super.getItemAttributeModifiers();
+        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", (double)this.toolDamage, 0));
+        return multimap;
+    }
 }

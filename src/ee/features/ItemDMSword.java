@@ -1,36 +1,25 @@
 package ee.features;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.util.DamageSource;
+import cpw.mods.fml.client.FMLClientHandler;
 
-public class ItemDMSword extends ItemFunction {
-
-	public int damageVsEntity = 10;
-	public ItemDMSword(int id) {
-		super(id,INameRegistry.DMSword);
-		this.setMaxDamage(200);
-	}
-	public int getDamageVsEntity(Entity par1Entity)
+public class ItemDMSword extends ItemEE
+{
+    public ItemDMSword(int par1)
     {
-        return this.damageVsEntity * (int)((EELimited.instance.getPlayer().getCurrentEquippedItem().getItemDamage() + 0.8)*(EELimited.instance.getPlayer().getCurrentEquippedItem().getItemDamage() + 0.8));
+        super(par1, NameRegistry.DMSword, 10);
     }
-	@Override
-    public float getStrVsBlock(ItemStack stack, Block block)
-    {
-        return block.blockID == Block.web.blockID ? 20:1;
-    }
-	@Override
-	public void onDestroyedLog(EntityPlayer p, ItemStack is, int x, int y,
-			int z, int blockId) {
-	}
-	@Override
-	public void doPassive(World world, EntityPlayer player, ItemStack is) {
-	}
-	@Override
-	public void doPassive(World world, EntityPlayer player, ItemStack is, int d) {
-	}
 
+    public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
+    {
+        if (par1ItemStack.getItemDamage() == 1)
+        {
+            par2EntityLivingBase.attackEntityFrom(DamageSource.causePlayerDamage(FMLClientHandler.instance().getClient().thePlayer), 20);
+            par2EntityLivingBase.setFire(20);
+        }
+
+        return super.hitEntity(par1ItemStack, par2EntityLivingBase, par3EntityLivingBase);
+    }
 }

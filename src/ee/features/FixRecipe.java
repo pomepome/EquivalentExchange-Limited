@@ -13,14 +13,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
-public class FixRecipe implements IRecipe {
-
-	/** Is the ItemStack that you get when craft the recipe. */
+public class FixRecipe implements IRecipe
+{
+    /** Is the ItemStack that you get when craft the recipe. */
     private ItemStack recipeOutput;
 
     /** Is a List of ItemStack that composes the recipe. */
     public List recipeItems;
-    public Map<Integer,Integer> enchantment;
+    /** Is the Enchantment of the tool*/
+    public Map<Integer, Integer> enchantment;
 
     public FixRecipe(ItemStack par1ItemStack, List par2List)
     {
@@ -50,21 +51,22 @@ public class FixRecipe implements IRecipe {
                     {
                         ItemStack var9 = (ItemStack)var8.next();
 
-                        if(var9==null)
+                        if (var9 == null)
                         {
-                        	return false;
+                            return false;
                         }
 
-                        if (var6.itemID == var9.itemID && ((var9.getItemDamage() == -1 && var6.getItemDamage() != 0)|| var6.getItemDamage() == var9.getItemDamage()))
+                        if (var6.itemID == var9.itemID && ((var9.getItemDamage() == 32767 && var6.getItemDamage() != 0) || var6.getItemDamage() == var9.getItemDamage()))
                         {
-                        	if(var9.getItemDamage() == -1&&var6.isItemEnchanted())
-                        	{
-                        		enchantment = EnchantmentHelper.getEnchantments(var6);
-                        	}
-                        	else if(var9.getItemDamage() == -1)
-                        	{
-                        		enchantment = null;
-                        	}
+                            if (var9.getItemDamage() == 32767 && var6.isItemEnchanted())
+                            {
+                                enchantment = EnchantmentHelper.getEnchantments(var6);
+                            }
+                            else if (var9.getItemDamage() == 32767)
+                            {
+                                enchantment = null;
+                            }
+
                             var7 = true;
                             var3.remove(var9);
                             break;
@@ -87,22 +89,26 @@ public class FixRecipe implements IRecipe {
      */
     public ItemStack getCraftingResult(InventoryCrafting par1InventoryCrafting)
     {
-    	ItemStack is = recipeOutput.copy();
-    	if(enchantment != null)
-    	{
-    		Set<Integer> keyset = enchantment.keySet();
-    		Iterator it = keyset.iterator();
-    		while(it.hasNext())
-    		{
-    			int id = (Integer)it.next();
-    			int level = (Integer)enchantment.get(id);
-    			is.addEnchantment(Enchantment.enchantmentsList[id],level);
-    		}
-    	}
-    	if(!is.getHasSubtypes())
-    	{
-    		is.setItemDamage(0);
-    	}
+        ItemStack is = recipeOutput.copy();
+
+        if (enchantment != null)
+        {
+            Set<Integer> keyset = enchantment.keySet();
+            Iterator it = keyset.iterator();
+
+            while (it.hasNext())
+            {
+                int id = (Integer)it.next();
+                int level = (Integer)enchantment.get(id);
+                is.addEnchantment(Enchantment.enchantmentsList[id], level);
+            }
+        }
+
+        if (!is.getHasSubtypes())
+        {
+            is.setItemDamage(0);
+        }
+
         return is;
     }
 
@@ -114,9 +120,9 @@ public class FixRecipe implements IRecipe {
         return this.recipeItems.size();
     }
 
-	@Override
-	public ItemStack getRecipeOutput() {
-		return this.recipeOutput;
-	}
-
+    @Override
+    public ItemStack getRecipeOutput()
+    {
+        return this.recipeOutput;
+    }
 }

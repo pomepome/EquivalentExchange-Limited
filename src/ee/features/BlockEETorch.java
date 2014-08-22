@@ -1,5 +1,7 @@
 package ee.features;
 
+import static net.minecraftforge.common.ForgeDirection.*;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -22,9 +24,9 @@ public class BlockEETorch extends BlockEE
 {
     private int powerCycle;
 
-    protected BlockEETorch(int var1)
+    public BlockEETorch(int var1)
     {
-        super(var1, Material.circuits,INameRegistry.TorchEE);
+        super(var1, Material.circuits, NameRegistry.EETorch);
         this.setTickRandomly(true);
     }
 
@@ -69,52 +71,63 @@ public class BlockEETorch extends BlockEE
 
     private boolean canPlaceTorchOn(World var1, int var2, int var3, int var4)
     {
-        return var1.isBlockNormalCube(var2, var3, var4) || var1.getBlockId(var2, var3, var4) == Block.fence.blockID;
+        if (var1.doesBlockHaveSolidTopSurface(var2, var3, var4))
+        {
+            return true;
+        }
+        else
+        {
+            int var5 = var1.getBlockId(var2, var3, var4);
+            return (Block.blocksList[var5] != null && Block.blocksList[var5].canPlaceTorchOnTop(var1, var2, var3, var4));
+        }
     }
 
     /**
      * Checks to see if its valid to put this block at the specified coordinates. Args: world, x, y, z
      */
-    public boolean canPlaceBlockAt(World var1, int var2, int var3, int var4)
+    public boolean canPlaceBlockAt(World par1World, int par2, int par3, int par4)
     {
-        return var1.isBlockNormalCube(var2 - 1, var3, var4) ? true : (var1.isBlockNormalCube(var2 + 1, var3, var4) ? true : (var1.isBlockNormalCube(var2, var3, var4 - 1) ? true : (var1.isBlockNormalCube(var2, var3, var4 + 1) ? true : this.canPlaceTorchOn(var1, var2, var3 - 1, var4))));
+        return par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST,  true) ||
+               par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST,  true) ||
+               par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true) ||
+               par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true) ||
+               canPlaceTorchOn(par1World, par2, par3 - 1, par4);
     }
-
     /**
      * Called when a block is placed using an item. Used often for taking the facing and figuring out how to position
      * the item. Args: x, y, z, facing
      */
-    public void onBlockPlaced(World var1, int var2, int var3, int var4, int var5)
+    public int onBlockPlaced(World par1World, int par2, int par3, int par4, int par5, float par6, float par7, float par8, int par9)
     {
-        var1.scheduleBlockUpdate(var2, var3, var4, this.blockID, 1);
-        int var6 = var1.getBlockMetadata(var2, var3, var4);
+        int var10 = par9;
 
-        if (var5 == 1 && this.canPlaceTorchOn(var1, var2, var3 - 1, var4))
+        if (par5 == 1 && this.canPlaceTorchOn(par1World, par2, par3 - 1, par4))
         {
-            var6 = 5;
+            var10 = 5;
         }
 
-        if (var5 == 2 && var1.isBlockNormalCube(var2, var3, var4 + 1))
+        if (par5 == 2 && par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
         {
-            var6 = 4;
+            var10 = 4;
         }
 
-        if (var5 == 3 && var1.isBlockNormalCube(var2, var3, var4 - 1))
+        if (par5 == 3 && par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
         {
-            var6 = 3;
+            var10 = 3;
         }
 
-        if (var5 == 4 && var1.isBlockNormalCube(var2 + 1, var3, var4))
+        if (par5 == 4 && par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
         {
-            var6 = 2;
+            var10 = 2;
         }
 
-        if (var5 == 5 && var1.isBlockNormalCube(var2 - 1, var3, var4))
+        if (par5 == 5 && par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
         {
-            var6 = 1;
+            var10 = 1;
         }
 
-        var1.setBlockMetadataWithNotify(var2, var3, var4, var6);
+        par1World.scheduleBlockUpdate(par2, par3, par4, this.blockID, 1);
+        return var10;
     }
 
     /**
@@ -143,32 +156,33 @@ public class BlockEETorch extends BlockEE
     /**
      * Called whenever the block is added into the world. Args: world, x, y, z
      */
-    public void onBlockAdded(World var1, int var2, int var3, int var4)
+    public void onBlockAdded(World par1World, int par2, int par3, int par4)
     {
-        var1.scheduleBlockUpdate(var2, var3, var4, this.blockID, 1);
+        if (par1World.getBlockMetadata(par2, par3, par4) == 0)
+        {
+            if (par1World.isBlockSolidOnSide(par2 - 1, par3, par4, EAST, true))
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 1, 2);
+            }
+            else if (par1World.isBlockSolidOnSide(par2 + 1, par3, par4, WEST, true))
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 2, 2);
+            }
+            else if (par1World.isBlockSolidOnSide(par2, par3, par4 - 1, SOUTH, true))
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 3, 2);
+            }
+            else if (par1World.isBlockSolidOnSide(par2, par3, par4 + 1, NORTH, true))
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 4, 2);
+            }
+            else if (this.canPlaceTorchOn(par1World, par2, par3 - 1, par4))
+            {
+                par1World.setBlockMetadataWithNotify(par2, par3, par4, 5, 2);
+            }
+        }
 
-        if (var1.isBlockNormalCube(var2 - 1, var3, var4))
-        {
-            var1.setBlockMetadataWithNotify(var2, var3, var4, 1);
-        }
-        else if (var1.isBlockNormalCube(var2 + 1, var3, var4))
-        {
-            var1.setBlockMetadataWithNotify(var2, var3, var4, 2);
-        }
-        else if (var1.isBlockNormalCube(var2, var3, var4 - 1))
-        {
-            var1.setBlockMetadataWithNotify(var2, var3, var4, 3);
-        }
-        else if (var1.isBlockNormalCube(var2, var3, var4 + 1))
-        {
-            var1.setBlockMetadataWithNotify(var2, var3, var4, 4);
-        }
-        else if (this.canPlaceTorchOn(var1, var2, var3 - 1, var4))
-        {
-            var1.setBlockMetadataWithNotify(var2, var3, var4, 5);
-        }
-
-        this.dropTorchIfCantStay(var1, var2, var3, var4);
+        this.dropTorchIfCantStay(par1World, par2, par3, par4);
     }
 
     /**
@@ -223,7 +237,7 @@ public class BlockEETorch extends BlockEE
             if (var7)
             {
                 this.dropBlockAsItem(var1, var2, var3, var4, var1.getBlockMetadata(var2, var3, var4), 1);
-                var1.setBlockWithNotify(var2, var3, var4, 0);
+                var1.setBlock(var2, var3, var4, 0);
             }
         }
     }
@@ -233,7 +247,7 @@ public class BlockEETorch extends BlockEE
         if (!this.canPlaceBlockAt(var1, var2, var3, var4))
         {
             this.dropBlockAsItem(var1, var2, var3, var4, var1.getBlockMetadata(var2, var3, var4), 1);
-            var1.setBlockWithNotify(var2, var3, var4, 0);
+            var1.setBlock(var2, var3, var4, 0);
             return false;
         }
         else
@@ -329,9 +343,10 @@ public class BlockEETorch extends BlockEE
         while (var11.hasNext())
         {
             Entity var10 = (Entity)var11.next();
-            if(!(((EntityArrow)var10).shootingEntity instanceof EntityPlayer))
+
+            if (((EntityArrow)var10).shootingEntity != null && !(((EntityArrow)var10).shootingEntity instanceof EntityPlayer))
             {
-            	this.PushEntities(var10, var2, var3, var4);
+                this.PushEntities(var10, var2, var3, var4);
             }
         }
 
@@ -404,4 +419,3 @@ public class BlockEETorch extends BlockEE
         }
     }
 }
-

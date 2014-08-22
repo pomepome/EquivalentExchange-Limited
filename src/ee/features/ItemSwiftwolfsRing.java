@@ -1,24 +1,22 @@
 package ee.features;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class ItemDamageDisabler extends ItemRing
+public class ItemSwiftwolfsRing extends ItemRing
 {
-    public ItemDamageDisabler(int par1)
+    public ItemSwiftwolfsRing(int par1)
     {
-        super(par1, NameRegistry.DamageDisable);
-        setMaxStackSize(1);
+        super(par1, NameRegistry.Swift);
     }
 
     @Override
     public void doPassive(World world, EntityPlayer player, ItemStack is)
     {
-        if (player.getFoodStats().needFood())
+        if (player.fallDistance > 0)
         {
-            player.getFoodStats().addStats((ItemFood)EELimited.Food);
+            player.fallDistance = 0;
         }
     }
 

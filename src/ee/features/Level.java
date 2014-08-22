@@ -1,7 +1,8 @@
 package ee.features;
 
-public enum Level {
-
-	LOW,MIDDLE,HIGH
-
+public enum Level
+{
+    LOW,
+    MIDDLE,
+    HIGH
 }

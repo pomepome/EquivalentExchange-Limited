@@ -6,23 +6,34 @@ import java.util.Map;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.IFuelHandler;
 
-public class FuelHandler implements IFuelHandler {
+public class FuelHandler implements IFuelHandler
+{
+    static Map<Integer, Integer> map = new HashMap<Integer, Integer>();
 
-	static Map<Integer,Integer> map = new HashMap<Integer,Integer>();
-	public static void register(int id,int burnTime)
-	{
-		if(!map.containsKey(id))
-		{
-			map.put(id,burnTime);
-		}
-	}
-	@Override
-	public int getBurnTime(ItemStack fuel) {
-		if(map.containsKey(fuel.itemID))
-		{
-			return map.get(fuel.itemID);
-		}
-		return 0;
-	}
+    @Override
+    public int getBurnTime(ItemStack fuel)
+    {
+        return get(fuel);
+    }
 
+    public static boolean register(int itemID, int value)
+    {
+        if (map.containsKey(itemID))
+        {
+            return false;
+        }
+
+        map.put(itemID, value);
+        return true;
+    }
+
+    public int get(ItemStack is)
+    {
+        if (map.containsKey(is.itemID))
+        {
+            return map.get(is.itemID);
+        }
+
+        return 0;
+    }
 }
