@@ -19,7 +19,12 @@ public class ItemDMPickaxe extends ItemEE
     @Override
     public float getStrVsBlock(ItemStack stack, Block block)
     {
-        return block.blockMaterial == Material.rock ? (int)(10 * (stack.getItemDamage() + 0.2)) : 2.5F;
+    	int base = block.blockMaterial == Material.rock ? 10 : 8;
+    	if(stack.getItemDamage() > 0)
+    	{
+    		base *= 3;
+    	}
+        return base;
     }
     public boolean canHarvestBlock(Block par1Block)
     {

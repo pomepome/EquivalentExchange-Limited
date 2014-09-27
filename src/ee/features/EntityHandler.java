@@ -3,10 +3,10 @@ package ee.features;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.DamageSource;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
 
 public class EntityHandler
 {
@@ -52,6 +52,7 @@ public class EntityHandler
                 {
                     disableDamage = true;
                 }
+                
             }
 
             p.capabilities.allowFlying = allowFly;
@@ -60,20 +61,7 @@ public class EntityHandler
             if (p.inventory.hasItem(EELimited.IDVolc))
             {
                 p.extinguish();
-            }
-        }
-    }
-    @ForgeSubscribe
-    public void livingHurt(LivingHurtEvent e)
-    {
-        if (e.entityLiving instanceof EntityPlayer)
-        {
-            EntityPlayer p = (EntityPlayer)e.entityLiving;
-            DamageSource d = e.source;
-
-            if (p.inventory.hasItem(EELimited.IDVolc) && (d == DamageSource.lava || d == DamageSource.inFire || d == DamageSource.onFire))
-            {
-                e.setCanceled(true);
+                p.addPotionEffect(new PotionEffect(Potion.fireResistance.id,10));
             }
         }
     }

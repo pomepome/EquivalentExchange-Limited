@@ -23,9 +23,11 @@ import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.src.ModLoader;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
+import appeng.api.Materials;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -189,19 +191,23 @@ public class EELimited
         MinecraftForge.setToolClass(DMPickaxe, "pickaxe", 4);
         MinecraftForge.setToolClass(DMShovel, "shovel", 4);
 
-        if (ModLoader.isModLoaded("IC2"))
+        if (Loader.isModLoaded("IC2"))
         {
             addIC2Recipe();
         }
 
-        if (ModLoader.isModLoaded("Forestry"))
+        if (Loader.isModLoaded("Forestry"))
         {
             addForestryRecipe();
         }
 
-        if (ModLoader.isModLoaded("Tubestuff"))
+        if (Loader.isModLoaded("Tubestuff"))
         {
             addTSRecipe();
+        }
+        if (Loader.isModLoaded("AppliedEnergistics"))
+        {
+        	addAERecipe();
         }
     }
 
@@ -399,6 +405,20 @@ public class EELimited
         list.add(gs(Phil));
         addSRecipe(dest, list.toArray());
     }
+    public void addExchange(ItemStack dest, Object obj, int amount,int phil)
+    {
+        List<ItemStack> list = new ArrayList<ItemStack>();
+
+        for (int i = 0; i < amount; i++)
+        {
+            list.add(gs(obj));
+        }
+        for(int i = 0;i < phil;i++)
+        {
+        	list.add(gs(Phil));
+        }
+        addSRecipe(dest, list.toArray());
+    }
     public void addExchange(ItemStack dest, Object... objs)
     {
         List<ItemStack> list = new ArrayList<ItemStack>();
@@ -467,6 +487,11 @@ public class EELimited
         return ItemInterface.getItem(name);
     }
 
+    public ItemStack getIC2(String name)
+    {
+    	return Items.getItem(name);
+    }
+
     public void addForestryRecipe()
     {
         ItemStack fertilizer = getFItem("fertilizerCompound");
@@ -495,6 +520,18 @@ public class EELimited
         addFixRecipe(MIDDLE, Items.getItem("bronzeSword"), 2);
         addFixRecipe(MIDDLE, Items.getItem("bronzeShovel"), 1);
         addFixRecipe(MIDDLE, Items.getItem("bronzeHoe"), 2);
+        addRecipe(gs(Item.emerald,2),"MMM","MMM"," M ",'M',Items.getItem("matter"));
+        addRecipe(gs(Item.blazeRod,4),"M M","MM ","M M",'M',Items.getItem("matter"));
+        addRecipe(new ShapelessOreRecipe(getIC2("platecopper"),gs(Phil),gs(Phil),gs(Phil),"ingotCopper"));
+        addRecipe(new ShapelessOreRecipe(getIC2("platetin"),gs(Phil),gs(Phil),gs(Phil),"ingotTin"));
+        addRecipe(new ShapelessOreRecipe(getIC2("plategold"),gs(Phil),gs(Phil),gs(Phil),gs(Item.ingotGold)));
+        addRecipe(new ShapelessOreRecipe(getIC2("plateiron"),gs(Phil),gs(Phil),gs(Phil),gs(Item.ingotIron)));
+        addRecipe(new ShapelessOreRecipe(getIC2("platebronze"),gs(Phil),gs(Phil),gs(Phil),"ingotBronze"));
+        addRecipe(new ShapelessOreRecipe(getIC2("platelead"),gs(Phil),gs(Phil),gs(Phil),"ingotLead"));
+        addExchange(changeAmount(getIC2("ironCableItem"),4),getIC2("plateiron"));
+        addExchange(changeAmount(getIC2("copperCableItem"),4),getIC2("platecopper"));
+        addExchange(changeAmount(getIC2("goldCableItem"),4),getIC2("plategold"));
+        addExchange(changeAmount(getIC2("tinCableItem"),4),getIC2("platetin"));
         ItemStack dp = Items.getItem("diamondDust");
         Recipes.macerator.addRecipe(new RecipeInputItemStack(gs(Block.oreDiamond)), null, changeAmount(dp, 2));
         FurnaceRecipes.smelting().addSmelting(dp.itemID, dp.getItemDamage(), gs(Item.diamond), 10f);
@@ -513,6 +550,15 @@ public class EELimited
         	}
         	addSRecipe(op.items.get(0),list.toArray());
         }*/
+    }
+    public void addAERecipe()
+    {
+    	addRecipe(Materials.matProcessorBasicUncooked," P ","RGR"," S ",'P',Phil,'R',Item.redstone,'G',Item.ingotGold,'S',Materials.matSilicon);
+    	addRecipe(Materials.matProcessorAdvancedUncooked," P ","RDR"," S ",'P',Phil,'R',Item.redstone,'D',Item.diamond,'S',Materials.matSilicon);
+    	addExchange(changeAmount(Materials.matQuartz,5),Item.coal,Item.redstone);
+    	addExchange(changeAmount(Materials.matQuartz,5 * 2),Item.coal,Item.redstone,Item.coal,Item.redstone);
+    	addExchange(changeAmount(Materials.matQuartz,5 * 3),Item.coal,Item.redstone,Item.coal,Item.redstone,Item.coal,Item.redstone);
+    	addExchange(changeAmount(Materials.matQuartz,5 * 4),Item.coal,Item.redstone,Item.coal,Item.redstone,Item.coal,Item.redstone,Item.coal,Item.redstone);
     }
     public void addCovalenceRecipe()
     {
@@ -538,32 +584,35 @@ public class EELimited
         /*
          * Non-Meta Smelting
          */
-        HashMap<Integer, ItemStack> map1 = (HashMap<Integer, ItemStack>)fr.getSmeltingList();
-        Set<Entry<Integer, ItemStack>> entryset = map1.entrySet();
-        Iterator it = entryset.iterator();
-
-        while (it.hasNext())
         {
-            Entry<Integer, ItemStack> entry = (Entry<Integer, ItemStack>)it.next();
-            int itemID = entry.getKey();
-            ItemStack dest = entry.getValue();
-            addSRecipe(dest, gs(Phil), gs(Phil), gs(itemID));
+        	HashMap<Integer, ItemStack> map1 = (HashMap<Integer, ItemStack>)fr.getSmeltingList();
+        	Set<Entry<Integer, ItemStack>> entryset = map1.entrySet();
+        	Iterator it = entryset.iterator();
+
+        	while (it.hasNext())
+        	{
+            	Entry<Integer, ItemStack> entry = (Entry<Integer, ItemStack>)it.next();
+            	int itemID = entry.getKey();
+            	ItemStack dest = entry.getValue();
+            	addExchange(dest,gs(itemID),1,2);
+        	}
         }
-
-        /*
-         * Meta-Smelting
-         */
-        Map<List<Integer>, ItemStack> map2 = fr.getMetaSmeltingList();
-        Set<Entry<List<Integer>, ItemStack>> entryset2 = map2.entrySet();
-        it = entryset2.iterator();
-
-        while (it.hasNext())
         {
-            Entry<List<Integer>, ItemStack> entry = (Entry<List<Integer>, ItemStack>)it.next();
-            List<Integer> l = entry.getKey();
-            int itemID = l.get(0);
-            int damage = l.get(1);
-            addSRecipe(entry.getValue(), gs(Phil), gs(Phil), gs(itemID, 1, damage));
+        	/*
+        	 * Meta-Smelting
+        	 */
+        	Map<List<Integer>, ItemStack> map = fr.getMetaSmeltingList();
+        	Set<Entry<List<Integer>, ItemStack>> entryset = map.entrySet();
+        	Iterator it = entryset.iterator();
+
+        	while (it.hasNext())
+        	{
+        		Entry<List<Integer>, ItemStack> entry = (Entry<List<Integer>, ItemStack>)it.next();
+        		List<Integer> l = entry.getKey();
+        		int itemID = l.get(0);
+        		int damage = l.get(1);
+        		addExchange(entry.getValue(),gs(itemID, 1, damage),1,2);
+        	}
         }
     }
     public void addFixRecipe()
@@ -616,8 +665,7 @@ public class EELimited
     }
     public void addAlchemicalRecipe()
     {
-        addRecipe(gs(DM), "DBD", "BPB", "DBD", 'D', Block.blockDiamond, 'B', mobiusFuel, 'P', Phil);
-        addRecipe(gs(DM), "DBD", "BPB", "DBD", 'B', Block.blockDiamond, 'D', mobiusFuel, 'P', Phil);
+        addRecipe(gs(DMBlock), "OMO", "DDD", "OMO", 'D', Block.blockDiamond, 'M', mobiusFuel, 'O', Block.obsidian);
         addExchange(gs(Block.blockDiamond, 4), DM);
         addExchange(gs(Item.coal), gs(Item.coal, 1, 1));
         // Dirt
@@ -921,12 +969,10 @@ public class EELimited
         addExchange(gs(Block.tnt), Item.gunpowder, Item.gunpowder, Block.sand);
         addExchange(gs(Block.tnt, 2), Item.gunpowder, Item.gunpowder, Block.sand, Item.gunpowder, Item.gunpowder, Block.sand);
         //Alchemical Coal Recipe
-        addExchange(gs(AlchCoal), Item.coal, Item.glowstone, Item.bucketLava);
-        addExchange(gs(AlchCoal), Item.coal, Item.glowstone, Volc);
-        addExchange(gs(AlchCoal, 2), Item.coal, Item.glowstone, Item.coal, Item.glowstone, Item.bucketLava);
-        addExchange(gs(AlchCoal, 2), Item.coal, Item.glowstone, Item.coal, Item.glowstone, Volc);
-        addExchange(gs(AlchCoal, 3), Item.coal, Item.coal, Item.coal, Item.glowstone, Item.glowstone, Item.glowstone, Item.bucketLava);
-        addExchange(gs(AlchCoal, 3), Item.coal, Item.coal, Item.coal, Item.glowstone, Item.glowstone, Item.glowstone, Volc);
+        addExchange(gs(AlchCoal), Item.coal, Item.glowstone);
+        addExchange(gs(AlchCoal, 2), Item.coal, Item.glowstone, Item.coal, Item.glowstone);
+        addExchange(gs(AlchCoal, 3), Item.coal, Item.coal, Item.coal, Item.glowstone, Item.glowstone, Item.glowstone);
+        addExchange(gs(AlchCoal, 4), Item.coal, Item.coal, Item.coal, Item.glowstone, Item.glowstone, Item.glowstone, Item.glowstone, Item.glowstone);
         //Mobius Fuel Recipe
         addExchange(gs(mobiusFuel), AlchCoal, 3);
         addExchange(gs(mobiusFuel, 2), AlchCoal, 6);
@@ -968,9 +1014,20 @@ public class EELimited
         //material block recipe
         addExchange(gs(Block.blockGold), Block.blockIron, 4);
         addExchange(gs(Block.blockGold, 2), Block.blockIron, 8);
+        for(int i = 4;i <= 8;i++)
+        {
+        	if(i == 4||i == 8)
+        	{
+        		continue;
+        	}
+        	addExchange(gs(Block.blockIron,4 * i),Block.blockGold,i);
+        }
         addExchange(gs(Block.blockDiamond), Block.blockGold, 4);
         addExchange(gs(Block.blockDiamond, 2), Block.blockGold, 8);
-
+        for(int i = 1;i <= 8;i++)
+        {
+        	addExchange(gs(Block.blockGold,4 * i),Block.blockDiamond,i);
+        }
         //dye Recipe
         for (int i = 0; i < 16; i++)
         {
