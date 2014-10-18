@@ -1,0 +1,29 @@
+#English Language File
+
+#CreativeTab
+itemGroup.EELimited=EELimited
+
+#Item names
+item.phil.name=Philosopher's stone
+item.NuggetIron.name=Iron Nugget
+item.Volc.name=Volcanite Amulet
+item.Ever.name=Evertide Amulet
+item.Cov_low.name=Covalence Dust(low)
+item.Cov_mid.name=Covalence Dust(mid)
+item.Cov_high.name=Covalence Dust(high)
+item.Swift.name=Swiftwolf's Rending Gale
+item.AlchemicalFuel.name=Alchemical Coal
+item.Mobius.name=Mobius Fuel
+item.DMAxe.name=Darkmatter Axe
+item.DMPickaxe.name=Darkmatter Pickaxe
+item.DMHoe.name=Darkmatter Hoe
+item.DMShovel.name=Darkmatter Shovel
+item.DMSword.name=Darkmatter Sword
+item.DMShears.name=Darkmatter Shears
+item.DamDis.name=Damage Disabler
+item.DM.name=Darkmatter
+item.ironband.name=Iron Band
+
+#Block names
+tile.DMBlock.name=Darkmatter Block
+tile.EETorch.name=Interdiction Torch

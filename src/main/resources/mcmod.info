@@ -1,0 +1,16 @@
+[
+{
+  "modid": "EELimited",
+  "name": "EE Limited",
+  "description": "Equivalent Exchange Revival Trial mod.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["ExampleDude"],
+  "credits": "The Forge and FML guys, and Equivalent Exchange Authors and many people",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
