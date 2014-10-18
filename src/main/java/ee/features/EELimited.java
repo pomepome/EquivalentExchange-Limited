@@ -130,6 +130,7 @@ public class EELimited {
         addRecipe(gs(DMHoe), "DD ", " X ", " X ", 'D', DM, 'X', Items.diamond);
     	addRelicRecipe();
     	addAlchemicalRecipe();
+    	addCovalenceRecipe();
     	addFixRecipe();
     	registerFuel();
     	registerHarvestLevel();
@@ -154,10 +155,6 @@ public class EELimited {
     	if(Loader.isModLoaded("Tubestuff"))
     	{
     		addTSRecipe();
-    	}
-    	if(Loader.isModLoaded("bluepower"))
-    	{
-    		BPAddon();
     	}
     	if(Loader.isModLoaded("ProjRed|Core"))
     	{
@@ -283,24 +280,6 @@ public class EELimited {
         	addSRecipe(op.items.get(0),list.toArray());
         }*/
     }
-    public void BPAddon()
-    {
-    	Item BlueAlloy = getBPItem("blue_alloy_ingot");
-    	Item ZincIngot = getBPItem("zinc_ingot");
-    	Item BrassIngot = getBPItem("brass_ingot");
-    	Item SiliconBoule = getBPItem("silicon_boule");
-    	Item RedWafer = getBPItem("red_doped_wafer");
-    	Item BlueWafer = getBPItem("blue_doped_wafer");
-    	Item Screwdriver = getBPItem("screwdriver");
-    	Item teslatite = getBPItem("teslatite_dust");
-    	addFixRecipe(LOW,Screwdriver,1);
-    	GameRegistry.addSmelting(Items.redstone,gs(teslatite),0);
-    	addRecipe(new ShapelessOreRecipe(gs(BlueAlloy),gs(Phil),"ingotSilver",gs(teslatite),gs(teslatite),gs(teslatite),gs(teslatite)));
-    	addRecipe(new ShapelessOreRecipe(gs(BrassIngot),gs(Phil),"ingotCopper",gs(ZincIngot),gs(ZincIngot),gs(ZincIngot),gs(ZincIngot)));
-    	addExchange(gs(SiliconBoule),Blocks.sand,8);
-    	addExchange(gs(BlueWafer),gs(SiliconBoule),gs(teslatite),gs(teslatite),gs(teslatite),gs(teslatite));
-    	addExchange(gs(RedWafer),gs(SiliconBoule),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone));
-    }
     public void PRAddon()
     {
     	try
@@ -332,6 +311,22 @@ public class EELimited {
     		ItemStack RedWafer = gs(Part,1,13);
     		ItemStack GlowWafer = gs(Part,1,14);
     		addFixRecipe(MIDDLE,screwdriver,3);
+    		addFixRecipe(MIDDLE,RubyAxe,3);
+    		addFixRecipe(MIDDLE,SapphireAxe,3);
+    		addFixRecipe(MIDDLE,PeridotAxe,3);
+    		addFixRecipe(MIDDLE,RubyHoe,2);
+    		addFixRecipe(MIDDLE,SapphireHoe,2);
+    		addFixRecipe(MIDDLE,PeridotHoe,2);
+    		addFixRecipe(MIDDLE,RubyShovel,1);
+    		addFixRecipe(MIDDLE,SapphireShovel,1);
+    		addFixRecipe(MIDDLE,PeridotShovel,1);
+    		addFixRecipe(MIDDLE,RubySword,2);
+    		addFixRecipe(MIDDLE,SapphireSword,2);
+    		addFixRecipe(MIDDLE,PeridotSword,2);
+    		addFixRecipe(MIDDLE,RubySaw,1);
+    		addFixRecipe(MIDDLE,SapphireSaw,1);
+    		addFixRecipe(MIDDLE,PeridotSaw,1);
+    		addFixRecipe(MIDDLE,GoldSaw,1);
     		addSRecipe(gs(RedAlloy),gs(Phil),gs(Items.iron_ingot),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone));
     		addOSRecipe(gs(RedAlloy),gs(Phil),"ingotCopper",gs(Items.redstone),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone));
     		addExchange(gs(BouleSilicon),Blocks.sand,gs(Items.coal,1,-1));
@@ -745,6 +740,24 @@ public class EELimited {
         addRecipe(gs(ironband), "III", "ILI", "III", 'I', Items.iron_ingot, 'L', Volc);
         addRecipe(gs(Swift), "DFD", "FBF", "DFD", 'D', DM, 'F', Items.feather, 'B', ironband);
         addRecipe(gs(DD), "DDD", "DBD", "DDD", 'D', DM, 'B', ironband);
+    }
+    public void addCovalenceRecipe()
+    {
+    	addSRecipe(changeAmount(getCov(LOW), 3), gs(Blocks.cobblestone), gs(Blocks.cobblestone), gs(Items.coal));
+        addSRecipe(changeAmount(getCov(MIDDLE), 3), gs(Items.iron_ingot), gs(Items.iron_ingot), gs(Items.coal));
+        addSRecipe(changeAmount(getCov(HIGH), 3), gs(Items.diamond), gs(Items.diamond), gs(Items.coal));
+        addSRecipe(changeAmount(getCov(LOW), 5), gs(Blocks.cobblestone), gs(Blocks.cobblestone), gs(Blocks.cobblestone), gs(Items.redstone));
+        addSRecipe(changeAmount(getCov(MIDDLE), 5), gs(Items.iron_ingot), gs(Items.iron_ingot), gs(Items.iron_ingot), gs(Items.redstone));
+        addSRecipe(changeAmount(getCov(HIGH), 5), gs(Items.diamond), gs(Items.diamond), gs(Items.diamond), gs(Items.redstone));
+        addSRecipe(changeAmount(getCov(LOW), 2), gs(Blocks.cobblestone), gs(Items.glowstone_dust), gs(Phil));
+        addSRecipe(changeAmount(getCov(MIDDLE), 2), gs(Items.iron_ingot), gs(Items.glowstone_dust), gs(Phil));
+        addSRecipe(changeAmount(getCov(HIGH), 2), gs(Items.diamond), gs(Items.glowstone_dust), gs(Phil));
+        addSRecipe(changeAmount(getCov(LOW), 5), gs(Blocks.cobblestone), gs(Blocks.cobblestone), gs(AlchCoal), gs(Phil));
+        addSRecipe(changeAmount(getCov(MIDDLE), 5), gs(Items.iron_ingot), gs(Items.iron_ingot), gs(AlchCoal), gs(Phil));
+        addSRecipe(changeAmount(getCov(HIGH), 5), gs(Items.diamond), gs(Items.diamond), gs(AlchCoal), gs(Phil));
+        addSRecipe(changeAmount(getCov(LOW), 5), gs(Blocks.cobblestone), gs(mobiusFuel), gs(Phil));
+        addSRecipe(changeAmount(getCov(MIDDLE), 5), gs(Items.iron_ingot), gs(mobiusFuel), gs(Phil));
+        addSRecipe(changeAmount(getCov(HIGH), 5), gs(Items.diamond), gs(mobiusFuel), gs(Phil));
     }
     public void addAlchemicalRecipe()
     {
