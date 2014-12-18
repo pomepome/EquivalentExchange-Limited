@@ -7,7 +7,6 @@ import ic2.api.recipe.Recipes;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +16,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.RecipeSorter;
@@ -36,10 +33,8 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.registry.FMLControlledNamespacedRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.LanguageRegistry;
 
 @Mod(modid = "EELimited",name = "EELimited",version = "rev.a1")
 public class EELimited {
@@ -104,7 +99,7 @@ public class EELimited {
     	DMSword = new ItemDMSword();
     	DMShovel = new ItemDMShovel();
     	DMShears = new ItemDMShears();
-    	DMPickaxe = new ItemDMPickaxe(); 
+    	DMPickaxe = new ItemDMPickaxe();
     	DD = new ItemDamageDisabler();
     	DM = new ItemEE(NameRegistry.DM);
     	DMBlock = new BlockEE(Material.rock,NameRegistry.DMBlock).setHardness(500);
@@ -169,7 +164,7 @@ public class EELimited {
     public void registerFuel()
     {
     	FuelHandler.register(AlchCoal,convertCountToTick(40));
-    	FuelHandler.register(AlchCoal,convertCountToTick(120));
+    	FuelHandler.register(mobiusFuel,convertCountToTick(120));
     	GameRegistry.registerFuelHandler(new FuelHandler());
     }
     public void registerHarvestLevel()
@@ -218,7 +213,7 @@ public class EELimited {
     			}
     		}
     	}
-    	
+
     	return null;
     }
     public ItemStack getIC2(String name)
@@ -570,8 +565,11 @@ public class EELimited {
         {
             list.add(gs(obj));
         }
-
         list.add(gs(Phil));
+        if(list.size() > 9)
+        {
+        	return;
+        }
         addSRecipe(dest, list.toArray());
     }
     public void addExchange(ItemStack dest, Object obj, int amount,int phil)
@@ -586,6 +584,10 @@ public class EELimited {
         {
         	list.add(gs(Phil));
         }
+        if(list.size() > 9)
+        {
+        	return;
+        }
         addSRecipe(dest, list.toArray());
     }
     public void addExchange(ItemStack dest, Object... objs)
@@ -596,8 +598,11 @@ public class EELimited {
         {
             list.add(gs(objs[i]));
         }
-
         list.add(gs(Phil));
+        if(list.size() > 9)
+        {
+        	return;
+        }
         addSRecipe(dest, list.toArray());
     }
     public List<ItemStack> getPhils(int count)
@@ -653,7 +658,7 @@ public class EELimited {
     	{
     		try {
 				return (Block)c.getField(name).get(null);
-			} catch (Exception e){}	
+			} catch (Exception e){}
     	}
     	return null;
     }
@@ -664,7 +669,7 @@ public class EELimited {
     	{
     		try {
 				return (Item)c.getField(name).get(null);
-			} catch (Exception e){}	
+			} catch (Exception e){}
     	}
     	return null;
     }

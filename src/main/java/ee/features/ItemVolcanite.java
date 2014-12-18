@@ -1,9 +1,12 @@
 package ee.features;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 
 public class ItemVolcanite extends ItemEE
@@ -122,5 +125,14 @@ public class ItemVolcanite extends ItemEE
     public boolean doesContainerItemLeaveCraftingGrid(ItemStack itemStack)
     {
         return false;
+    }
+    @Override
+    public final void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5)
+    {
+    	if(par3Entity instanceof EntityPlayer)
+    	{
+    		EntityPlayer p = (EntityPlayer)par3Entity;
+    		p.addPotionEffect(new PotionEffect(Potion.fireResistance.id,0));
+    	}
     }
 }

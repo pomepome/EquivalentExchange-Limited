@@ -22,7 +22,7 @@ public abstract class ItemRing extends ItemEE
     {
         super(name);
         texture = name;
-        this.setMaxDamage(0);
+        this.setMaxDamage(0).setMaxStackSize(1);
         setHasSubtypes(true);
     }
 
