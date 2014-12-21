@@ -27,3 +27,9 @@ item.ironband.name=Iron Band
 #Block names
 tile.DMBlock.name=Darkmatter Block
 tile.EETorch.name=Interdiction Torch
+
+#Achievements
+achievement.getPhil=Take the first step!
+achievement.getPhil.desc=Make a Philosopher's stone
+achievement.getDM=Invisible Matter
+achievement.getDM.desc=Make a darkmatter

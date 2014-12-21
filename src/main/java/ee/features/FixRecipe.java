@@ -59,15 +59,17 @@ public class FixRecipe extends ShapelessRecipes
 
                         if (var6.getItem() == var9.getItem() && ((var9.getItemDamage() == 32767 && var6.getItemDamage() != 0) || var6.getItemDamage() == var9.getItemDamage()))
                         {
-                            if (var9.getItemDamage() == 32767 && var6.isItemEnchanted())
+                            if (var9.getItemDamage() == 32767)
                             {
-                                enchantment = EnchantmentHelper.getEnchantments(var6);
+                            	if(var6.isItemEnchanted())
+                            	{
+                            		enchantment = EnchantmentHelper.getEnchantments(var6);
+                            	}
+                            	else
+                            	{
+                            		enchantment = null;
+                            	}
                             }
-                            else if (var9.getItemDamage() == 32767)
-                            {
-                                enchantment = null;
-                            }
-
                             var7 = true;
                             var3.remove(var9);
                             break;

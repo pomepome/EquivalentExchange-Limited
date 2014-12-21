@@ -1,0 +1,35 @@
+#Japanese Language File
+
+#CreativeTab
+itemGroup.EELimited=錬金術
+
+#Item names
+item.phil.name=賢者の石
+item.NuggetIron.name=鉄ナゲット
+item.Volc.name=溶岩の祭器
+item.Ever.name=湧水の祭器
+item.Cov_low.name=共有結合粉(低)
+item.Cov_mid.name=共有結合粉(中)
+item.Cov_high.name=共有結合粉(高)
+item.Swift.name=風統べる狼王の指輪
+item.AlchemicalFuel.name=錬金炭
+item.Mobius.name=メビウス燃料
+item.DMAxe.name=暗黒物質のオノ
+item.DMPickaxe.name=暗黒物質のツルハシ
+item.DMHoe.name=暗黒物質のクワ
+item.DMShovel.name=暗黒物質のシャベル
+item.DMSword.name=暗黒物質の剣
+item.DMShears.name=暗黒物質のハサミ
+item.DamDis.name=ダメージ無効化の石
+item.DM.name=暗黒物質
+item.ironband.name=鉄の腕輪
+
+#Block names
+tile.DMBlock.name=暗黒物質のブロック
+tile.EETorch.name=結界灯火
+
+#Achievements
+achievement.getPhil=最初の一歩!
+achievement.getPhil.desc=賢者の石を作る
+achievement.getDM=不可視な物質
+achievement.getDM.desc=暗黒物質を作る

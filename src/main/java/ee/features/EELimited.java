@@ -20,6 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.stats.Achievement;
+import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.RecipeSorter;
@@ -27,6 +29,7 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -41,6 +44,9 @@ public class EELimited {
 
 	public static EELimited instance;
     public static CreativeTabs TabEE = new CreativeTabEE();
+
+    public static Achievement getPhil;
+    public static Achievement getDM;
 
     public File suggestedConfig;
 
@@ -131,6 +137,7 @@ public class EELimited {
     	addFixRecipe();
     	registerFuel();
     	registerHarvestLevel();
+    	registerAchievements();
     }
     @EventHandler
     public void preInit(FMLPreInitializationEvent e)
@@ -145,6 +152,7 @@ public class EELimited {
     public void postInit(FMLPostInitializationEvent e)
     {
     	MinecraftForge.EVENT_BUS.register(new EEHandler());
+    	FMLCommonHandler.instance().bus().register(new CraftingHandler());
     	if(Loader.isModLoaded("IC2"))
     	{
     		IC2Addon();
@@ -182,6 +190,13 @@ public class EELimited {
     	Debug = config.getBoolean("Debug",config.CATEGORY_GENERAL,false,"Debug mode");
     	config.save();
     }
+    public void registerAchievements()
+    {
+    	getPhil = new Achievement("getPhil","getPhil",0,0,Phil,null);
+    	getDM = new Achievement("getDM","getDM",2,1,DM,getPhil);
+    	AchievementPage page = new AchievementPage("EELimited",getPhil,getDM);
+    	AchievementPage.registerAchievementPage(page);
+    }
     /*
      * Addons
      */
@@ -208,7 +223,7 @@ public class EELimited {
     			}
     			if(isRightItem)
     			{
-    				System.out.println("[EELimited-ItemFinder]Item Found:"+gs(i).getDisplayName());
+    				System.out.println("Item Found:"+gs(i).getDisplayName());
     				return i;
     			}
     		}
