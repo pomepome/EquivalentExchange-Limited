@@ -23,6 +23,13 @@ item.DMShears.name=Darkmatter Shears
 item.DamDis.name=Damage Disabler
 item.DM.name=Darkmatter
 item.ironband.name=Iron Band
+item.PhilTool_smelt.name=Philosopher's stone(Smelting)
+item.PhilTool_crowbar.name=Philosopher's stone(Crowbar)
+item.PhilTool_hhammer.name=Philosopher's stone(Hammer)
+item.PhilTool_screw.name=Philosopher's stone(Screwdriver)
+item.PhilTool_shammer.name=Philosopher's stone(SoftHammer)
+item.PhilTool_wrench.name=Philosopher's stone(Wrench)
+item.PhilTool_saw.name=Philosopher's stone(Saw)
 
 #Block names
 tile.DMBlock.name=Darkmatter Block

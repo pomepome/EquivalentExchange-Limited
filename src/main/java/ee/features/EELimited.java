@@ -1,18 +1,23 @@
 package ee.features;
 
 import static ee.features.Level.*;
+import gregtech.api.GregTech_API;
+import gregtech.api.objects.GT_ItemStack;
+import gregtech.api.util.GT_Utility;
 import ic2.api.item.IC2Items;
 import ic2.api.recipe.RecipeInputItemStack;
 import ic2.api.recipe.Recipes;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -77,14 +82,16 @@ public class EELimited {
     public static Item DMShears;
     public static Item DMHoe;
     public static Item NIron;
+    public static Item PhilTool;
     /**
      * Blocks
      */
     public static Block EETorch;
     public static Block DMBlock;
-	/**
-	 * Events
-	 */
+    /**
+     * Addon
+     */
+    public static boolean loadGT,loadFMP;
     @EventHandler
     public void init(FMLInitializationEvent e)
     {
@@ -111,6 +118,7 @@ public class EELimited {
     	DMBlock = new BlockEE(Material.rock,NameRegistry.DMBlock).setHardness(500);
     	EETorch = new BlockEETorch();
     	ironband = new ItemEE(NameRegistry.IronBand);
+    	PhilTool = new ItemPhilToolBase();
     	if(Hard)
     	{
     		removeRecipes();
@@ -125,16 +133,20 @@ public class EELimited {
         addSRecipe(gs(Items.redstone, 4), gs(Items.coal), gs(Blocks.cobblestone));
         addSRecipe(gs(DM, 4), gs(DMBlock));
         addRecipe(gs(DMBlock), "DD", "DD", 'D', DM);
-        addRecipe(gs(DMPickaxe), "DDD", " X ", " X ", 'D', DM, 'X', Items.diamond);
+        ItemStack is = new ItemStack(DMPickaxe);
+        is.addEnchantment(Enchantment.fortune,10);
+        addRecipe(is, "DDD", " X ", " X ", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMAxe), "DD ", "DX ", " X ", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMShears), " D", "X ", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMShovel), "D", "X", "X", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMSword), "D", "D", "X", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMHoe), "DD ", " X ", " X ", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(DMHoe), " DD", " X ", " X ", 'D', DM, 'X', Items.diamond);
     	addRelicRecipe();
     	addAlchemicalRecipe();
     	addCovalenceRecipe();
     	addFixRecipe();
+    	addRingRecipe();
     	registerFuel();
     	registerHarvestLevel();
     	registerAchievements();
@@ -149,8 +161,22 @@ public class EELimited {
     	return 200 * count;
     }
     @EventHandler
-    public void postInit(FMLPostInitializationEvent e)
+    public void postInit(FMLPostInitializationEvent e) throws Exception
     {
+    	loadGT = Loader.isModLoaded("gregtech");
+    	loadFMP = Loader.isModLoaded("ForgeMultipart");
+    	if(loadGT&&!loadFMP)
+    	{
+    		PhilTool = new ItemPhilToolGT();
+    	}
+    	else if(loadGT && loadFMP)
+    	{
+    		PhilTool = new ItemPhilToolGTFMP();
+    	}
+    	else if(!loadGT && loadFMP)
+    	{
+    		PhilTool = new ItemPhilToolFMP();
+    	}
     	MinecraftForge.EVENT_BUS.register(new EEHandler());
     	FMLCommonHandler.instance().bus().register(new CraftingHandler());
     	if(Loader.isModLoaded("IC2"))
@@ -164,6 +190,10 @@ public class EELimited {
     	if(Loader.isModLoaded("ProjRed|Core"))
     	{
     		PRAddon();
+    	}
+    	if(Loader.isModLoaded("gregtech"))
+    	{
+    		GTAddon();
     	}
     }
     /*
@@ -228,7 +258,6 @@ public class EELimited {
     			}
     		}
     	}
-
     	return null;
     }
     public ItemStack getIC2(String name)
@@ -246,52 +275,55 @@ public class EELimited {
 		}
         addRecipe(BHC, "DDD", "DCD", "DDD", 'D', DM, 'C', Blocks.chest);
     }
-    public void IC2Addon()
+    public void CallGTMethod(String method)
     {
-    	addFixRecipe(LOW, IC2Items.getItem("treetap").getItem(), 5);
-        addFixRecipe(LOW, IC2Items.getItem("hazmatHelmet").getItem(), 4);
-        addFixRecipe(LOW, IC2Items.getItem("hazmatChestplate").getItem(), 6);
-        addFixRecipe(LOW, IC2Items.getItem("hazmatLeggings").getItem(), 6);
-        addFixRecipe(LOW, IC2Items.getItem("hazmatBoots").getItem(), 6);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzeHelmet").getItem(), 5);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzeChestplate").getItem(), 8);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzeLeggings").getItem(), 7);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzeBoots").getItem(), 4);
-        addFixRecipe(MIDDLE, IC2Items.getItem("wrench").getItem(), 6);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzePickaxe"), 3);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzeAxe"), 3);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzeSword"), 2);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzeShovel"), 1);
-        addFixRecipe(MIDDLE, IC2Items.getItem("bronzeHoe"), 2);
-        addRecipe(new ShapelessOreRecipe(getIC2("platecopper"),gs(Phil),gs(Phil),gs(Phil),"ingotCopper"));
-        addRecipe(new ShapelessOreRecipe(getIC2("platetin"),gs(Phil),gs(Phil),gs(Phil),"ingotTin"));
-        addRecipe(new ShapelessOreRecipe(getIC2("plategold"),gs(Phil),gs(Phil),gs(Phil),gs(Items.gold_ingot)));
-        addRecipe(new ShapelessOreRecipe(getIC2("plateiron"),gs(Phil),gs(Phil),gs(Phil),gs(Items.iron_ingot)));
-        addRecipe(new ShapelessOreRecipe(getIC2("platebronze"),gs(Phil),gs(Phil),gs(Phil),"ingotBronze"));
-        addRecipe(new ShapelessOreRecipe(getIC2("platelead"),gs(Phil),gs(Phil),gs(Phil),"ingotLead"));
-        addExchange(changeAmount(getIC2("ironCableItem"),4),getIC2("plateiron"));
-        addExchange(changeAmount(getIC2("copperCableItem"),4),getIC2("platecopper"));
-        addExchange(changeAmount(getIC2("goldCableItem"),4),getIC2("plategold"));
-        addExchange(changeAmount(getIC2("tinCableItem"),4),getIC2("platetin"));
-        ItemStack dp = IC2Items.getItem("diamondDust");
-        Recipes.macerator.addRecipe(new RecipeInputItemStack(gs(Blocks.diamond_ore)), null, changeAmount(dp, 2));
-        GameRegistry.addSmelting(dp, gs(Items.diamond), 10);
-        /*{
-        	IMachineRecipeManager mac = Recipes.macerator;
-        	List<ItemStack> list = getPhils(3);
-        	Map<IRecipeInput,RecipeOutput> recipe = mac.getRecipes();
-        	Set<Entry<IRecipeInput,RecipeOutput>> es = recipe.entrySet();
-        	Entry<IRecipeInput,RecipeOutput> e = (Entry<IRecipeInput,RecipeOutput>)es.toArray()[0];
-        	IRecipeInput in = e.getKey();
-        	RecipeOutput op = e.getValue();
-        	ItemStack input = in.getInputs().get(0);
-        	for(int i = 0;i < in.getAmount();i++)
-        	{
-        		list.add(input);
-        	}
-        	addSRecipe(op.items.get(0),list.toArray());
-        }*/
     }
+    public void IC2Addon()
+	{
+		addFixRecipe(LOW, IC2Items.getItem("treetap").getItem(), 5);
+	    addFixRecipe(LOW, IC2Items.getItem("hazmatHelmet").getItem(), 4);
+	    addFixRecipe(LOW, IC2Items.getItem("hazmatChestplate").getItem(), 6);
+	    addFixRecipe(LOW, IC2Items.getItem("hazmatLeggings").getItem(), 6);
+	    addFixRecipe(LOW, IC2Items.getItem("hazmatBoots").getItem(), 6);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeHelmet").getItem(), 5);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeChestplate").getItem(), 8);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeLeggings").getItem(), 7);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeBoots").getItem(), 4);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("wrench").getItem(), 6);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzePickaxe"), 3);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeAxe"), 3);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeSword"), 2);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeShovel"), 1);
+	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeHoe"), 2);
+	    addRecipe(new ShapelessOreRecipe(getIC2("platecopper"),gs(PhilTool),"ingotCopper"));
+	    addRecipe(new ShapelessOreRecipe(getIC2("platetin"),gs(PhilTool),"ingotTin"));
+	    addRecipe(new ShapelessOreRecipe(getIC2("plategold"),gs(PhilTool),gs(Items.gold_ingot)));
+	    addRecipe(new ShapelessOreRecipe(getIC2("plateiron"),gs(PhilTool),gs(Items.iron_ingot)));
+	    addRecipe(new ShapelessOreRecipe(getIC2("platebronze"),gs(PhilTool),"ingotBronze"));
+	    addRecipe(new ShapelessOreRecipe(getIC2("platelead"),gs(PhilTool),"ingotLead"));
+	    addSRecipe(changeAmount(getIC2("ironCableItem"),4),gs(PhilTool),getIC2("plateiron"));
+	    addSRecipe(changeAmount(getIC2("copperCableItem"),4),gs(PhilTool),getIC2("platecopper"));
+	    addSRecipe(changeAmount(getIC2("goldCableItem"),4),gs(PhilTool),getIC2("plategold"));
+	    addSRecipe(changeAmount(getIC2("tinCableItem"),4),gs(PhilTool),getIC2("platetin"));
+	    ItemStack dp = IC2Items.getItem("diamondDust");
+	    Recipes.macerator.addRecipe(new RecipeInputItemStack(gs(Blocks.diamond_ore)), null, changeAmount(dp, 2));
+	    GameRegistry.addSmelting(dp, gs(Items.diamond), 10);
+	    /*{
+	    	IMachineRecipeManager mac = Recipes.macerator;
+	    	List<ItemStack> list = getPhils(3);
+	    	Map<IRecipeInput,RecipeOutput> recipe = mac.getRecipes();
+	    	Set<Entry<IRecipeInput,RecipeOutput>> es = recipe.entrySet();
+	    	Entry<IRecipeInput,RecipeOutput> e = (Entry<IRecipeInput,RecipeOutput>)es.toArray()[0];
+	    	IRecipeInput in = e.getKey();
+	    	RecipeOutput op = e.getValue();
+	    	ItemStack input = in.getInputs().get(0);
+	    	for(int i = 0;i < in.getAmount();i++)
+	    	{
+	    		list.add(input);
+	    	}
+	    	addSRecipe(op.items.get(0),list.toArray());
+	    }*/
+	}
     public void PRAddon()
     {
     	try
@@ -350,6 +382,19 @@ public class EELimited {
     		addExchange(gs(GlowWafer),gs(Silicon),gs(Items.glowstone_dust),gs(Items.glowstone_dust),gs(Items.glowstone_dust),gs(Items.glowstone_dust));
     	}
     	catch(Exception e){}
+    }
+    public void registerTool(ItemStack is,Collection<GT_ItemStack>aToolList)
+    {
+    	aToolList.add(new GT_ItemStack(GT_Utility.copyAmount(1,is)));
+    	GregTech_API.sToolList.add(new GT_ItemStack(GT_Utility.copyAmount(1,is)));
+    }
+    public void GTAddon()
+    {
+    	 registerTool(gs(PhilTool,1,1),GregTech_API.sCrowbarList);
+    	 registerTool(gs(PhilTool,1,2),GregTech_API.sHardHammerList);
+    	 registerTool(gs(PhilTool,1,3),GregTech_API.sScrewdriverList);
+    	 registerTool(gs(PhilTool,1,4),GregTech_API.sSoftHammerList);
+    	 registerTool(gs(PhilTool,1,5),GregTech_API.sWrenchList);
     }
     /*
      * Recipe Remove
@@ -433,8 +478,7 @@ public class EELimited {
     	for(Map.Entry<Object,ItemStack> entry : map.entrySet())
     	{
     		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
-    		list.add(gs(Phil));
-    		list.add(gs(Phil));
+    		list.add(gs(PhilTool));
     		list.add(gs(entry.getKey()));
     		addSRecipe(entry.getValue(),list.toArray());
     	}

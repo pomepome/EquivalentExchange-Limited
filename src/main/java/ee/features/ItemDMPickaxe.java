@@ -1,13 +1,16 @@
 package ee.features;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.MinecraftForge;
 
 public class ItemDMPickaxe extends ItemEE
 {
@@ -17,7 +20,12 @@ public class ItemDMPickaxe extends ItemEE
     {
         super(NameRegistry.DMPickaxe, 9);
     }
-
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List itemList)
+    {
+    	ItemStack is = new ItemStack(this,1);
+    	is.addEnchantment(Enchantment.fortune,10);
+    	itemList.add(is);
+    }
     @Override
     public float getDigSpeed(ItemStack stack, Block block,int meta)
     {

@@ -21,4 +21,5 @@ public interface NameRegistry
     String EETorch = "EETorch";
     String DMBlock = "DMBlock";
     String NuggetIron = "NuggetIron";
+    String PhilTool = "PhilTool";
 }

@@ -1,7 +1,5 @@
 package ee.features;
 
-import codechicken.microblock.Saw;
-import cpw.mods.fml.common.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,8 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 
-@Optional.Interface(modid = "ForgeMultipart",iface="codechicken.microblock.Saw")
-public class ItemDMAxe extends ItemEEFunctional implements Saw
+public class ItemDMAxe extends ItemEEFunctional
 {
     public ItemDMAxe()
     {
@@ -107,14 +104,4 @@ public class ItemDMAxe extends ItemEEFunctional implements Saw
     {
         return block.getMaterial() == Material.wood ? 20 * (int)((stack.getItemDamage() + 1) * 1.5) : 2.5F;
     }
-
-	@Override
-	public int getCuttingStrength(ItemStack arg0) {
-		return 3;
-	}
-
-	@Override
-	public int getMaxCuttingStrength() {
-		return 3;
-	}
 }
