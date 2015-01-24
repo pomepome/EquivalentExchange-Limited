@@ -10,7 +10,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 public class EEHandler {
 
 	public static boolean hasStarted = false;
-
 	@SubscribeEvent
 	public void livingUpdate(LivingUpdateEvent e)
 	{

@@ -1,6 +1,7 @@
-package ee.features;
+package ee.features.items;
 
 import cpw.mods.fml.common.eventhandler.Event;
+import ee.features.NameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;

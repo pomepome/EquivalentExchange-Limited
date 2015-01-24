@@ -1,5 +1,7 @@
-package ee.features;
+package ee.features.items;
 
+import ee.features.EELimited;
+import ee.features.NameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

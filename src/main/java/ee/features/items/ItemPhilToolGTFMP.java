@@ -1,4 +1,4 @@
-package ee.features;
+package ee.features.items;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import codechicken.microblock.Saw;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.EELimited;
 
 @Optional.Interface(modid = "ForgeMultipart",iface="codechicken.microblock.Saw")
 public class ItemPhilToolGTFMP extends ItemPhilToolBase implements Saw {

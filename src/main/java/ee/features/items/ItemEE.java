@@ -1,4 +1,4 @@
-package ee.features;
+package ee.features.items;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -11,6 +11,7 @@ import net.minecraft.world.World;
 import com.google.common.collect.Multimap;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import ee.features.EELimited;
 
 public class ItemEE extends Item {
 	int toolDamage = 0;

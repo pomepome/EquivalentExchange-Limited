@@ -23,6 +23,14 @@ item.DMShears.name=暗黒物質のハサミ
 item.DamDis.name=ダメージ無効化の石
 item.DM.name=暗黒物質
 item.ironband.name=鉄の腕輪
+item.PhilTool_smelt.name=賢者の石(精錬)
+item.PhilTool_crowbar.name=賢者の石(バール)
+item.PhilTool_hhammer.name=賢者の石(ハンマー)
+item.PhilTool_screw.name=賢者の石(ドライバー)
+item.PhilTool_shammer.name=賢者の石(ソフトハンマー)
+item.PhilTool_wrench.name=賢者の石(レンチ)
+item.PhilTool_saw.name=賢者の石(ノコ)
+item.repair.name=補修の御守
 
 #Block names
 tile.DMBlock.name=暗黒物質のブロック

@@ -22,6 +22,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
@@ -33,6 +34,7 @@ import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import tconstruct.library.tools.ToolCore;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -41,8 +43,29 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
+import ee.features.blocks.BlockEE;
+import ee.features.blocks.BlockEETorch;
+import ee.features.items.ItemCovalenceDust;
+import ee.features.items.ItemDMAxe;
+import ee.features.items.ItemDMHoe;
+import ee.features.items.ItemDMPickaxe;
+import ee.features.items.ItemDMShears;
+import ee.features.items.ItemDMShovel;
+import ee.features.items.ItemDMSword;
+import ee.features.items.ItemDamageDisabler;
+import ee.features.items.ItemEE;
+import ee.features.items.ItemEvertide;
+import ee.features.items.ItemPhilToolBase;
+import ee.features.items.ItemPhilToolFMP;
+import ee.features.items.ItemPhilToolGT;
+import ee.features.items.ItemPhilToolGTFMP;
+import ee.features.items.ItemPhilosophersStone;
+import ee.features.items.ItemRepairCharm;
+import ee.features.items.ItemSwiftwolfsRing;
+import ee.features.items.ItemVolcanite;
 
 @Mod(modid = "EELimited",name = "EELimited",version = "rev.a1")
 public class EELimited {
@@ -83,11 +106,13 @@ public class EELimited {
     public static Item DMHoe;
     public static Item NIron;
     public static Item PhilTool;
+    public static Item Repair;
     /**
      * Blocks
      */
     public static Block EETorch;
     public static Block DMBlock;
+    public static Block AlchChest;
     /**
      * Addon
      */
@@ -95,6 +120,7 @@ public class EELimited {
     @EventHandler
     public void init(FMLInitializationEvent e)
     {
+    	NetworkRegistry.INSTANCE.registerGuiHandler(this,new GuiHandler());
     	instance = this;
     	EEProxy.Init(FMLClientHandler.instance().getClient(),this);
     	loadConfig();
@@ -119,6 +145,8 @@ public class EELimited {
     	EETorch = new BlockEETorch();
     	ironband = new ItemEE(NameRegistry.IronBand);
     	PhilTool = new ItemPhilToolBase();
+    	Repair = new ItemRepairCharm();
+    	//AlchChest = new BlockAlchChest();
     	if(Hard)
     	{
     		removeRecipes();
@@ -142,6 +170,7 @@ public class EELimited {
         addRecipe(gs(DMSword), "D", "D", "X", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMHoe), "DD ", " X ", " X ", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMHoe), " DD", " X ", " X ", 'D', DM, 'X', Items.diamond);
+        addSRecipe(gs(Items.potionitem,1,0),Ever,Items.glass_bottle);
     	addRelicRecipe();
     	addAlchemicalRecipe();
     	addCovalenceRecipe();
@@ -482,6 +511,14 @@ public class EELimited {
     		list.add(gs(entry.getKey()));
     		addSRecipe(entry.getValue(),list.toArray());
     	}
+    	for(Object obj : GameData.getItemRegistry())
+    	{
+    		Item item = (Item)obj;
+    		if(item instanceof ItemTool||item instanceof ToolCore)
+    		{
+    			addFixRecipe(EXTREME,item,1);
+    		}
+    	}
     }
     /*
      * recipe wrapper
@@ -575,10 +612,13 @@ public class EELimited {
         {
             return gs(Cov, 1, 0);
         }
-
-        if (lv == MIDDLE)
+        else if (lv == MIDDLE)
         {
             return gs(Cov, 1, 1);
+        }
+        else if (lv == EXTREME)
+        {
+        	return gs(Repair);
         }
 
         return gs(Cov, 1, 2);
@@ -806,6 +846,8 @@ public class EELimited {
         addRecipe(gs(ironband), "III", "ILI", "III", 'I', Items.iron_ingot, 'L', Volc);
         addRecipe(gs(Swift), "DFD", "FBF", "DFD", 'D', DM, 'F', Items.feather, 'B', ironband);
         addRecipe(gs(DD), "DDD", "DBD", "DDD", 'D', DM, 'B', ironband);
+        addRecipe(gs(Repair),"HML","SPS","LMH",'H',getCov(HIGH),'M',getCov(MIDDLE),'L',getCov(LOW),'S',Items.string,'P',Items.paper);
+        addRecipe(gs(Repair),"HML","SPS","LMH",'L',getCov(HIGH),'M',getCov(MIDDLE),'H',getCov(LOW),'S',Items.string,'P',Items.paper);
     }
     public void addCovalenceRecipe()
     {

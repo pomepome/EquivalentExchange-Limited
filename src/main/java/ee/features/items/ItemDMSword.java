@@ -1,9 +1,11 @@
-package ee.features;
+package ee.features.items;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import cpw.mods.fml.client.FMLClientHandler;
+import ee.features.EEProxy;
+import ee.features.NameRegistry;
 
 public class ItemDMSword extends ItemEE
 {

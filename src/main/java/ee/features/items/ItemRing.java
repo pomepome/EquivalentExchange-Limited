@@ -1,4 +1,4 @@
-package ee.features;
+package ee.features.items;
 
 import java.util.List;
 

@@ -11,6 +11,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 public class FixRecipe extends ShapelessRecipes
@@ -22,6 +23,7 @@ public class FixRecipe extends ShapelessRecipes
     public List recipeItems;
     /** Is the Enchantment of the tool*/
     public Map<Integer, Integer> enchantment;
+    private NBTTagCompound tag;
 
     public FixRecipe(ItemStack par1ItemStack, List par2List)
     {
@@ -61,13 +63,21 @@ public class FixRecipe extends ShapelessRecipes
                         {
                             if (var9.getItemDamage() == 32767)
                             {
-                            	if(var6.isItemEnchanted())
+                            	if(var6.isItemEnchanted())//アイテムがエンチャントされているかどうか
                             	{
-                            		enchantment = EnchantmentHelper.getEnchantments(var6);
+                            		enchantment = EnchantmentHelper.getEnchantments(var6);//エンチャントを取得
                             	}
                             	else
                             	{
-                            		enchantment = null;
+                            		enchantment = null;//Nullにしておく
+                            	}
+                            	if(var6.hasTagCompound())//NBTTagの存在を確認(NBTTagに種類を格納するMODがあるため ex.TinCo)
+                            	{
+                            		tag = var6.getTagCompound();//NBTTagを保存
+                            	}
+                            	else
+                            	{
+                            		tag = null;//Nullに(ry
                             	}
                             }
                             var7 = true;
@@ -94,7 +104,7 @@ public class FixRecipe extends ShapelessRecipes
     {
         ItemStack is = recipeOutput.copy();
 
-        if (enchantment != null)
+        if (enchantment != null)//エンチャントが保存されている?
         {
             Set<Integer> keyset = enchantment.keySet();
             Iterator it = keyset.iterator();
@@ -106,7 +116,10 @@ public class FixRecipe extends ShapelessRecipes
                 is.addEnchantment(Enchantment.enchantmentsList[id], level);
             }
         }
-
+        if(tag != null)//NBTTagが保存されているか
+        {
+        	is.setTagCompound(tag);//タグを取得・設定
+        }
         if (!is.getHasSubtypes())
         {
             is.setItemDamage(0);

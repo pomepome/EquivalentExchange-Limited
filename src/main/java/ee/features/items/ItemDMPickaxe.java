@@ -1,7 +1,10 @@
-package ee.features;
+package ee.features.items;
 
 import java.util.List;
 
+import ee.features.EELimited;
+import ee.features.EEProxy;
+import ee.features.NameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;

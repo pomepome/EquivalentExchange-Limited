@@ -1,6 +1,8 @@
-package ee.features;
+package ee.features.items;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import ee.features.EELimited;
+import ee.features.NameRegistry;
 import net.minecraft.item.ItemShears;
 
 public class ItemDMShears extends ItemShears {

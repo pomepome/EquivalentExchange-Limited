@@ -1,5 +1,7 @@
-package ee.features;
+package ee.features.items;
 
+import ee.features.EEProxy;
+import ee.features.NameRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
