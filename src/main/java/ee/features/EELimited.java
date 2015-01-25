@@ -2,6 +2,7 @@ package ee.features;
 
 import static ee.features.Level.*;
 import gregtech.api.GregTech_API;
+import gregtech.api.items.GT_MetaGenerated_Tool;
 import gregtech.api.objects.GT_ItemStack;
 import gregtech.api.util.GT_Utility;
 import ic2.api.item.IC2Items;
@@ -514,9 +515,19 @@ public class EELimited {
     	for(Object obj : GameData.getItemRegistry())
     	{
     		Item item = (Item)obj;
-    		if(item instanceof ItemTool||item instanceof ToolCore)
+    		if(loadGT)
     		{
-    			addFixRecipe(EXTREME,item,1);
+    			if(item instanceof ItemTool||item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
+    			{
+    				addFixRecipe(EXTREME,item,1);
+    			}
+    		}
+    		else
+    		{
+    			if(item instanceof ItemTool||item instanceof ToolCore)
+    			{
+    				addFixRecipe(EXTREME,item,1);
+    			}
     		}
     	}
     }
