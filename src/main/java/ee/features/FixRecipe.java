@@ -83,7 +83,7 @@ public class FixRecipe extends ShapelessRecipes
                             	{
                             		tag = null;//Null‚É(ry
                             	}
-                            	if(var6.getItem() instanceof GT_MetaGenerated_Tool)
+                            	if(EELimited.loadGT&&var6.getItem() instanceof GT_MetaGenerated_Tool)
                             	{
                             		flag = true;
                             		GT_MetaGenerated_Tool tool = (GT_MetaGenerated_Tool)var6.getItem();
