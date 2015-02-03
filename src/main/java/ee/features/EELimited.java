@@ -117,7 +117,7 @@ public class EELimited {
     /**
      * Addon
      */
-    public static boolean loadGT,loadFMP;
+    public static boolean loadGT,loadFMP,loadTinCo;
     @EventHandler
     public void init(FMLInitializationEvent e)
     {
@@ -195,6 +195,7 @@ public class EELimited {
     {
     	loadGT = Loader.isModLoaded("gregtech");
     	loadFMP = Loader.isModLoaded("ForgeMultipart");
+    	loadTinCo = Loader.isModLoaded("TConstruct");
     	if(loadGT&&!loadFMP)
     	{
     		PhilTool = new ItemPhilToolGT();
@@ -517,16 +518,36 @@ public class EELimited {
     		Item item = (Item)obj;
     		if(loadGT)
     		{
-    			if(item instanceof ItemTool||item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
+    			if(loadTinCo)
     			{
-    				addFixRecipe(EXTREME,item,1);
+    				if(item instanceof ItemTool||item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
+    				{
+    					addFixRecipe(EXTREME,item,1);
+    				}
+    			}
+    			else
+    			{
+    				if(item instanceof ItemTool||item instanceof GT_MetaGenerated_Tool)
+    				{
+    					addFixRecipe(EXTREME,item,1);
+    				}
     			}
     		}
     		else
     		{
-    			if(item instanceof ItemTool||item instanceof ToolCore)
+    			if(loadTinCo)
     			{
-    				addFixRecipe(EXTREME,item,1);
+    				if(item instanceof ItemTool||item instanceof ToolCore)
+    				{
+    					addFixRecipe(EXTREME,item,1);
+    				}
+    			}
+    			else
+    			{
+    				if(item instanceof ItemTool)
+    				{
+    					addFixRecipe(EXTREME,item,1);
+    				}
     			}
     		}
     	}
@@ -1184,10 +1205,12 @@ public class EELimited {
         addExchange(gs(Blocks.tnt), Items.gunpowder, Items.gunpowder, Blocks.sand);
         addExchange(gs(Blocks.tnt, 2), Items.gunpowder, Items.gunpowder, Blocks.sand, Items.gunpowder, Items.gunpowder, Blocks.sand);
         //Alchemical Coal Recipe
-        addExchange(gs(AlchCoal), Items.coal, Items.glowstone_dust);
-        addExchange(gs(AlchCoal, 2), Items.coal, Items.glowstone_dust, Items.coal, Items.glowstone_dust);
-        addExchange(gs(AlchCoal, 3), Items.coal, Items.coal, Items.coal, Items.glowstone_dust, Items.glowstone_dust, Items.glowstone_dust);
-        addExchange(gs(AlchCoal, 4), Items.coal, Items.coal, Items.coal, Items.glowstone_dust, Items.glowstone_dust, Items.glowstone_dust, Items.glowstone_dust, Items.glowstone_dust);
+        addExchange(gs(AlchCoal), Items.coal, Items.glowstone_dust,Items.lava_bucket);
+        addExchange(gs(AlchCoal, 2), Items.coal, Items.glowstone_dust, Items.coal, Items.glowstone_dust,Items.lava_bucket);
+        addExchange(gs(AlchCoal, 3), Items.coal, Items.coal, Items.coal, Items.glowstone_dust, Items.glowstone_dust, Items.glowstone_dust,Items.lava_bucket);
+        addExchange(gs(AlchCoal), Items.coal, Items.glowstone_dust,Volc);
+        addExchange(gs(AlchCoal, 2), Items.coal, Items.glowstone_dust, Items.coal, Items.glowstone_dust,Volc);
+        addExchange(gs(AlchCoal, 3), Items.coal, Items.coal, Items.coal, Items.glowstone_dust, Items.glowstone_dust, Items.glowstone_dust,Volc);
         //Mobius Fuel Recipe
         addExchange(gs(mobiusFuel), AlchCoal, 3);
         addExchange(gs(mobiusFuel, 2), AlchCoal, 6);
