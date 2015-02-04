@@ -62,26 +62,26 @@ public class FixRecipe extends ShapelessRecipes
                             return false;
                         }
 
-                        if (var6.getItem() == var9.getItem() && ((var9.getItemDamage() == 32767 && var6.getItemDamage() != 0) || var6.getItemDamage() == var9.getItemDamage()))
+                        if (var6.getItem() == var9.getItem() && ((var9.getItemDamage() == 32767 && (var6.getItemDamage() != 0 || EELimited.loadTinCo ? true:false)) || var6.getItemDamage() == var9.getItemDamage()))
                         {
                         	boolean flag = false;
                             if (var9.getItemDamage() == 32767)
                             {
-                            	if(var6.isItemEnchanted())//アイテムがエンチャントされているかどうか
+                            	if(var6.isItemEnchanted())
                             	{
-                            		enchantment = EnchantmentHelper.getEnchantments(var6);//エンチャントを取得
+                            		enchantment = EnchantmentHelper.getEnchantments(var6);
                             	}
                             	else
                             	{
-                            		enchantment = null;//Nullにしておく
+                            		enchantment = null;
                             	}
-                            	if(var6.hasTagCompound())//NBTTagの存在を確認(NBTTagに種類を格納するMODがあるため ex.TinCo)
+                            	if(var6.hasTagCompound())
                             	{
-                            		tag = var6.getTagCompound();//NBTTagを保存
+                            		tag = var6.getTagCompound();
                             	}
                             	else
                             	{
-                            		tag = null;//Nullに(ry
+                            		tag = null;
                             	}
                             	if(EELimited.loadGT&&var6.getItem() instanceof GT_MetaGenerated_Tool)
                             	{
@@ -124,7 +124,7 @@ public class FixRecipe extends ShapelessRecipes
     {
         ItemStack is = recipeOutput.copy();
 
-        if (enchantment != null)//エンチャントが保存されている?
+        if (enchantment != null)
         {
             Set<Integer> keyset = enchantment.keySet();
             Iterator it = keyset.iterator();
@@ -136,9 +136,13 @@ public class FixRecipe extends ShapelessRecipes
                 is.addEnchantment(Enchantment.enchantmentsList[id], level);
             }
         }
-        if(tag != null)//NBTTagが保存されているか
+        if(tag != null)
         {
-        	is.setTagCompound(tag);//タグを取得・設定
+        	if(tag.hasKey("Damage"))
+        	{
+        		tag.setInteger("Damage",0);
+        	}
+        	is.setTagCompound(tag);
         }
         if (!is.getHasSubtypes()&&GTItem == null)
         {
@@ -159,3 +163,4 @@ public class FixRecipe extends ShapelessRecipes
         return is;
     }
 }
+

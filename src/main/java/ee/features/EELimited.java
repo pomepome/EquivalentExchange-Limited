@@ -22,6 +22,8 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.CraftingManager;
@@ -35,6 +37,10 @@ import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import tconstruct.library.tools.ToolCore;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -78,6 +84,8 @@ public class EELimited {
     public static Achievement getDM;
 
     public File suggestedConfig;
+    public Logger log = LogManager.getLogger("EELimited");
+    public Logger logFinder = LogManager.getLogger("EEItemFinder");
 
     /**
      * Options
@@ -284,7 +292,7 @@ public class EELimited {
     			}
     			if(isRightItem)
     			{
-    				System.out.println("Item Found:"+gs(i).getDisplayName());
+    				logFinder.info("Item Found:"+gs(i).getDisplayName());
     				return i;
     			}
     		}
@@ -515,40 +523,38 @@ public class EELimited {
     	}
     	for(Object obj : GameData.getItemRegistry())
     	{
-    		Item item = (Item)obj;
-    		if(loadGT)
+    		try
     		{
-    			if(loadTinCo)
+    			Item item = (Item)obj;
+    			if(!(item instanceof ItemDMShears))
     			{
-    				if(item instanceof ItemTool||item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
+    				/*
+    				 * For Vannila Items
+    				 */
+    				if(item instanceof ItemTool||item instanceof ItemShears||item instanceof ItemBow)
+    				{
+    					addFixRecipe(EXTREME,item,1);
+    					continue;
+    				}
+    			}
+    			if(loadGT)
+    			{
+    				if(item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
     				{
     					addFixRecipe(EXTREME,item,1);
     				}
     			}
     			else
     			{
-    				if(item instanceof ItemTool||item instanceof GT_MetaGenerated_Tool)
+    				if(item instanceof ToolCore)
     				{
     					addFixRecipe(EXTREME,item,1);
     				}
     			}
     		}
-    		else
+    		catch(Exception e)
     		{
-    			if(loadTinCo)
-    			{
-    				if(item instanceof ItemTool||item instanceof ToolCore)
-    				{
-    					addFixRecipe(EXTREME,item,1);
-    				}
-    			}
-    			else
-    			{
-    				if(item instanceof ItemTool)
-    				{
-    					addFixRecipe(EXTREME,item,1);
-    				}
-    			}
+    			continue;
     		}
     	}
     }

@@ -23,6 +23,13 @@ public class EEHandler {
 		{
 			EntityPlayer p = (EntityPlayer)l;
 			PlayerCapabilities pc = p.capabilities;
+			/*{
+				ItemStack is = p.getCurrentEquippedItem();
+				if(is!=null)
+				{
+					p.addChatMessage(new ChatComponentText(is.getItem().toString()));
+				}
+			}*/
 			if(pc.isCreativeMode)
 			{
 				return;
