@@ -15,6 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import tconstruct.library.tools.AbilityHelper;
+import tconstruct.library.tools.ToolCore;
 
 public class FixRecipe extends ShapelessRecipes
 {
@@ -143,6 +145,11 @@ public class FixRecipe extends ShapelessRecipes
         		tag.setInteger("Damage",0);
         	}
         	is.setTagCompound(tag);
+        }
+        if(EELimited.loadTinCo&&is.getItem() instanceof ToolCore)
+        {
+        	AbilityHelper.repairTool(is,tag);
+        	return is;
         }
         if (!is.getHasSubtypes()&&GTItem == null)
         {

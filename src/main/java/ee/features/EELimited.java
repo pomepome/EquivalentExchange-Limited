@@ -25,6 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -531,7 +532,7 @@ public class EELimited {
     				/*
     				 * For Vannila Items
     				 */
-    				if(item instanceof ItemTool||item instanceof ItemShears||item instanceof ItemBow)
+    				if(item instanceof ItemTool||item instanceof ItemSword||item instanceof ItemShears||item instanceof ItemBow)
     				{
     					addFixRecipe(EXTREME,item,1);
     					continue;
