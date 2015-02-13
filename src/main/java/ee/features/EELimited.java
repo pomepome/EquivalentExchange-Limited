@@ -33,10 +33,10 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import assets.ee.models.item.ItemDMAxe;
 import ee.features.blocks.BlockEETorch;
 import ee.features.items.ItemAlchemicalCoal;
 import ee.features.items.ItemCovalenceDust;
+import ee.features.items.ItemDMAxe;
 import ee.features.items.ItemDMHoe;
 import ee.features.items.ItemDMPickaxe;
 import ee.features.items.ItemDMShears;
