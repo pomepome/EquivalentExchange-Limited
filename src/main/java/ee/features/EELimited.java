@@ -44,6 +44,7 @@ import ee.features.items.ItemDMShovel;
 import ee.features.items.ItemDMSword;
 import ee.features.items.ItemDamageDisabler;
 import ee.features.items.ItemDarkmatter;
+import ee.features.items.ItemEvertide;
 import ee.features.items.ItemIronBand;
 import ee.features.items.ItemMobiusFuel;
 import ee.features.items.ItemPhilToolBase;
@@ -107,6 +108,7 @@ public class EELimited
     	DD = new ItemDamageDisabler();
     	Cov = new ItemCovalenceDust();
     	Volc = new ItemVolcanite();
+    	Ever = new ItemEvertide();
     	EETorch = new BlockEETorch();
     	Repair = new ItemRepairCharm();
     	AlchCoal = new ItemAlchemicalCoal();
