@@ -1,34 +1,37 @@
 package ee.features.items;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import com.google.common.collect.Multimap;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import ee.features.EELimited;
+import ee.features.EEProxy;
 
-public class ItemEE extends Item {
+public abstract class ItemEE extends Item {
 	int toolDamage = 0;
-
-    public ItemEE(String name)
+	public ItemEE(String name)
     {
         super();
-        this.setUnlocalizedName(name).setTextureName("ee:" + name).setCreativeTab(EELimited.TabEE);
+        this.setUnlocalizedName(name).setCreativeTab(EELimited.TabEE);
         GameRegistry.registerItem(this, name);
+        EEProxy.mc.getRenderItem().getItemModelMesher().register(this, 0, new ModelResourceLocation("ee:"+name,"inventory"));
     }
 
     public ItemEE(String name, int damage)
     {
         super();
-        this.setFull3D().setUnlocalizedName(name).setTextureName("ee:" + name).setMaxDamage(200).setCreativeTab(EELimited.TabEE).setMaxStackSize(1);
+        this.setFull3D().setUnlocalizedName(name).setMaxDamage(200).setCreativeTab(EELimited.TabEE).setMaxStackSize(1);
         GameRegistry.registerItem(this, name);
         toolDamage = damage;
+        EEProxy.mc.getRenderItem().getItemModelMesher().register(this, 0, new ModelResourceLocation("ee:"+name,"inventory"));
     }
 
     public boolean isWood(Block b)
@@ -70,7 +73,7 @@ public class ItemEE extends Item {
         }
 
         Multimap multimap = super.getItemAttributeModifiers();
-        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(field_111210_e, "Weapon modifier", (double)this.toolDamage, 0));
+        multimap.put(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName(), new AttributeModifier(itemModifierUUID, "Weapon modifier", (double)this.toolDamage, 0));
         return multimap;
     }
 }

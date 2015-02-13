@@ -1,31 +1,27 @@
 package ee.features.items;
 
-import ee.features.NameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import ee.features.EEProxy;
+import ee.features.NameRegistry;
 
-public class ItemDamageDisabler extends ItemRing
-{
-    public ItemDamageDisabler()
-    {
-        super(NameRegistry.DamageDisable);
-        setMaxStackSize(1);
-    }
+public class ItemDamageDisabler extends ItemEERing {
 
-    @Override
-    public void doPassive(World world, EntityPlayer player, ItemStack is)
-    {
-        if (player.getFoodStats().needFood())
-        {
-            player.getFoodStats().addStats(20,1.0F);
-        }
-    }
+	public ItemDamageDisabler() {
+		super(NameRegistry.DamageDisable);
+	}
 
-    @Override
-    public void doPassive(World world, EntityPlayer player, ItemStack is, int d)
-    {
-    }
+	@Override
+	public void doPassive(World world, EntityPlayer player, ItemStack is, int d) {
+		if(EEProxy.getFoodStats(player).needFood())
+		{
+			EEProxy.getFoodStats(player).addStats(20, 1);
+		}
+	}
+
+	@Override
+	public void doPassive(World world, EntityPlayer player, ItemStack is) {
+	}
+
 }
-

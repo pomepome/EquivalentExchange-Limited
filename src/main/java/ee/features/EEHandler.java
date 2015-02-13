@@ -1,14 +1,14 @@
 package ee.features;
 
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class EEHandler {
-
 	public static boolean hasStarted = false;
 	@SubscribeEvent
 	public void livingUpdate(LivingUpdateEvent e)
@@ -16,7 +16,7 @@ public class EEHandler {
 		if(!hasStarted)
 		{
 			hasStarted = true;
-			EELimited.instance.addSmeltingExchange();
+			((EELimited) EELimited.instance).addSmeltingExchange();
 		}
 		EntityLivingBase l = e.entityLiving;
 		if(l instanceof EntityPlayer)
@@ -42,11 +42,11 @@ public class EEHandler {
 				{
 					continue;
 				}
-				if(is.getItem() == EELimited.Swift && is.getItemDamage() > 0)
+				if(is.getItem() == EELimited.Swift && is.getItemDamage() == 0)
 				{
 					allowFly = true;
 				}
-				if(is.getItem() == EELimited.DD && is.getItemDamage() > 0)
+				if(is.getItem() == EELimited.DD && is.getItemDamage() == 0)
 				{
 					disableDamage = true;
 				}

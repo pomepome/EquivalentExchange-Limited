@@ -5,7 +5,7 @@ import java.util.Map;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.IFuelHandler;
+import net.minecraftforge.fml.common.IFuelHandler;
 
 public class FuelHandler implements IFuelHandler
 {
@@ -38,3 +38,4 @@ public class FuelHandler implements IFuelHandler
         return 0;
     }
 }
+
