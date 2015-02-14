@@ -30,6 +30,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -102,6 +103,7 @@ public class EELimited
      * misc
      */
 	public static boolean cutDown;
+	public static boolean noBats;
 	/**
 	 * Achievements
 	 */
@@ -165,6 +167,11 @@ public class EELimited
     	registerFuel();
     	registerAchievements();
     }
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent e)
+    {
+    	suggestedConfig = e.getSuggestedConfigurationFile();
+    }
     public void registerFuel()
     {
     	FuelHandler.register(AlchCoal,convertCountToTick(40));
@@ -184,6 +191,7 @@ public class EELimited
     	Configuration config = new Configuration(suggestedConfig);
     	config.load();
     	cutDown = config.getBoolean("cutDown","general",true,"Cut down from root");
+    	cutDown = config.getBoolean("noBats","general",false,"No more any bats!");
     	config.save();
     }
     /*

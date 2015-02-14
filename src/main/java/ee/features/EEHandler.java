@@ -1,12 +1,17 @@
 package ee.features;
 
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import ee.features.items.ItemDMSword;
 
 public class EEHandler {
 	public static boolean hasStarted = false;
@@ -53,6 +58,25 @@ public class EEHandler {
 			}
 			pc.allowFlying = allowFly;
 			pc.disableDamage = disableDamage;
+		}
+		if(EELimited.noBats&& l instanceof EntityBat)
+		{
+			l.attackEntityFrom(DamageSource.drown,20);
+		}
+	}
+	@SubscribeEvent
+	public void livingHurt(LivingHurtEvent e)
+	{
+		Entity cause = e.source.getEntity();
+		EntityLivingBase hurted = e.entityLiving;
+		if(cause!=null&&cause instanceof EntityPlayer)
+		{
+			EntityPlayer p = (EntityPlayer)cause;
+			ItemStack current = p.getCurrentEquippedItem();
+			if(current != null && current.getItem() instanceof ItemDMSword)
+			{
+				hurted.setFire(20);
+			}
 		}
 	}
 }

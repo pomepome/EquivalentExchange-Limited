@@ -15,12 +15,12 @@ public class ItemDMSword extends ItemEE
     @Override
     public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
     {
+        par2EntityLivingBase.setFire(20);
     	boolean ret = super.hitEntity(par1ItemStack, par2EntityLivingBase, par3EntityLivingBase);
         if (par1ItemStack.getItemDamage() == 1)
         {
             par2EntityLivingBase.attackEntityFrom(DamageSource.causePlayerDamage(EEProxy.getPlayer()), toolDamage * 2);
         }
-        par2EntityLivingBase.setFire(20);
         return ret;
     }
 }

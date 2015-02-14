@@ -20,12 +20,14 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -47,11 +49,11 @@ public class BlockEETorch extends BlockEE {
             return this.apply((EnumFacing)p_apply_1_);
         }
     });
-	private int powerCycle;
+	private int powerCycle = 16;
 	public BlockEETorch() {
 		super(Material.circuits,NameRegistry.EETorch);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.UP));
-        this.setTickRandomly(true).setLightLevel(1f);
+        this.setTickRandomly(false).setLightLevel(1f);
 	}
     public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state)
     {
@@ -129,21 +131,13 @@ public class BlockEETorch extends BlockEE {
             }
             while (!worldIn.isSideSolid(pos.offset(enumfacing1.getOpposite()), enumfacing1, true));
             worldIn.scheduleUpdate(pos,worldIn.getBlockState(pos).getBlock(), 1);
+            this.powerCycle = 16;
             return this.getDefaultState().withProperty(FACING, enumfacing1);
         }
     }
     @Override
     public void updateTick(World var1,BlockPos pos,IBlockState state,Random rand)
     {
-        if (this.powerCycle > 0)
-        {
-            this.doInterdiction(var1, pos.getX(), pos.getY(), pos.getZ());
-            --this.powerCycle;
-        }
-
-        this.doInterdiction(var1, pos.getX(), pos.getY(), pos.getZ());
-
-        var1.scheduleUpdate(pos, state.getBlock(),1);
     }
     public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
     {
@@ -293,6 +287,18 @@ public class BlockEETorch extends BlockEE {
         {
             worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0, d1, d2, 0.0D, 0.0D, 0.0D, new int[0]);
         }
+
+    	FMLClientHandler.instance().getClient().thePlayer.attackEntityFrom(DamageSource.cactus, 200);
+        if (this.powerCycle > 0)
+        {
+            this.doInterdiction(worldIn, pos.getX(), pos.getY(), pos.getZ());
+            --this.powerCycle;
+            if(this.powerCycle < 0)
+            {
+            	this.powerCycle = 16;
+            }
+        }
+        worldIn.scheduleUpdate(pos, state.getBlock(),1);
     }
 
     public int getMetaFromState(IBlockState state)
@@ -398,7 +404,7 @@ public class BlockEETorch extends BlockEE {
         }
     public void doInterdiction(World var1, int var2, int var3, int var4)
     {
-        float var6 = 20.0F;
+        float var6 = 100.0F;
         List var7 = var1.getEntitiesWithinAABB(EntityMob.class, AxisAlignedBB.fromBounds((double)((float)var2 - var6), (double)((float)var3 - var6), (double)((float)var4 - var6), (double)((float)var2 + var6), (double)var3 + (double)var6, (double)((float)var4 + var6)));
         Iterator var9 = var7.iterator();
 
