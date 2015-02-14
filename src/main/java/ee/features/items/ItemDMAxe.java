@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
@@ -56,17 +57,17 @@ public class ItemDMAxe extends ItemEEFunctional
         	w.setBlockToAir(new BlockPos(x, y, z));
     	}
 	}
-	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, BlockPos pos, int par7, float par8, float par9, float par10)
+	public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, BlockPos pos, EnumFacing par7, float par8, float par9, float par10)
 	{
 		int par4 = pos.getX();
 		int par5 = pos.getY();
 		int par6 = pos.getZ();
     	//EEProxy.mc.thePlayer.sendChatMessage(EEProxy.getSide(par2EntityPlayer, par4, par5, par6).name());;
-    	if (par1ItemStack.getItemDamage() > 0 && isWood(getBlock(par3World,par4, par5, par6)))
+    	if (par1ItemStack.getItemDamage() > 0 && getBlock(par3World,par4,par5,par6).isWood(par3World, new BlockPos(par4,par5,par6)))
     	{
         	if (EELimited.cutDown)
         	{
-        		for (; isWood(getBlock(par3World,par4, par5, par6)); par5--) {}
+        		for (; getBlock(par3World,par4,par5,par6).isWood(par3World, new BlockPos(par4,par5,par6)); par5--) {}
             	par5++;
         	}
 
@@ -75,7 +76,7 @@ public class ItemDMAxe extends ItemEEFunctional
 
         	for (int i = par5; i < 256; i++)
         	{
-            	if (!isWood(getBlock(par3World,par4, i, par6)))
+            	if (!getBlock(par3World,par4,i,par6).isWood(par3World, new BlockPos(par4,i,par6)))
             	{
                 	break;
             	}

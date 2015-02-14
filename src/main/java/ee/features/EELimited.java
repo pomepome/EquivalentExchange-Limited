@@ -19,8 +19,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.stats.Achievement;
+import net.minecraft.stats.AchievementList;
+import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -33,6 +38,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import ee.features.blocks.BlockDM;
 import ee.features.blocks.BlockEETorch;
 import ee.features.items.ItemAlchemicalCoal;
 import ee.features.items.ItemCovalenceDust;
@@ -91,11 +97,16 @@ public class EELimited
      * Blocks
      */
     public static Block EETorch;
+    public static Block DMBlock;
     /**
      * misc
      */
 	public static boolean cutDown;
-
+	/**
+	 * Achievements
+	 */
+	public static Achievement getPhil;
+	public static Achievement getDM;
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
@@ -124,12 +135,16 @@ public class EELimited
     	DMSword = new ItemDMSword();
     	DMHoe = new ItemDMHoe();
     	DMShears = new ItemDMShears();
+    	DMBlock = new BlockDM().setHardness(200);
+    	DMBlock.setHarvestLevel("pickaxe",10);
     	addRecipe(gs(Items.water_bucket), "S", "B", 'S', Items.snowball, 'B', Items.bucket);
         addRecipe(gs(Items.lava_bucket), "GRG", " B ", 'G', Items.gunpowder, 'R', Items.redstone, 'B', Items.bucket);
         addRecipe(gs(Items.milk_bucket), "B", "W", "E", 'B', gs(Items.dye, 1, 0xF), 'W', Items.water_bucket, 'E', Items.bucket);
         addRecipe(gs(Phil), "RGR", "GSG", "RGR", 'R', Items.redstone, 'G', Items.glowstone_dust, 'S', Items.slime_ball);
         addRecipe(gs(Phil), "RGR", "GSG", "RGR", 'R', Items.glowstone_dust, 'G', Items.redstone, 'S', Items.slime_ball);
         addSRecipe(gs(Phil),gs(Phil),gs(Items.slime_ball),gs(Items.glowstone_dust),gs(Items.redstone));
+        addRecipe(gs(DMBlock),"DD","DD",'D',DM);
+        addSRecipe(gs(DM,4),gs(DMBlock));
         addSRecipe(gs(Items.glowstone_dust, 4), gs(Items.coal), gs(Items.redstone));
         addSRecipe(gs(Items.redstone, 4), gs(Items.coal), gs(Blocks.cobblestone));
         ItemStack is = new ItemStack(DMPickaxe);
@@ -148,12 +163,28 @@ public class EELimited
     	addFixRecipe();
     	addRingRecipe();
     	registerFuel();
+    	registerAchievements();
     }
     public void registerFuel()
     {
     	FuelHandler.register(AlchCoal,convertCountToTick(40));
     	FuelHandler.register(mobiusFuel,convertCountToTick(120));
     	GameRegistry.registerFuelHandler(new FuelHandler());
+    }
+    public void registerAchievements()
+    {
+    	getPhil = new Achievement("getPhil","getPhil",0,0,Phil,AchievementList.portal);
+    	getDM = new Achievement("getDM","getDM",2,1,DM,getPhil);
+    	AchievementPage page = new AchievementPage("EELimited",getPhil,getDM);
+    	AchievementPage.registerAchievementPage(page);
+    	FMLCommonHandler.instance().bus().register(new CraftingHandler());
+    }
+    public void loadConfig()
+    {
+    	Configuration config = new Configuration(suggestedConfig);
+    	config.load();
+    	cutDown = config.getBoolean("cutDown","general",true,"Cut down from root");
+    	config.save();
     }
     /*
      * Helper
@@ -537,7 +568,7 @@ public class EELimited
     }
     public void addAlchemicalRecipe()
     {
-    	addRecipe(gs(DM,4), "OMO", "DDD", "OMO", 'D', Blocks.diamond_block, 'M', mobiusFuel, 'O', Blocks.obsidian);
+    	addRecipe(gs(DMBlock), "OMO", "DDD", "OMO", 'D', Blocks.diamond_block, 'M', mobiusFuel, 'O', Blocks.obsidian);
         addExchange(gs(Blocks.diamond_block, 4), DM);
         addExchange(gs(Items.coal), gs(Items.coal, 1, 1));
         // Dirt
@@ -907,5 +938,39 @@ public class EELimited
         {
             addExchange(gs(Items.dye, 2, 15 - i), gs(Blocks.wool, 1, i), 3);
         }
+    }
+
+    /*
+     * Addons
+     */
+    public Item findItemFromName(String name)
+    {
+    	return findItemFromName(name,true);
+    }
+    public Item findItemFromName(String name,boolean part)
+    {
+    	for(Object obj : GameData.getItemRegistry())
+    	{
+    		Item i = (Item)obj;
+    		if(i != null)
+    		{
+    			String itemName = i.getUnlocalizedName();
+    			boolean isRightItem;
+    			if(part)
+    			{
+    				isRightItem = itemName.toLowerCase().contains(name.toLowerCase());
+    			}
+    			else
+    			{
+    				isRightItem = itemName == name;
+    			}
+    			if(isRightItem)
+    			{
+    				logFinder.info("Item Found:"+gs(i).getDisplayName());
+    				return i;
+    			}
+    		}
+    	}
+    	return null;
     }
 }

@@ -1,5 +1,5 @@
 {
     "variants": {
-        "meta=0":  { "model": "ee:DMBlock" }
+        "normal":  { "model": "ee:DMBlock" }
     }
 }

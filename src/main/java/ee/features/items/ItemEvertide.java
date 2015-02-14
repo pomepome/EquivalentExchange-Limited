@@ -111,7 +111,7 @@ public class ItemEvertide extends ItemEEFunctional{
     	if(par3Entity instanceof EntityPlayer)
     	{
     		EntityPlayer p = (EntityPlayer)par3Entity;
-    		p.addPotionEffect(new PotionEffect(Potion.fireResistance.id,0));
+    		p.addPotionEffect(new PotionEffect(Potion.waterBreathing.id,0));
     	}
     }
 }
