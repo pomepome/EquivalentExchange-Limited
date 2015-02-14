@@ -22,5 +22,5 @@ public interface NameRegistry
     String DMBlock = "DMBlock";
     String NuggetIron = "NuggetIron";
     String PhilTool = "PhilTool";
-    String Repair = "repair";
+    String Repair = "Repair";
 }
