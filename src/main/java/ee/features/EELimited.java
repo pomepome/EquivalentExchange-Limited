@@ -11,6 +11,7 @@ import ic2.api.recipe.Recipes;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.stats.Achievement;
+import net.minecraft.stats.AchievementList;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -94,6 +96,7 @@ public class EELimited {
     public static boolean cutDown;
     public static boolean Debug;
     public static boolean Hard;
+    public static boolean noBats;
     /**
      * Items
      */
@@ -255,14 +258,15 @@ public class EELimited {
     {
     	Configuration config = new Configuration(suggestedConfig);
     	config.load();
-    	Hard = config.getBoolean("Hard Mode",config.CATEGORY_GENERAL,true,"removes some vanilla recipes and adds harder recipes!");
+    	Hard = config.getBoolean("Hard Mode",config.CATEGORY_GENERAL,false,"removes some vanilla recipes and adds harder recipes!");
     	cutDown = config.getBoolean("Cut Down",config.CATEGORY_GENERAL,true,"cut down from root");
     	Debug = config.getBoolean("Debug",config.CATEGORY_GENERAL,false,"Debug mode");
+    	noBats= config.getBoolean("noBats",config.CATEGORY_GENERAL,false,"No more bats!");
     	config.save();
     }
     public void registerAchievements()
     {
-    	getPhil = new Achievement("getPhil","getPhil",0,0,Phil,null);
+    	getPhil = new Achievement("getPhil","getPhil",0,0,Phil,AchievementList.portal);
     	getDM = new Achievement("getDM","getDM",2,1,DM,getPhil);
     	AchievementPage page = new AchievementPage("EELimited",getPhil,getDM);
     	AchievementPage.registerAchievementPage(page);
@@ -364,6 +368,22 @@ public class EELimited {
 	    	addSRecipe(op.items.get(0),list.toArray());
 	    }*/
 	}
+    public void addSawRecipe(ItemStack is,Object obj,int count)
+    {
+    	if(obj instanceof ItemStack)
+    	{
+    		List<ItemStack> list = Arrays.asList(new ItemStack[]{gs(PhilTool,1,1)});
+    		for(int i = 0;i < count;i++)
+    		{
+    			list.add((ItemStack)obj);
+    		}
+    		addSRecipe(is,list.toArray());
+    	}
+    	else
+    	{
+    		addSawRecipe(is,gs(obj),count);
+    	}
+    }
     public void PRAddon()
     {
     	try
@@ -416,7 +436,7 @@ public class EELimited {
     		addExchange(gs(BouleSilicon),Blocks.sand,gs(Items.coal,1,-1));
     		for(int i = 1;i <= 8;i++)
     		{
-    			addExchange(changeAmount(Silicon,8 * i),BouleSilicon,i);
+    			addSawRecipe(changeAmount(Silicon,8 * i),BouleSilicon,i);
     		}
     		addExchange(gs(RedWafer),gs(Silicon),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone));
     		addExchange(gs(GlowWafer),gs(Silicon),gs(Items.glowstone_dust),gs(Items.glowstone_dust),gs(Items.glowstone_dust),gs(Items.glowstone_dust));
@@ -524,8 +544,6 @@ public class EELimited {
     	}
     	for(Object obj : GameData.getItemRegistry())
     	{
-    		try
-    		{
     			Item item = (Item)obj;
     			if(!(item instanceof ItemDMShears))
     			{
@@ -538,25 +556,20 @@ public class EELimited {
     					continue;
     				}
     			}
-    			if(loadGT)
+    			if(loadGT&&loadTinCo)
     			{
     				if(item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
     				{
     					addFixRecipe(EXTREME,item,1);
     				}
     			}
-    			else
+    			else if(loadTinCo)
     			{
     				if(item instanceof ToolCore)
     				{
     					addFixRecipe(EXTREME,item,1);
     				}
     			}
-    		}
-    		catch(Exception e)
-    		{
-    			continue;
-    		}
     	}
     }
     /*

@@ -3,7 +3,6 @@ package ee.features.items;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
-import cpw.mods.fml.client.FMLClientHandler;
 import ee.features.EEProxy;
 import ee.features.NameRegistry;
 
@@ -16,7 +15,6 @@ public class ItemDMSword extends ItemEE
 
     public boolean hitEntity(ItemStack par1ItemStack, EntityLivingBase par2EntityLivingBase, EntityLivingBase par3EntityLivingBase)
     {
-        par2EntityLivingBase.setFire(20);
         if (par1ItemStack.getItemDamage() == 1)
         {
             par2EntityLivingBase.attackEntityFrom(DamageSource.causePlayerDamage(EEProxy.getPlayer()), toolDamage * 2);

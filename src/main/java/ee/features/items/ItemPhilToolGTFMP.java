@@ -15,7 +15,7 @@ import ee.features.EELimited;
 
 @Optional.Interface(modid = "ForgeMultipart",iface="codechicken.microblock.Saw")
 public class ItemPhilToolGTFMP extends ItemPhilToolBase implements Saw {
-	String[] names = {"smelt","crowbar","hhammer","screw","shammer","wrench","saw"};
+	String[] names = {"smelt","saw","crowbar","hhammer","screw","shammer","wrench"};
 	public ItemPhilToolGTFMP()
 	{
 		super("GTFMP");
@@ -33,7 +33,7 @@ public class ItemPhilToolGTFMP extends ItemPhilToolBase implements Saw {
 	}
 	@Override
 	public int getCuttingStrength(ItemStack arg0) {
-		return arg0.getItemDamage() == 6 ? 5 : -1;
+		return arg0.getItemDamage() == 1 ? 5 : -1;
 	}
 	public ItemStack onItemRightClick(ItemStack var1, World var2, EntityPlayer var3)
     {
