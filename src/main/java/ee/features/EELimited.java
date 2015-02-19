@@ -1,63 +1,52 @@
 package ee.features;
 
-import static ee.features.Level.*;
-import gregtech.api.GregTech_API;
-import gregtech.api.items.GT_MetaGenerated_Tool;
-import gregtech.api.objects.GT_ItemStack;
-import gregtech.api.util.GT_Utility;
-import ic2.api.item.IC2Items;
-import ic2.api.recipe.RecipeInputItemStack;
-import ic2.api.recipe.Recipes;
+import static ee.features.items.Level.*;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.AchievementList;
+import net.minecraft.world.World;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.oredict.RecipeSorter.Category;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tconstruct.library.tools.ToolCore;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
-import ee.features.blocks.BlockEE;
+import ee.features.blocks.BlockDM;
 import ee.features.blocks.BlockEETorch;
+import ee.features.gui.GuiHandler;
+import ee.features.items.ItemAlchemicalCoal;
 import ee.features.items.ItemCovalenceDust;
 import ee.features.items.ItemDMAxe;
 import ee.features.items.ItemDMHoe;
@@ -66,114 +55,112 @@ import ee.features.items.ItemDMShears;
 import ee.features.items.ItemDMShovel;
 import ee.features.items.ItemDMSword;
 import ee.features.items.ItemDamageDisabler;
-import ee.features.items.ItemEE;
+import ee.features.items.ItemDarkmatter;
 import ee.features.items.ItemEvertide;
+import ee.features.items.ItemIronBand;
+import ee.features.items.ItemMobiusFuel;
 import ee.features.items.ItemPhilToolBase;
-import ee.features.items.ItemPhilToolFMP;
-import ee.features.items.ItemPhilToolGT;
-import ee.features.items.ItemPhilToolGTFMP;
 import ee.features.items.ItemPhilosophersStone;
 import ee.features.items.ItemRepairCharm;
-import ee.features.items.ItemSwiftwolfsRing;
+import ee.features.items.ItemSwiftWolf;
 import ee.features.items.ItemVolcanite;
+import ee.features.items.Level;
+import ee.features.proxy.EEProxy;
+import ee.features.proxy.KeyHandler;
 
-@Mod(modid = "EELimited",name = "EELimited",version = "rev.a1")
-public class EELimited {
-
-	public static EELimited instance;
+@Mod(modid = "EELimited",name="EELimited",version = EELimited.VERSION)
+public class EELimited
+{
+    public static final String MODID = "ee";
+    public static final String VERSION = "v2g";
+    @Instance
+    public static Object instance;
     public static CreativeTabs TabEE = new CreativeTabEE();
-
-    public static Achievement getPhil;
-    public static Achievement getDM;
-
     public File suggestedConfig;
     public Logger log = LogManager.getLogger("EELimited");
     public Logger logFinder = LogManager.getLogger("EEItemFinder");
+    public static int CraftID = 0;
 
-    /**
-     * Options
-     */
-    public static boolean cutDown;
-    public static boolean Debug;
-    public static boolean Hard;
-    public static boolean noBats;
     /**
      * Items
      */
     public static Item Phil;
-    public static Item AlchCoal;
+    public static Item PhilTool;
+    public static Item Swift;
+    public static Item DD;
     public static Item Cov;
-    public static Item mobiusFuel;
     public static Item Volc;
     public static Item Ever;
+    public static Item Repair;
+    public static Item AlchCoal;
+    public static Item mobiusFuel;
     public static Item DM;
-    public static Item Swift;
-    public static Item Food;
-    public static Item DD;
+    public static Item ironband;
     public static Item DMAxe;
-    public static Item DMSword;
     public static Item DMPickaxe;
     public static Item DMShovel;
-    public static Item ironband;
-    public static Item DMShears;
+    public static Item DMSword;
     public static Item DMHoe;
-    public static Item NIron;
-    public static Item PhilTool;
-    public static Item Repair;
+    public static Item DMShears;
     /**
      * Blocks
      */
     public static Block EETorch;
     public static Block DMBlock;
-    public static Block AlchChest;
     /**
-     * Addon
+     * misc
      */
-    public static boolean loadGT,loadFMP,loadTinCo;
+	public static boolean cutDown;
+	public static boolean noBats;
+	public static boolean dropVillagerInventory;
+	/**
+	 * Achievements
+	 */
+	public static Achievement getPhil;
+	public static Achievement getDM;
     @EventHandler
-    public void init(FMLInitializationEvent e)
+    public void init(FMLInitializationEvent event)
     {
-    	NetworkRegistry.INSTANCE.registerGuiHandler(this,new GuiHandler());
     	instance = this;
-    	EEProxy.Init(FMLClientHandler.instance().getClient(),this);
-    	loadConfig();
-    	Blocks.command_block.setCreativeTab(CreativeTabs.tabRedstone);
-    	RecipeSorter.register("eelimited.fixrecipe",FixRecipe.class,Category.SHAPELESS,"after:minecraft:shapeless");
+    	MinecraftForge.EVENT_BUS.register(new EEHandler());
+    	NetworkRegistry.INSTANCE.registerGuiHandler(this,new GuiHandler());
+    	FMLCommonHandler.instance().bus().register(this);
+    	EEProxy.Init(this);
+    	KeyHandler.init();
     	Phil = new ItemPhilosophersStone();
+    	PhilTool = new ItemPhilToolBase();
+    	Swift = new ItemSwiftWolf();
+    	DD = new ItemDamageDisabler();
+    	Cov = new ItemCovalenceDust();
     	Volc = new ItemVolcanite();
     	Ever = new ItemEvertide();
-    	Cov = new ItemCovalenceDust();
-    	Swift = new ItemSwiftwolfsRing();
-    	AlchCoal = new ItemEE(NameRegistry.AlchemicalCoal);
-    	mobiusFuel = new ItemEE(NameRegistry.Mobius);
-    	DMAxe = new ItemDMAxe();
-    	DMHoe = new ItemDMHoe();
-    	DMSword = new ItemDMSword();
-    	DMShovel = new ItemDMShovel();
-    	DMShears = new ItemDMShears();
-    	DMPickaxe = new ItemDMPickaxe();
-    	DD = new ItemDamageDisabler();
-    	DM = new ItemEE(NameRegistry.DM);
-    	DMBlock = new BlockEE(Material.rock,NameRegistry.DMBlock).setHardness(500);
     	EETorch = new BlockEETorch();
-    	ironband = new ItemEE(NameRegistry.IronBand);
-    	PhilTool = new ItemPhilToolBase();
     	Repair = new ItemRepairCharm();
-    	//AlchChest = new BlockAlchChest();
-    	if(Hard)
-    	{
-    		removeRecipes();
-    	}
+    	AlchCoal = new ItemAlchemicalCoal();
+    	mobiusFuel = new ItemMobiusFuel();
+    	DM = new ItemDarkmatter();
+    	ironband = new ItemIronBand();
+    	DMAxe = new ItemDMAxe();
+    	DMAxe.setHarvestLevel("axe",10);
+    	DMPickaxe = new ItemDMPickaxe();
+    	DMPickaxe.setHarvestLevel("pickaxe",10);
+    	DMShovel = new ItemDMShovel();
+    	DMShovel.setHarvestLevel("shovel",10);
+    	DMSword = new ItemDMSword();
+    	DMHoe = new ItemDMHoe();
+    	DMShears = new ItemDMShears();
+    	DMBlock = new BlockDM().setHardness(200);
+    	DMBlock.setHarvestLevel("pickaxe",10);
     	addRecipe(gs(Items.water_bucket), "S", "B", 'S', Items.snowball, 'B', Items.bucket);
         addRecipe(gs(Items.lava_bucket), "GRG", " B ", 'G', Items.gunpowder, 'R', Items.redstone, 'B', Items.bucket);
         addRecipe(gs(Items.milk_bucket), "B", "W", "E", 'B', gs(Items.dye, 1, 0xF), 'W', Items.water_bucket, 'E', Items.bucket);
         addRecipe(gs(Phil), "RGR", "GSG", "RGR", 'R', Items.redstone, 'G', Items.glowstone_dust, 'S', Items.slime_ball);
         addRecipe(gs(Phil), "RGR", "GSG", "RGR", 'R', Items.glowstone_dust, 'G', Items.redstone, 'S', Items.slime_ball);
         addSRecipe(gs(Phil),gs(Phil),gs(Items.slime_ball),gs(Items.glowstone_dust),gs(Items.redstone));
+        addRecipe(gs(DMBlock),"DD","DD",'D',DM);
+        addSRecipe(gs(DM,4),gs(DMBlock));
         addSRecipe(gs(Items.glowstone_dust, 4), gs(Items.coal), gs(Items.redstone));
         addSRecipe(gs(Items.redstone, 4), gs(Items.coal), gs(Blocks.cobblestone));
-        addSRecipe(gs(DM, 4), gs(DMBlock));
-        addRecipe(gs(DMBlock), "DD", "DD", 'D', DM);
         ItemStack is = new ItemStack(DMPickaxe);
         is.addEnchantment(Enchantment.fortune,10);
         addRecipe(is, "DDD", " X ", " X ", 'D', DM, 'X', Items.diamond);
@@ -190,79 +177,19 @@ public class EELimited {
     	addFixRecipe();
     	addRingRecipe();
     	registerFuel();
-    	registerHarvestLevel();
     	registerAchievements();
+    	loadConfig();
     }
     @EventHandler
     public void preInit(FMLPreInitializationEvent e)
     {
     	suggestedConfig = e.getSuggestedConfigurationFile();
     }
-    public int convertCountToTick(int count)
-    {
-    	return 200 * count;
-    }
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent e) throws Exception
-    {
-    	loadGT = Loader.isModLoaded("gregtech");
-    	loadFMP = Loader.isModLoaded("ForgeMultipart");
-    	loadTinCo = Loader.isModLoaded("TConstruct");
-    	if(loadGT&&!loadFMP)
-    	{
-    		PhilTool = new ItemPhilToolGT();
-    	}
-    	else if(loadGT && loadFMP)
-    	{
-    		PhilTool = new ItemPhilToolGTFMP();
-    	}
-    	else if(!loadGT && loadFMP)
-    	{
-    		PhilTool = new ItemPhilToolFMP();
-    	}
-    	MinecraftForge.EVENT_BUS.register(new EEHandler());
-    	FMLCommonHandler.instance().bus().register(new CraftingHandler());
-    	if(Loader.isModLoaded("IC2"))
-    	{
-    		IC2Addon();
-    	}
-    	if(Loader.isModLoaded("Tubestuff"))
-    	{
-    		addTSRecipe();
-    	}
-    	if(Loader.isModLoaded("ProjRed|Core"))
-    	{
-    		PRAddon();
-    	}
-    	if(Loader.isModLoaded("gregtech"))
-    	{
-    		GTAddon();
-    	}
-    }
-    /*
-     * Config
-     */
     public void registerFuel()
     {
     	FuelHandler.register(AlchCoal,convertCountToTick(40));
     	FuelHandler.register(mobiusFuel,convertCountToTick(120));
     	GameRegistry.registerFuelHandler(new FuelHandler());
-    }
-    public void registerHarvestLevel()
-    {
-    	DMPickaxe.setHarvestLevel("pickaxe",10);
-    	DMShovel.setHarvestLevel("shovel",4);
-    	DMBlock.setHarvestLevel("pickaxe",5);
-    }
-    public void loadConfig()
-    {
-    	Configuration config = new Configuration(suggestedConfig);
-    	config.load();
-    	Hard = config.getBoolean("Hard Mode",config.CATEGORY_GENERAL,false,"removes some vanilla recipes and adds harder recipes!");
-    	cutDown = config.getBoolean("Cut Down",config.CATEGORY_GENERAL,true,"cut down from root");
-    	Debug = config.getBoolean("Debug",config.CATEGORY_GENERAL,false,"Debug mode");
-    	noBats= config.getBoolean("noBats",config.CATEGORY_GENERAL,false,"No more bats!");
-    	config.save();
     }
     public void registerAchievements()
     {
@@ -270,333 +197,56 @@ public class EELimited {
     	getDM = new Achievement("getDM","getDM",2,1,DM,getPhil);
     	AchievementPage page = new AchievementPage("EELimited",getPhil,getDM);
     	AchievementPage.registerAchievementPage(page);
+    	FMLCommonHandler.instance().bus().register(new CraftingHandler());
+    }
+    public void loadConfig()
+    {
+    	Configuration config = new Configuration(suggestedConfig);
+    	config.load();
+    	cutDown = config.getBoolean("cutDown","general",true,"Cut down from root");
+    	noBats = config.getBoolean("noBats","general",false,"No more any bats!");
+    	dropVillagerInventory = config.getBoolean("dropVillagerInventory","general",false,"Drop villagers' inventory");
+    	config.save();
     }
     /*
-     * Addons
+     * Helper
      */
-    public Item findItemFromName(String name)
+    public int convertCountToTick(int count)
     {
-    	return findItemFromName(name,true);
+    	return 200 * count;
     }
-    public Item findItemFromName(String name,boolean part)
+    public void registerIcon(Item item,String name,int damage)
     {
-    	for(Object obj : GameData.getItemRegistry())
-    	{
-    		Item i = (Item)obj;
-    		if(i != null)
-    		{
-    			String itemName = i.getUnlocalizedName();
-    			boolean isRightItem;
-    			if(part)
-    			{
-    				isRightItem = itemName.toLowerCase().contains(name.toLowerCase());
-    			}
-    			else
-    			{
-    				isRightItem = itemName == name;
-    			}
-    			if(isRightItem)
-    			{
-    				logFinder.info("Item Found:"+gs(i).getDisplayName());
-    				return i;
-    			}
-    		}
-    	}
-    	return null;
+    	EEProxy.getMC().getRenderItem().getItemModelMesher().register(item, damage, new ModelResourceLocation("ee:"+name,"inventory"));
     }
-    public ItemStack getIC2(String name)
+    public void registerIcon(Block item,String name,int damage)
     {
-    	return IC2Items.getItem(name);
-    }
-    public void addTSRecipe()
-    {
-        ItemStack BHC;
-		try {
-			BHC = gs(getTSBlock("block"), 1, 2);
-		} catch (Exception e)
-		{
-			return;
-		}
-        addRecipe(BHC, "DDD", "DCD", "DDD", 'D', DM, 'C', Blocks.chest);
-    }
-    public void CallGTMethod(String method)
-    {
-    }
-    public void IC2Addon()
-	{
-		addFixRecipe(LOW, IC2Items.getItem("treetap").getItem(), 5);
-	    addFixRecipe(LOW, IC2Items.getItem("hazmatHelmet").getItem(), 4);
-	    addFixRecipe(LOW, IC2Items.getItem("hazmatChestplate").getItem(), 6);
-	    addFixRecipe(LOW, IC2Items.getItem("hazmatLeggings").getItem(), 6);
-	    addFixRecipe(LOW, IC2Items.getItem("hazmatBoots").getItem(), 6);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeHelmet").getItem(), 5);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeChestplate").getItem(), 8);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeLeggings").getItem(), 7);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeBoots").getItem(), 4);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("wrench").getItem(), 6);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzePickaxe"), 3);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeAxe"), 3);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeSword"), 2);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeShovel"), 1);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeHoe"), 2);
-	    addRecipe(new ShapelessOreRecipe(getIC2("platecopper"),gs(PhilTool),"ingotCopper"));
-	    addRecipe(new ShapelessOreRecipe(getIC2("platetin"),gs(PhilTool),"ingotTin"));
-	    addRecipe(new ShapelessOreRecipe(getIC2("plategold"),gs(PhilTool),gs(Items.gold_ingot)));
-	    addRecipe(new ShapelessOreRecipe(getIC2("plateiron"),gs(PhilTool),gs(Items.iron_ingot)));
-	    addRecipe(new ShapelessOreRecipe(getIC2("platebronze"),gs(PhilTool),"ingotBronze"));
-	    addRecipe(new ShapelessOreRecipe(getIC2("platelead"),gs(PhilTool),"ingotLead"));
-	    addSRecipe(changeAmount(getIC2("ironCableItem"),4),gs(PhilTool),getIC2("plateiron"));
-	    addSRecipe(changeAmount(getIC2("copperCableItem"),4),gs(PhilTool),getIC2("platecopper"));
-	    addSRecipe(changeAmount(getIC2("goldCableItem"),4),gs(PhilTool),getIC2("plategold"));
-	    addSRecipe(changeAmount(getIC2("tinCableItem"),4),gs(PhilTool),getIC2("platetin"));
-	    ItemStack dp = IC2Items.getItem("diamondDust");
-	    Recipes.macerator.addRecipe(new RecipeInputItemStack(gs(Blocks.diamond_ore)), null, changeAmount(dp, 2));
-	    GameRegistry.addSmelting(dp, gs(Items.diamond), 10);
-	    /*{
-	    	IMachineRecipeManager mac = Recipes.macerator;
-	    	List<ItemStack> list = getPhils(3);
-	    	Map<IRecipeInput,RecipeOutput> recipe = mac.getRecipes();
-	    	Set<Entry<IRecipeInput,RecipeOutput>> es = recipe.entrySet();
-	    	Entry<IRecipeInput,RecipeOutput> e = (Entry<IRecipeInput,RecipeOutput>)es.toArray()[0];
-	    	IRecipeInput in = e.getKey();
-	    	RecipeOutput op = e.getValue();
-	    	ItemStack input = in.getInputs().get(0);
-	    	for(int i = 0;i < in.getAmount();i++)
-	    	{
-	    		list.add(input);
-	    	}
-	    	addSRecipe(op.items.get(0),list.toArray());
-	    }*/
-	}
-    public void addSawRecipe(ItemStack is,Object obj,int count)
-    {
-    	if(obj instanceof ItemStack)
-    	{
-    		List<ItemStack> list = Arrays.asList(new ItemStack[]{gs(PhilTool,1,1)});
-    		for(int i = 0;i < count;i++)
-    		{
-    			list.add((ItemStack)obj);
-    		}
-    		addSRecipe(is,list.toArray());
-    	}
-    	else
-    	{
-    		addSawRecipe(is,gs(obj),count);
-    	}
-    }
-    public void PRAddon()
-    {
-    	try
-    	{
-    		Item screwdriver = findItemFromName("projectred.core.screwdriver");
-    		Item Part = findItemFromName("projectred.core.part");
-    		Item RubyAxe = findItemFromName("exploration.axeruby");
-    		Item SapphireAxe = findItemFromName("exploration.axesapphire");
-    		Item PeridotAxe = findItemFromName("exploration.axeperidot");
-    		Item RubyHoe = findItemFromName("exploration.hoeruby");
-    		Item SapphireHoe = findItemFromName("exploration.hoesapphire");
-    		Item PeridotHoe = findItemFromName("exploration.hoeperidot");
-    		Item RubyShovel = findItemFromName("exploration.shovelruby");
-    		Item SapphireShovel = findItemFromName("exploration.shovelsapphire");
-    		Item PeridotShovel = findItemFromName("exploration.shovelperidot");
-    		Item RubyPickaxe = findItemFromName("exploration.pickaxeruby");
-    		Item SapphirePickaxe = findItemFromName("exploration.pickaxesapphire");
-    		Item PeridotPickaxe = findItemFromName("exploration.pickaxeperidot");
-    		Item RubySword = findItemFromName("exploration.swordruby");
-    		Item SapphireSword = findItemFromName("exploration.swordsapphire");
-    		Item PeridotSword = findItemFromName("exploration.axeperidot");
-    		Item RubySaw = findItemFromName("exploration.sawruby");
-    		Item SapphireSaw = findItemFromName("exploration.sawsapphire");
-    		Item PeridotSaw = findItemFromName("exploration.sawperidot");
-    		Item GoldSaw = findItemFromName("exploration.sawgold");
-    		ItemStack RedAlloy = gs(Part,1,10);
-    		ItemStack BouleSilicon = gs(Part,1,11);
-    		ItemStack Silicon = gs(Part,1,12);
-    		ItemStack RedWafer = gs(Part,1,13);
-    		ItemStack GlowWafer = gs(Part,1,14);
-    		addFixRecipe(MIDDLE,screwdriver,3);
-    		addFixRecipe(MIDDLE,RubyAxe,3);
-    		addFixRecipe(MIDDLE,SapphireAxe,3);
-    		addFixRecipe(MIDDLE,PeridotAxe,3);
-    		addFixRecipe(MIDDLE,RubyHoe,2);
-    		addFixRecipe(MIDDLE,SapphireHoe,2);
-    		addFixRecipe(MIDDLE,PeridotHoe,2);
-    		addFixRecipe(MIDDLE,RubyShovel,1);
-    		addFixRecipe(MIDDLE,SapphireShovel,1);
-    		addFixRecipe(MIDDLE,PeridotShovel,1);
-    		addFixRecipe(MIDDLE,RubySword,2);
-    		addFixRecipe(MIDDLE,SapphireSword,2);
-    		addFixRecipe(MIDDLE,PeridotSword,2);
-    		addFixRecipe(MIDDLE,RubySaw,1);
-    		addFixRecipe(MIDDLE,SapphireSaw,1);
-    		addFixRecipe(MIDDLE,PeridotSaw,1);
-    		addFixRecipe(MIDDLE,GoldSaw,1);
-    		addSRecipe(gs(RedAlloy),gs(Phil),gs(Items.iron_ingot),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone));
-    		addOSRecipe(gs(RedAlloy),gs(Phil),"ingotCopper",gs(Items.redstone),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone));
-    		addExchange(gs(BouleSilicon),Blocks.sand,gs(Items.coal,1,-1));
-    		for(int i = 1;i <= 8;i++)
-    		{
-    			addSawRecipe(changeAmount(Silicon,8 * i),BouleSilicon,i);
-    		}
-    		addExchange(gs(RedWafer),gs(Silicon),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone),gs(Items.redstone));
-    		addExchange(gs(GlowWafer),gs(Silicon),gs(Items.glowstone_dust),gs(Items.glowstone_dust),gs(Items.glowstone_dust),gs(Items.glowstone_dust));
-    	}
-    	catch(Exception e){}
-    }
-    public void registerTool(ItemStack is,Collection<GT_ItemStack>aToolList)
-    {
-    	aToolList.add(new GT_ItemStack(GT_Utility.copyAmount(1,is)));
-    	GregTech_API.sToolList.add(new GT_ItemStack(GT_Utility.copyAmount(1,is)));
-    }
-    public void GTAddon()
-    {
-    	 registerTool(gs(PhilTool,1,1),GregTech_API.sCrowbarList);
-    	 registerTool(gs(PhilTool,1,2),GregTech_API.sHardHammerList);
-    	 registerTool(gs(PhilTool,1,3),GregTech_API.sScrewdriverList);
-    	 registerTool(gs(PhilTool,1,4),GregTech_API.sSoftHammerList);
-    	 registerTool(gs(PhilTool,1,5),GregTech_API.sWrenchList);
+    	EEProxy.getMC().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(item), damage, new ModelResourceLocation("ee:"+name,"inventory"));
     }
     /*
-     * Recipe Remove
+     * Exchanges
      */
-    public void removeRecipes()
-    {
-    	removeSmeltingRecipe(Blocks.iron_ore);
-    	NIron = new ItemEE(NameRegistry.NuggetIron);
-    	GameRegistry.addSmelting(Blocks.iron_ore,gs(NIron),10);
-    	addRecipe(gs(Items.iron_ingot),"XXX","XXX","XXX",'X',NIron);
-    	removeSmeltingRecipe(Blocks.gold_ore);
-    	GameRegistry.addSmelting(Blocks.gold_ore,gs(Items.gold_nugget),10);
-    }
-    public static boolean areStacksEqual(ItemStack is1,ItemStack is2)
-    {
-    	if(is1==null||is2==null)
-    	{
-    		return false;
-    	}
-    	return is1.getItem() == is2.getItem();
-    }
-    public static boolean removeSmeltingRecipe(Object aInput) {
-		if (aInput != null) {
-			if(aInput instanceof ItemStack)
-			{
-				for (Object tInput : FurnaceRecipes.smelting().getSmeltingList().keySet()) {
-					if (areStacksEqual((ItemStack)aInput, (ItemStack)tInput)) {
-						FurnaceRecipes.smelting().getSmeltingList().remove(tInput);
-						return true;
-					}
-				}
-			}
-			else
-			{
-				ItemStack is = gs(aInput);
-	    		if(is==null)
-	    		{
-	    			return false;
-	    		}
-	    		return removeSmeltingRecipe(is);
-			}
-		}
-		return false;
-	}
-    public static boolean removeRecipe(Object aOutput)
-    {
-    	return removeRecipe(aOutput, true);
-    }
-    public static boolean removeRecipe(Object aOutput,boolean ignoreAmount) {
-    	if (aOutput == null) return false;
-    	boolean rReturn = false;
-    	if(aOutput instanceof ItemStack)
-    	{
-    		ArrayList<IRecipe> tList = (ArrayList<IRecipe>)CraftingManager.getInstance().getRecipeList();
-    		for (int i = 0; i < tList.size(); i++) {
-    			ItemStack tStack = tList.get(i).getRecipeOutput();
-	    		if (areStacksEqual(tStack, (ItemStack)aOutput)) {
-	    			if(!ignoreAmount && (tStack.stackSize != ((ItemStack)aOutput).stackSize))
-	    			{
-	    				continue;
-	    			}
-					tList.remove(i);
-					rReturn = true;
-	    		}
-			}
-    	}
-    	else
-    	{
-    		ItemStack is = gs(aOutput);
-    		if(is==null)
-    		{
-    			return false;
-    		}
-    		return removeRecipe(is, ignoreAmount);
-    	}
-		return rReturn;
-    }
     public void addSmeltingExchange()
     {
-    	Map<Object,ItemStack> map = FurnaceRecipes.smelting().getSmeltingList();
-    	for(Map.Entry<Object,ItemStack> entry : map.entrySet())
+    	FurnaceRecipes recipes = FurnaceRecipes.instance();
+    	Set<Map.Entry<ItemStack,ItemStack>> entrySet = recipes.getSmeltingList().entrySet();
+    	for(Map.Entry<ItemStack, ItemStack> entry : entrySet)
     	{
-    		ArrayList<ItemStack> list = new ArrayList<ItemStack>();
-    		list.add(gs(PhilTool));
-    		list.add(gs(entry.getKey()));
-    		addSRecipe(entry.getValue(),list.toArray());
+    		ItemStack i = entry.getKey();
+    		ItemStack dest = entry.getValue();
+    		addSRecipe(dest,i,gs(PhilTool));
     	}
     	for(Object obj : GameData.getItemRegistry())
     	{
-    			Item item = (Item)obj;
-    			if(!(item instanceof ItemDMShears))
-    			{
-    				/*
-    				 * For Vannila Items
-    				 */
-    				if(item instanceof ItemTool||item instanceof ItemSword||item instanceof ItemShears||item instanceof ItemBow)
-    				{
-    					addFixRecipe(EXTREME,item,1);
-    					continue;
-    				}
-    			}
-    			if(loadGT&&loadTinCo)
-    			{
-    				if(item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
-    				{
-    					addFixRecipe(EXTREME,item,1);
-    				}
-    			}
-    			else if(loadTinCo)
-    			{
-    				if(item instanceof ToolCore)
-    				{
-    					addFixRecipe(EXTREME,item,1);
-    				}
-    			}
+    		Item item = (Item)obj;
+    		if(obj instanceof ItemTool)
+    		{
+    			addFixRecipe(EXTREME,item,1);
+    		}
     	}
     }
     /*
-     * recipe wrapper
-     */
-    public static void addRecipe(IRecipe recipe)
-    {
-        GameRegistry.addRecipe(recipe);
-    }
-    public static void addRecipe(ItemStack dest, Object...objs)
-    {
-        GameRegistry.addRecipe(dest, objs);
-    }
-    public static void addSRecipe(ItemStack dest, Object...objs)
-    {
-        GameRegistry.addShapelessRecipe(dest, objs);
-    }
-    public static void addORecipe(ItemStack dest,Object...objs)
-    {
-    	addRecipe(new ShapedOreRecipe(dest,objs));
-    }
-    public static void addOSRecipe(ItemStack dest,Object...objs)
-    {
-    	addRecipe(new ShapelessOreRecipe(dest,objs));
-    }
-    /*
-     * itemStack Generate Methods
+     * Recipe
      */
     public static ItemStack changeAmount(ItemStack is, int amount)
     {
@@ -658,7 +308,26 @@ public class EELimited {
 
         return is;
     }
-    public static ItemStack getCov(Level lv)
+    public static void addRecipe(IRecipe recipe)
+    {
+        GameRegistry.addRecipe(recipe);
+    }
+    public static void addRecipe(ItemStack dest, Object...objs)
+    {
+        GameRegistry.addRecipe(dest, objs);
+    }
+    public static void addSRecipe(ItemStack dest, Object...objs)
+    {
+        GameRegistry.addShapelessRecipe(dest, objs);
+    }
+    public static void addORecipe(ItemStack dest,Object...objs)
+    {
+    	addRecipe(new ShapedOreRecipe(dest,objs));
+    }
+    public static void addOSRecipe(ItemStack dest,Object...objs)
+    {
+    	addRecipe(new ShapelessOreRecipe(dest,objs));
+    }public static ItemStack getCov(Level lv)
     {
         if (lv == LOW)
         {
@@ -835,7 +504,7 @@ public class EELimited {
         addRingRecipe(Blocks.wool, 0x10);
         addRingRecipe(Items.dye, 0x10);
         addRingRecipe(gti(gs(Items.porkchop), gs(Items.beef), gs(Items.chicken), gs(Items.fish)));
-        addRingRecipe(gti(gs(Items.cooked_porkchop), gs(Items.cooked_beef), gs(Items.cooked_chicken), gs(Items.cooked_fished)));
+        addRingRecipe(gti(gs(Items.cooked_porkchop), gs(Items.cooked_beef), gs(Items.cooked_chicken), gs(Items.cooked_fish)));
     }
     public void addFixRecipe()
     {
@@ -1290,6 +959,54 @@ public class EELimited {
         for (int i = 0; i < 16; i++)
         {
             addExchange(gs(Items.dye, 2, 15 - i), gs(Blocks.wool, 1, i), 3);
+        }
+    }
+
+    /*
+     * Addons
+     */
+    public Item findItemFromName(String name)
+    {
+    	return findItemFromName(name,true);
+    }
+    public Item findItemFromName(String name,boolean part)
+    {
+    	for(Object obj : GameData.getItemRegistry())
+    	{
+    		Item i = (Item)obj;
+    		if(i != null)
+    		{
+    			String itemName = i.getUnlocalizedName();
+    			boolean isRightItem;
+    			if(part)
+    			{
+    				isRightItem = itemName.toLowerCase().contains(name.toLowerCase());
+    			}
+    			else
+    			{
+    				isRightItem = itemName == name;
+    			}
+    			if(isRightItem)
+    			{
+    				logFinder.info("Item Found:"+gs(i).getDisplayName());
+    				return i;
+    			}
+    		}
+    	}
+    	return null;
+    }
+    /*
+     * Events
+     */
+    @SubscribeEvent
+    public void KeyHandlingEvent(KeyInputEvent event) {
+        if (KeyHandler.keyCraft.isPressed()) {
+        	EntityPlayer p = EEProxy.getPlayer();
+        	World w = p.worldObj;
+        	if(p.inventory.hasItem(Phil))
+        	{
+        		//p.openGui(this,0,w,(int)p.posX,(int)p.posY,(int)p.posZ);
+        	}
         }
     }
 }

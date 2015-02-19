@@ -1,6 +1,5 @@
 package ee.features.items;
 
-import net.minecraft.item.ItemStack;
 
 public class ItemEEFunctional extends ItemEE {
 
@@ -12,11 +11,5 @@ public class ItemEEFunctional extends ItemEE {
 		super(name,damage);
 		this.setContainerItem(this).setMaxStackSize(1);
 	}
-
-    @Override
-    public boolean doesContainerItemLeaveCraftingGrid(ItemStack itemStack)
-    {
-        return false;
-    }
 
 }

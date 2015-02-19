@@ -7,27 +7,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
 
-public class ItemPhilToolBase extends ItemEEFunctional
-{
-	protected String[] names = {"smelt","crowbar","hhammer","screw","shammer","wrench"};
-	public ItemPhilToolBase()
-	{
+public class ItemPhilToolBase extends ItemEEFunctional {
+
+	public ItemPhilToolBase() {
 		super(NameRegistry.PhilTool);
-		this.setTextureName("ee:"+NameRegistry.Philo).setHasSubtypes(true);
-	}
-	public ItemPhilToolBase(String philtool)
-	{
-		super(NameRegistry.PhilTool+philtool);
-		this.setTextureName("ee:"+NameRegistry.Philo).setHasSubtypes(true);
 	}
 	@Override
 	@SideOnly(Side.CLIENT)
-    public boolean hasEffect(ItemStack is,int pass)
+    public boolean hasEffect(ItemStack is)
     {
 		return true;
     }
@@ -51,12 +43,12 @@ public class ItemPhilToolBase extends ItemEEFunctional
 	@Override
 	public String getUnlocalizedName(ItemStack is)
 	{
-		int damage = is.getItemDamage();
-		return "item.PhilTool_"+names[damage];
+		return "item.PhilTool_smelt";
 	}
 	@Override
     public ItemStack getContainerItem(ItemStack itemStack)
     {
 		return itemStack;
     }
+
 }
