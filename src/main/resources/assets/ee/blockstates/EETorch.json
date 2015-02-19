@@ -1,9 +1,0 @@
-{
-	"variants": {
-        "facing=up": { "model": "ee:EETorch" },
-        "facing=east": { "model": "ee:EETorch_wall" },
-        "facing=south": { "model": "ee:EETorch_wall", "y": 90 },
-        "facing=west": { "model": "ee:EETorch_wall", "y": 180 },
-        "facing=north": { "model": "ee:EETorch_wall", "y": 270 }
-    }
-}

@@ -1,21 +1,20 @@
 package ee.features;
 
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
-import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import ee.features.items.ItemDMSword;
+import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class EEHandler {
+
 	public static boolean hasStarted = false;
 	@SubscribeEvent
 	public void livingUpdate(LivingUpdateEvent e)
@@ -23,7 +22,7 @@ public class EEHandler {
 		if(!hasStarted)
 		{
 			hasStarted = true;
-			((EELimited) EELimited.instance).addSmeltingExchange();
+			EELimited.instance.addSmeltingExchange();
 		}
 		EntityLivingBase l = e.entityLiving;
 		if(l instanceof EntityPlayer)
@@ -49,11 +48,11 @@ public class EEHandler {
 				{
 					continue;
 				}
-				if(is.getItem() == EELimited.Swift && is.getItemDamage() == 0)
+				if(is.getItem() == EELimited.Swift && is.getItemDamage() > 0)
 				{
 					allowFly = true;
 				}
-				if(is.getItem() == EELimited.DD && is.getItemDamage() == 0)
+				if(is.getItem() == EELimited.DD && is.getItemDamage() > 0)
 				{
 					disableDamage = true;
 				}
@@ -61,37 +60,39 @@ public class EEHandler {
 			pc.allowFlying = allowFly;
 			pc.disableDamage = disableDamage;
 		}
-		if(EELimited.noBats&& l instanceof EntityBat)
+		if(EELimited.noBats&&l instanceof EntityBat)
 		{
-			l.attackEntityFrom(DamageSource.drown,20);
-		}
-		if(EELimited.dropVillagerInventory&& l instanceof EntityVillager)
-		{
-			InventoryBasic villagerInventory = ((EntityVillager)l).func_175551_co();
-			for(int i = 0;i < villagerInventory.getSizeInventory();i++)
-			{
-				ItemStack is = villagerInventory.getStackInSlot(i);
-				if(is == null)
-				{
-					continue;
-				}
-				villagerInventory.setInventorySlotContents(i, null);
-				l.dropItem(is.getItem(),is.stackSize);
-			}
+			l.attackEntityFrom(DamageSource.drown,80);
 		}
 	}
 	@SubscribeEvent
-	public void livingHurt(LivingHurtEvent e)
+	 public void sleepHandle(PlayerSleepInBedEvent event)
+	 {
+		if(event.entityPlayer.getHealth() < 40)
+		{
+			event.entityPlayer.heal(1);
+		}
+	 }
+	@SubscribeEvent
+	public void livingHurt(LivingHurtEvent event)
 	{
-		Entity cause = e.source.getEntity();
-		EntityLivingBase hurted = e.entityLiving;
-		if(cause!=null&&cause instanceof EntityPlayer)
+		EntityLivingBase e = event.entityLiving;
+		Entity cause = event.source.getEntity();
+		if(e instanceof EntityPlayer&&!(e instanceof EntityTameable)&&event.source == DamageSource.inWall)
+		{
+			EntityPlayer p = (EntityPlayer)e;
+			if(p.worldObj.getBlock(p.playerLocation.posX,p.playerLocation.posY,p.playerLocation.posZ).isBed(p.worldObj,p.playerLocation.posX,p.playerLocation.posY,p.playerLocation.posZ, p))
+			{
+				event.setCanceled(true);
+			}
+		}
+		if(cause instanceof EntityPlayer)
 		{
 			EntityPlayer p = (EntityPlayer)cause;
 			ItemStack current = p.getCurrentEquippedItem();
-			if(current != null && current.getItem() instanceof ItemDMSword)
+			if(current != null&&current.getItem() == EELimited.DMSword)
 			{
-				hurted.setFire(20);
+				e.setFire(30);
 			}
 		}
 	}
