@@ -81,7 +81,7 @@ public class EEHandler {
 		if(e instanceof EntityPlayer&&!(e instanceof EntityTameable)&&event.source == DamageSource.inWall)
 		{
 			EntityPlayer p = (EntityPlayer)e;
-			if(p.worldObj.getBlock(p.playerLocation.posX,p.playerLocation.posY,p.playerLocation.posZ).isBed(p.worldObj,p.playerLocation.posX,p.playerLocation.posY,p.playerLocation.posZ, p))
+			if(p != null&&p!=null&&p.worldObj != null&&p.worldObj.getBlock((int)p.posX,(int)p.posY,(int)p.posZ).isBed(p.worldObj,(int)p.posX,(int)p.posY,(int)p.posZ, p))
 			{
 				event.setCanceled(true);
 			}
