@@ -1,25 +1,23 @@
 package ee.features.items;
 
-import net.minecraft.block.Block;
+import ee.features.EEProxy;
+import ee.features.NameRegistry;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import ee.features.NameRegistry;
-import ee.features.proxy.EEProxy;
 
-public class ItemVolcanite extends ItemEEFunctional {
-
-	public ItemVolcanite() {
-		super(NameRegistry.Volc);
-	}
+public class ItemVolcanite extends ItemEE
+{
+    public ItemVolcanite()
+    {
+        super(NameRegistry.Volc);
+        this.setMaxStackSize(1).setContainerItem(this);
+    }
 
     public void doVaporize(ItemStack var1, World var2, EntityPlayer var3, int range)
     {
@@ -45,10 +43,10 @@ public class ItemVolcanite extends ItemEEFunctional {
                     int ny = oy + j;
                     int nz = oz + k;
 
-                    if (var2.getBlockState(new BlockPos(nx,ny,nz)).getBlock().getMaterial() == Material.water)
+                    if (var2.getBlock(nx, ny, nz).getMaterial() == Material.water)
                     {
                         var4 = true;
-                        var2.setBlockToAir(new BlockPos(nx,ny,nz));
+                        var2.setBlock(nx, ny, nz, Blocks.air);
                     }
                 }
             }
@@ -58,7 +56,7 @@ public class ItemVolcanite extends ItemEEFunctional {
             EEProxy.playSoundAtPlayer("random.fizz", var3, 1.0F, 1.2F / (var2.rand.nextFloat() * 0.2F + 0.9F));
         }
     }
-    @Override
+
     public ItemStack onItemRightClick(ItemStack var1, World var2, EntityPlayer var3)
     {
         if (var3.isSneaking())
@@ -69,34 +67,66 @@ public class ItemVolcanite extends ItemEEFunctional {
         return var1;
     }
 
-    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, BlockPos pos, EnumFacing par7, float par8, float par9, float par10)
+    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
-    	BlockPos pos1 = pos.offset(par7);
-    	Block b = par3World.getBlockState(pos1).getBlock();
-        if (!par3World.isAirBlock(pos))
+        if (par3World.getBlock(par4, par5, par6) != Blocks.air)
         {
+            if (par7 == 0)
+            {
+                --par5;
+            }
 
-            if (!(b.getMaterial() == Material.lava || b.getMaterial() == Material.water) && !par3World.isAirBlock(pos1))
+            if (par7 == 1)
+            {
+                ++par5;
+            }
+
+            if (par7 == 2)
+            {
+                --par6;
+            }
+
+            if (par7 == 3)
+            {
+                ++par6;
+            }
+
+            if (par7 == 4)
+            {
+                --par4;
+            }
+
+            if (par7 == 5)
+            {
+                ++par4;
+            }
+
+            if (!(par3World.getBlock(par4, par5, par6).getMaterial() == Material.lava || par3World.getBlock(par4, par5, par6).getMaterial() == Material.water) && !par3World.isAirBlock(par4, par5, par6))
             {
                 return false;
             }
         }
 
-        if (!par2EntityPlayer.canPlayerEdit(pos1, par7, par1ItemStack))
+        if (!par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack))
         {
             return false;
         }
         else
         {
-            if (Blocks.lava.canPlaceBlockAt(par3World, pos1))
+            if (Blocks.lava.canPlaceBlockAt(par3World, par4, par5, par6))
             {
-            	IBlockState state = Blocks.lava.getDefaultState();
-                par3World.setBlockState(pos1,state);
-                state.getBlock().onNeighborBlockChange(par3World, pos1,state,Blocks.air);
+                par3World.setBlock(par4, par5, par6, Blocks.lava);
+                par3World.getBlock(par4, par5, par6).onNeighborBlockChange(par3World, par4, par5, par6, Blocks.air);
             }
 
             return true;
         }
+    }
+
+    @Override
+    public boolean doesContainerItemLeaveCraftingGrid(ItemStack itemStack)
+    {
+        return false;
     }
     @Override
     public final void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5)
@@ -107,5 +137,4 @@ public class ItemVolcanite extends ItemEEFunctional {
     		p.addPotionEffect(new PotionEffect(Potion.fireResistance.id,0));
     	}
     }
-
 }

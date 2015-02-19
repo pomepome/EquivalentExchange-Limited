@@ -1,24 +1,24 @@
 package ee.features;
 
+import static ee.features.EELimited.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import net.minecraft.item.Item;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 
 public class CraftingHandler {
-
 	@SubscribeEvent
 	public void onCrafted(PlayerEvent.ItemCraftedEvent e)
 	{
-		ItemStack item = e.crafting;
 		EntityPlayer p = e.player;
-		if(item.getItem() == EELimited.Phil)
+		Item i = e.crafting.getItem();
+		if(i == Phil)
 		{
-			p.triggerAchievement(EELimited.getPhil);
+			p.triggerAchievement(getPhil);
 		}
-		if(item.getItem() == EELimited.DM)
+		if(i == DM)
 		{
-			p.triggerAchievement(EELimited.getDM);
+			p.triggerAchievement(getDM);
 		}
 	}
 }

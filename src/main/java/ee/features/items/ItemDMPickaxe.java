@@ -2,18 +2,18 @@ package ee.features.items;
 
 import java.util.List;
 
+import ee.features.EELimited;
+import ee.features.EEProxy;
+import ee.features.NameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import ee.features.NameRegistry;
 
 public class ItemDMPickaxe extends ItemEE
 {
@@ -30,9 +30,8 @@ public class ItemDMPickaxe extends ItemEE
     	itemList.add(is);
     }
     @Override
-    public float getDigSpeed(ItemStack stack,IBlockState meta)
+    public float getDigSpeed(ItemStack stack, Block block,int meta)
     {
-    	Block block = meta.getBlock();
     	int base = block.getMaterial() == Material.rock ? 30 : 8;
     	if(stack.getItemDamage() > 0)
     	{
@@ -208,11 +207,10 @@ public class ItemDMPickaxe extends ItemEE
 
         return "unknown";
     }
-    @Override
-    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World,BlockPos pos,EnumFacing face, float par8, float par9, float par10)
+    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
-    	IBlockState state = par3World.getBlockState(pos);
-        Block block = state.getBlock();
+        Block block = par3World.getBlock(par4, par5, par6);
+        int metadata = par3World.getBlockMetadata(par4, par5, par6);
         skip = !skip;
 
         if (skip)
@@ -220,10 +218,15 @@ public class ItemDMPickaxe extends ItemEE
             return true;
         }
 
-        if (pos.getY() > 0 && par1ItemStack.getItemDamage() > 0 && state.getBlock().getBlockHardness(par3World,pos) < 0)
+        if (EELimited.Debug)
         {
-            state.getBlock().dropBlockAsItem(par3World,pos,state, 0);
-            par3World.setBlockToAir(pos);
+            EEProxy.getPlayer().sendChatMessage(getMaterialName((par3World.getBlock(par4, par5, par6).getMaterial())));
+        }
+
+        if (par5 > 0 && par1ItemStack.getItemDamage() > 0 && par3World.getBlock(par4, par5, par6).getBlockHardness(par3World, par4, par5, par6) < 0)
+        {
+            par3World.getBlock(par4, par5, par6).dropBlockAsItem(par3World, par4, par5, par6, par3World.getBlockMetadata(par4, par5, par6), 0);
+            par3World.setBlock(par4, par5, par6, Blocks.air);
             par1ItemStack.setItemDamage(1);
             return true;
         }
@@ -371,6 +374,6 @@ public class ItemDMPickaxe extends ItemEE
         	return true;
         }
         */
-        return super.onItemUse(par1ItemStack, par2EntityPlayer, par3World, pos, face, par8, par9, par10);
+        return super.onItemUse(par1ItemStack, par2EntityPlayer, par3World, par4, par5, par6, par7, par8, par9, par10);
     }
 }

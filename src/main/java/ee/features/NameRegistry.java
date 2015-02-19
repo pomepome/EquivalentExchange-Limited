@@ -2,7 +2,7 @@ package ee.features;
 
 public interface NameRegistry
 {
-    String AlchemicalCoal = "AlchCoal";
+    String AlchemicalCoal = "AlchemicalFuel";
     String Cov = "Cov_";
     String DamageDisable = "DamDis";
     String DM = "DM";
