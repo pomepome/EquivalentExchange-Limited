@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import com.google.common.collect.Multimap;
 
 import ee.features.EELimited;
-import ee.features.EEProxy;
+import ee.features.proxy.EEProxy;
 
 public abstract class ItemEE extends Item {
 	int toolDamage = 0;
@@ -22,7 +22,7 @@ public abstract class ItemEE extends Item {
         super();
         this.setUnlocalizedName(name).setCreativeTab(EELimited.TabEE);
         GameRegistry.registerItem(this, name);
-        EEProxy.mc.getRenderItem().getItemModelMesher().register(this, 0, new ModelResourceLocation("ee:"+name,"inventory"));
+        EEProxy.getMC().getRenderItem().getItemModelMesher().register(this, 0, new ModelResourceLocation("ee:"+name,"inventory"));
     }
 
     public ItemEE(String name, int damage)
@@ -31,7 +31,7 @@ public abstract class ItemEE extends Item {
         this.setFull3D().setUnlocalizedName(name).setMaxDamage(200).setCreativeTab(EELimited.TabEE).setMaxStackSize(1);
         GameRegistry.registerItem(this, name);
         toolDamage = damage;
-        EEProxy.mc.getRenderItem().getItemModelMesher().register(this, 0, new ModelResourceLocation("ee:"+name,"inventory"));
+        EEProxy.getMC().getRenderItem().getItemModelMesher().register(this, 0, new ModelResourceLocation("ee:"+name,"inventory"));
     }
 
     public boolean isWood(Block b)

@@ -4,8 +4,10 @@ package ee.features;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -62,6 +64,20 @@ public class EEHandler {
 		if(EELimited.noBats&& l instanceof EntityBat)
 		{
 			l.attackEntityFrom(DamageSource.drown,20);
+		}
+		if(EELimited.dropVillagerInventory&& l instanceof EntityVillager)
+		{
+			InventoryBasic villagerInventory = ((EntityVillager)l).func_175551_co();
+			for(int i = 0;i < villagerInventory.getSizeInventory();i++)
+			{
+				ItemStack is = villagerInventory.getStackInSlot(i);
+				if(is == null)
+				{
+					continue;
+				}
+				villagerInventory.setInventorySlotContents(i, null);
+				l.dropItem(is.getItem(),is.stackSize);
+			}
 		}
 	}
 	@SubscribeEvent

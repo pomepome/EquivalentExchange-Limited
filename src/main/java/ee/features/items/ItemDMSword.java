@@ -3,8 +3,8 @@ package ee.features.items;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
-import ee.features.EEProxy;
 import ee.features.NameRegistry;
+import ee.features.proxy.EEProxy;
 
 public class ItemDMSword extends ItemEE
 {

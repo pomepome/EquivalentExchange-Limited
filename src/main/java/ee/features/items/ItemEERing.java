@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ee.features.EEProxy;
+import ee.features.proxy.EEProxy;
 
 public abstract class ItemEERing extends ItemEEFunctional {
 
@@ -20,8 +20,8 @@ public abstract class ItemEERing extends ItemEEFunctional {
 		super(name);
 		this.setHasSubtypes(true).setMaxDamage(0);
 		ModelBakery.addVariantName(this, "ee:"+name+"On","ee:"+name+"Off");
-		EEProxy.mc.getRenderItem().getItemModelMesher().register(this,0,new ModelResourceLocation("ee:"+name+"On","inventory"));
-		EEProxy.mc.getRenderItem().getItemModelMesher().register(this,1,new ModelResourceLocation("ee:"+name+"Off","inventory"));
+		EEProxy.getMC().getRenderItem().getItemModelMesher().register(this,0,new ModelResourceLocation("ee:"+name+"On","inventory"));
+		EEProxy.getMC().getRenderItem().getItemModelMesher().register(this,1,new ModelResourceLocation("ee:"+name+"Off","inventory"));
 	}
 	@Override
 	@SideOnly(Side.CLIENT)

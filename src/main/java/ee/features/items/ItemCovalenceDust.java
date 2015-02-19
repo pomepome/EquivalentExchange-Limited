@@ -9,8 +9,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ee.features.EEProxy;
 import ee.features.NameRegistry;
+import ee.features.proxy.EEProxy;
 
 public class ItemCovalenceDust extends ItemEE {
 
@@ -19,9 +19,9 @@ public class ItemCovalenceDust extends ItemEE {
 		String name = NameRegistry.Cov;
 		this.setHasSubtypes(true).setMaxDamage(0);
 		ModelBakery.addVariantName(this, "ee:"+name+"low","ee:"+name+"mid","ee:"+name+"high");
-		EEProxy.mc.getRenderItem().getItemModelMesher().register(this,0,new ModelResourceLocation("ee:"+name+"low","inventory"));
-		EEProxy.mc.getRenderItem().getItemModelMesher().register(this,1,new ModelResourceLocation("ee:"+name+"mid","inventory"));
-		EEProxy.mc.getRenderItem().getItemModelMesher().register(this,2,new ModelResourceLocation("ee:"+name+"high","inventory"));
+		EEProxy.getMC().getRenderItem().getItemModelMesher().register(this,0,new ModelResourceLocation("ee:"+name+"low","inventory"));
+		EEProxy.getMC().getRenderItem().getItemModelMesher().register(this,1,new ModelResourceLocation("ee:"+name+"mid","inventory"));
+		EEProxy.getMC().getRenderItem().getItemModelMesher().register(this,2,new ModelResourceLocation("ee:"+name+"high","inventory"));
 	}
 	 @SideOnly(Side.CLIENT)
 	 @Override
