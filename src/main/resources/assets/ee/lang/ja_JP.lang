@@ -30,7 +30,7 @@ item.PhilTool_screw.name=賢者の石(ドライバー)
 item.PhilTool_shammer.name=賢者の石(ソフトハンマー)
 item.PhilTool_wrench.name=賢者の石(レンチ)
 item.PhilTool_saw.name=賢者の石(ノコ)
-item.repair.name=補修の御守
+item.Repair.name=補修の御守
 
 #Block names
 tile.DMBlock.name=暗黒物質のブロック

@@ -57,11 +57,12 @@ public class ItemEE extends Item {
 
     public void onActivated(ItemStack is)
     {
-        if (is.getHasSubtypes() || is.getMaxDamage() > 0)
+        if (is.getItem() instanceof ItemRing||(!is.getHasSubtypes() && is.getMaxDamage() > 0))
         {
             is.setItemDamage(1 - is.getItemDamage());
         }
     }
+    @SuppressWarnings("unchecked")
     public Multimap getItemAttributeModifiers()
     {
         if (toolDamage == 0)

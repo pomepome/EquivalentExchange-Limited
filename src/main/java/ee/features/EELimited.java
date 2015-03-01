@@ -1,10 +1,6 @@
 package ee.features;
 
 import static ee.features.Level.*;
-import gregtech.api.GregTech_API;
-import gregtech.api.items.GT_MetaGenerated_Tool;
-import gregtech.api.objects.GT_ItemStack;
-import gregtech.api.util.GT_Utility;
 import ic2.api.item.IC2Items;
 import ic2.api.recipe.RecipeInputItemStack;
 import ic2.api.recipe.Recipes;
@@ -20,10 +16,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemFlintAndSteel;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -76,6 +75,10 @@ import ee.features.items.ItemPhilosophersStone;
 import ee.features.items.ItemRepairCharm;
 import ee.features.items.ItemSwiftwolfsRing;
 import ee.features.items.ItemVolcanite;
+import gregtech.api.GregTech_API;
+import gregtech.api.items.GT_MetaGenerated_Tool;
+import gregtech.api.objects.GT_ItemStack;
+import gregtech.api.util.GT_Utility;
 
 @Mod(modid = "EELimited",name = "EELimited",version = "rev.a1")
 public class EELimited {
@@ -97,6 +100,8 @@ public class EELimited {
     public static boolean Debug;
     public static boolean Hard;
     public static boolean noBats;
+    public static boolean noTeleport;
+    public static boolean dontCarry;
     /**
      * Items
      */
@@ -240,6 +245,37 @@ public class EELimited {
     	}
     }
     /*
+     * Repair Check
+     */
+    public static boolean isRepairable(Item item)
+    {
+    	if(!(item instanceof ItemDMShears))
+		{
+			/*
+			 * For Vannila Items
+			 */
+			if(item instanceof ItemTool||item instanceof ItemSword||item instanceof ItemShears||item instanceof ItemBow||item instanceof ItemHoe||item instanceof ItemFlintAndSteel)
+			{
+				return true;
+			}
+		}
+		if(loadGT&&loadTinCo)
+		{
+			if(item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
+			{
+				return true;
+			}
+		}
+		if(loadTinCo)
+		{
+			if(item instanceof ToolCore)
+			{
+				return true;
+			}
+		}
+		return false;
+    }
+    /*
      * Config
      */
     public void registerFuel()
@@ -262,6 +298,8 @@ public class EELimited {
     	cutDown = config.getBoolean("Cut Down",config.CATEGORY_GENERAL,true,"cut down from root");
     	Debug = config.getBoolean("Debug",config.CATEGORY_GENERAL,false,"Debug mode");
     	noBats= config.getBoolean("noBats",config.CATEGORY_GENERAL,false,"No more bats!");
+    	noTeleport= config.getBoolean("noTeleport",config.CATEGORY_GENERAL,false,"now Enderman can't teleport!");
+    	dontCarry= config.getBoolean("noCarry",config.CATEGORY_GENERAL,false,"now Enderman can't carry blocks!");
     	config.save();
     }
     public void registerAchievements()
@@ -545,31 +583,18 @@ public class EELimited {
     	for(Object obj : GameData.getItemRegistry())
     	{
     			Item item = (Item)obj;
-    			if(!(item instanceof ItemDMShears))
+    			if(!(item instanceof ItemDMShears)&&isRepairable(item))
     			{
-    				/*
-    				 * For Vannila Items
-    				 */
-    				if(item instanceof ItemTool||item instanceof ItemSword||item instanceof ItemShears||item instanceof ItemBow)
-    				{
-    					addFixRecipe(EXTREME,item,1);
-    					continue;
-    				}
+    				addFixRecipe(EXTREME,item,1);
     			}
-    			if(loadGT&&loadTinCo)
-    			{
-    				if(item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
-    				{
-    					addFixRecipe(EXTREME,item,1);
-    				}
-    			}
-    			else if(loadTinCo)
-    			{
-    				if(item instanceof ToolCore)
-    				{
-    					addFixRecipe(EXTREME,item,1);
-    				}
-    			}
+    	}
+    	if(dontCarry)
+    	{
+    		for(Object obj : GameData.getBlockRegistry())
+    		{
+    			Block block = (Block)obj;
+    			EntityEnderman.setCarriable(block, false);
+    		}
     	}
     }
     /*

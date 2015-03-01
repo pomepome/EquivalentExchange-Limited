@@ -2,12 +2,14 @@ package ee.features;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
@@ -27,6 +29,7 @@ public class EEHandler {
 		EntityLivingBase l = e.entityLiving;
 		if(l instanceof EntityPlayer)
 		{
+			Timer1s.Tick();
 			EntityPlayer p = (EntityPlayer)l;
 			PlayerCapabilities pc = p.capabilities;
 			/*{
@@ -94,6 +97,14 @@ public class EEHandler {
 			{
 				e.setFire(30);
 			}
+		}
+	}
+	@SubscribeEvent
+	public void onTeleport(EnderTeleportEvent e)
+	{
+		if(e.entityLiving != null && e.entityLiving instanceof EntityEnderman)
+		{
+			e.setCanceled(EELimited.noTeleport);
 		}
 	}
 }
