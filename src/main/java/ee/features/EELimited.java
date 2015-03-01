@@ -12,17 +12,22 @@ import net.minecraft.block.Block;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemFishingRod;
+import net.minecraft.item.ItemFlintAndSteel;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.AchievementList;
-import net.minecraft.world.World;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -32,9 +37,6 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent.KeyInputEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -43,9 +45,9 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import ee.api.EELimitedException;
 import ee.features.blocks.BlockDM;
 import ee.features.blocks.BlockEETorch;
-import ee.features.gui.GuiHandler;
 import ee.features.items.ItemAlchemicalCoal;
 import ee.features.items.ItemCovalenceDust;
 import ee.features.items.ItemDMAxe;
@@ -65,14 +67,12 @@ import ee.features.items.ItemRepairCharm;
 import ee.features.items.ItemSwiftWolf;
 import ee.features.items.ItemVolcanite;
 import ee.features.items.Level;
-import ee.features.proxy.EEProxy;
-import ee.features.proxy.KeyHandler;
 
-@Mod(modid = "EELimited",name="EELimited",version = EELimited.VERSION)
+@Mod(modid = "EE",name="EELimited",version = EELimited.VERSION)
 public class EELimited
 {
     public static final String MODID = "ee";
-    public static final String VERSION = "v2g";
+    public static final String VERSION = "v2h";
     @Instance
     public static Object instance;
     public static CreativeTabs TabEE = new CreativeTabEE();
@@ -113,20 +113,19 @@ public class EELimited
 	public static boolean cutDown;
 	public static boolean noBats;
 	public static boolean dropVillagerInventory;
+	public static boolean noTeleport;
+	public static boolean noCarry;
 	/**
 	 * Achievements
 	 */
 	public static Achievement getPhil;
 	public static Achievement getDM;
     @EventHandler
-    public void init(FMLInitializationEvent event)
+    public void init(FMLInitializationEvent event) throws EELimitedException
     {
     	instance = this;
     	MinecraftForge.EVENT_BUS.register(new EEHandler());
-    	NetworkRegistry.INSTANCE.registerGuiHandler(this,new GuiHandler());
-    	FMLCommonHandler.instance().bus().register(this);
     	EEProxy.Init(this);
-    	KeyHandler.init();
     	Phil = new ItemPhilosophersStone();
     	PhilTool = new ItemPhilToolBase();
     	Swift = new ItemSwiftWolf();
@@ -206,6 +205,8 @@ public class EELimited
     	cutDown = config.getBoolean("cutDown","general",true,"Cut down from root");
     	noBats = config.getBoolean("noBats","general",false,"No more any bats!");
     	dropVillagerInventory = config.getBoolean("dropVillagerInventory","general",false,"Drop villagers' inventory");
+    	noTeleport = config.getBoolean("noTeleport","general",false,"Now,enderman can't teleport!");
+    	noCarry = config.getBoolean("noCarry","general",false,"Now,enderman can't carry blocks!");
     	config.save();
     }
     /*
@@ -239,11 +240,23 @@ public class EELimited
     	for(Object obj : GameData.getItemRegistry())
     	{
     		Item item = (Item)obj;
-    		if(obj instanceof ItemTool)
+    		if(isRepairable(item))
     		{
     			addFixRecipe(EXTREME,item,1);
     		}
     	}
+    	if(noCarry)
+    	{
+    		for(Object obj : GameData.getBlockRegistry())
+    		{
+    			Block block = (Block)obj;
+    			EntityEnderman.setCarriable(block, false);
+    		}
+    	}
+    }
+    public static boolean isRepairable(Item item)
+    {
+    	return (item instanceof ItemTool||item instanceof ItemHoe||item instanceof ItemFlintAndSteel||item instanceof ItemFishingRod||item instanceof ItemSword||item instanceof ItemShears||item instanceof ItemBow);
     }
     /*
      * Recipe
@@ -998,15 +1011,4 @@ public class EELimited
     /*
      * Events
      */
-    @SubscribeEvent
-    public void KeyHandlingEvent(KeyInputEvent event) {
-        if (KeyHandler.keyCraft.isPressed()) {
-        	EntityPlayer p = EEProxy.getPlayer();
-        	World w = p.worldObj;
-        	if(p.inventory.hasItem(Phil))
-        	{
-        		//p.openGui(this,0,w,(int)p.posX,(int)p.posY,(int)p.posZ);
-        	}
-        }
-    }
 }

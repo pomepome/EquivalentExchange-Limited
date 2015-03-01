@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import com.google.common.collect.Multimap;
 
 import ee.features.EELimited;
-import ee.features.proxy.EEProxy;
+import ee.features.EEProxy;
 
 public abstract class ItemEE extends Item {
 	int toolDamage = 0;

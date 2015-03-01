@@ -13,8 +13,8 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import ee.features.EEProxy;
 import ee.features.NameRegistry;
-import ee.features.proxy.EEProxy;
 
 public class ItemEvertide extends ItemEEFunctional{
 	public ItemEvertide() {

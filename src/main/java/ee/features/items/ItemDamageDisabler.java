@@ -3,8 +3,8 @@ package ee.features.items;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import ee.features.EEProxy;
 import ee.features.NameRegistry;
-import ee.features.proxy.EEProxy;
 
 public class ItemDamageDisabler extends ItemEERing {
 

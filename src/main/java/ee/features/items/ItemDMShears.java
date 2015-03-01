@@ -4,8 +4,8 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.ItemShears;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import ee.features.EELimited;
+import ee.features.EEProxy;
 import ee.features.NameRegistry;
-import ee.features.proxy.EEProxy;
 
 public class ItemDMShears extends ItemShears {
 	public ItemDMShears()

@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -16,6 +17,7 @@ import net.minecraft.util.FoodStats;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -25,14 +27,14 @@ public class EEProxy {
     public static Minecraft mc;
     private static EELimited ee;
 
-    public static void Init(Minecraft var0, EELimited var1)
+    public static void Init(EELimited var1)
     {
         if (!initialized)
         {
             initialized = true;
         }
 
-        mc = var0;
+        mc = FMLClientHandler.instance().getClient();
         ee = var1;
     }
     @SideOnly(Side.CLIENT)
@@ -113,4 +115,54 @@ public class EEProxy {
     {
         playSound(var0, (float)var1.posX, (float)var1.posY, (float)var1.posZ, var2, var3);
     }
+	public static Minecraft getMC() {
+		return mc;
+	}
+	public static int getItemAmount(IInventory inv,Item item)
+	{
+		int amount = 0;
+		for(int i = 0;i < inv.getSizeInventory();i++)
+		{
+			ItemStack is = inv.getStackInSlot(i);
+			if(is != null && is.getItem().equals(item))
+			{
+				amount += is.stackSize;
+			}
+		}
+		return amount;
+	}
+	public static boolean consumeItem(IInventory inv,Item item,int count)
+	{
+		if(count > getItemAmount(inv,item))
+		{
+			return false;
+		}
+		for(int i = 0;i < inv.getSizeInventory();i++)
+		{
+			if(inv.getStackInSlot(i) == null)
+			{
+				continue;
+			}
+			ItemStack is = inv.getStackInSlot(i).copy();
+			if(is != null&&is.getItem().equals(item))
+			{
+				if(is.stackSize >= count)
+				{
+					is.stackSize -= count;
+					if(is.stackSize <= 0)
+					{
+						is = null;
+					}
+					count = 0;
+				}
+				else
+				{
+					count -= is.stackSize;
+					is = null;
+				}
+			}
+			inv.setInventorySlotContents(i, is);
+		}
+		return true;
+	}
 }

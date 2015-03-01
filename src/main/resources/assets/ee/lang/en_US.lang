@@ -30,7 +30,7 @@ item.PhilTool_screw.name=Philosopher's stone(Screwdriver)
 item.PhilTool_shammer.name=Philosopher's stone(SoftHammer)
 item.PhilTool_wrench.name=Philosopher's stone(Wrench)
 item.PhilTool_saw.name=Philosopher's stone(Saw)
-item.repair.name=Talisman of Repair
+item.Repair.name=Talisman of Repair
 
 #Block names
 tile.DMBlock.name=Darkmatter Block
