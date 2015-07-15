@@ -12,8 +12,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.EEProxy;
 
-public abstract class ItemRing extends ItemEE
+public abstract class ItemRing extends ItemEEFunctional
 {
     IIcon On, Off;
     String texture = "";
@@ -56,4 +57,40 @@ public abstract class ItemRing extends ItemEE
     }
     public abstract void doPassive(World world, EntityPlayer player, ItemStack is);
     public abstract void doPassive(World world, EntityPlayer player, ItemStack is, int d);
+    public void onActivated(EntityPlayer player,ItemStack is)
+    {
+    	int prevDamage = is.getItemDamage();
+    	boolean flag = false;
+    	if(useResource())
+    	{
+    		if(prevDamage == 0)
+    		{
+    			if(EEProxy.useResource(player,1,false))
+    			{
+    				flag = true;
+    			}
+    		}
+    		else
+    		{
+    			flag = true;
+    			if(is.getItem() instanceof ItemSwiftwolfsRing)
+    			{
+    				player.capabilities.allowFlying = false;
+    				player.capabilities.isFlying = false;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		flag = true;
+    	}
+    	if(flag)
+    	{
+    		is.setItemDamage(1 - prevDamage);
+    	}
+    }
+    protected boolean useResource()
+    {
+    	return false;
+    }
 }

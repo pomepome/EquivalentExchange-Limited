@@ -1,11 +1,13 @@
 package ee.features;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
@@ -13,7 +15,9 @@ import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import ee.features.items.ItemChargeable;
 
 public class EEHandler {
 
@@ -26,10 +30,17 @@ public class EEHandler {
 			hasStarted = true;
 			EELimited.instance.addSmeltingExchange();
 		}
+		if(FMLCommonHandler.instance().getSide().isServer())
+		{
+			return;
+		}
 		EntityLivingBase l = e.entityLiving;
 		if(l instanceof EntityPlayer)
 		{
-			Timer1s.Tick();
+			if(!l.worldObj.isRemote)
+			{
+				Timer1s.Tick();
+			}
 			EntityPlayer p = (EntityPlayer)l;
 			PlayerCapabilities pc = p.capabilities;
 			/*{
@@ -43,30 +54,92 @@ public class EEHandler {
 			{
 				return;
 			}
-			boolean allowFly = false,disableDamage = false;
-			ItemStack[] inv = p.inventory.mainInventory;
-			for(ItemStack is : inv)
+			boolean disableDamage = false;
+			InventoryPlayer inv = p.inventory;
+			ItemStack wolf = EEProxy.getStackFromInv(inv,new ItemStack(EELimited.Swift,1,1));
+			if(wolf == null)
 			{
-				if(is == null)
+				pc.allowFlying = false;
+				pc.isFlying = false;
+			}
+			else
+			{
+				if(wolf.getItemDamage() > 0)
 				{
-					continue;
+					if(Timer1s.isTime() && !EEProxy.useResource(p,1,true))
+					{
+						disable(p);
+						wolf.setItemDamage(0);
+					}
+					else
+					{
+						if(EEProxy.useResource(p,1,false))
+						{
+							pc.allowFlying = true;
+						}
+						else
+						{
+							pc.allowFlying = false;
+							pc.isFlying = false;
+							wolf.setItemDamage(0);
+						}
+					}
 				}
-				if(is.getItem() == EELimited.Swift && is.getItemDamage() > 0)
+				else
 				{
-					allowFly = true;
-				}
-				if(is.getItem() == EELimited.DD && is.getItemDamage() > 0)
-				{
-					disableDamage = true;
+					pc.allowFlying = false;
+					pc.isFlying = false;
 				}
 			}
-			pc.allowFlying = allowFly;
-			pc.disableDamage = disableDamage;
+			ItemStack dd = EEProxy.getStackFromInv(inv,new ItemStack(EELimited.DD,1,1));
+			if(dd == null)
+			{
+				pc.disableDamage = false;
+			}
+			else
+			{
+				if(dd.getItemDamage() > 0)
+				{
+					if(Timer1s.isTime() && !EEProxy.useResource(p,1,true))
+					{
+						pc.disableDamage = false;
+						dd.setItemDamage(0);
+					}
+					else
+					{
+						if(EEProxy.useResource(p,1,false))
+						{
+							pc.disableDamage = true;
+						}
+						else
+						{
+							pc.disableDamage = false;
+							dd.setItemDamage(0);
+						}
+					}
+				}
+				else
+				{
+					pc.disableDamage = false;
+				}
+			}
+			EEProxy.setEntityImmuneToFire(p, p.inventory.hasItem(EELimited.Volc));
+			if(p.inventory.hasItem(EELimited.Volc)&&p.worldObj.getBlock((int)p.posX,(int)p.posY,(int)p.posZ).getMaterial() == Material.lava&&p.capabilities.getWalkSpeed() != 0.1F)
+			{
+				EEProxy.setPlayerSpeed(p, 0.1F);
+			}
+			p.inventory.markDirty();
+			p.inventoryContainer.detectAndSendChanges();
 		}
 		if(EELimited.noBats&&l instanceof EntityBat)
 		{
 			l.attackEntityFrom(DamageSource.drown,80);
 		}
+	}
+	public void disable(EntityPlayer p)
+	{
+		p.capabilities.allowFlying = false;
+		p.capabilities.isFlying = false;
 	}
 	@SubscribeEvent
 	 public void sleepHandle(PlayerSleepInBedEvent event)
@@ -95,6 +168,7 @@ public class EEHandler {
 			ItemStack current = p.getCurrentEquippedItem();
 			if(current != null&&current.getItem() == EELimited.DMSword)
 			{
+				if(((ItemChargeable)current.getItem()).getChargeLevel(current) > 0)
 				e.setFire(30);
 			}
 		}

@@ -1,9 +1,9 @@
 package ee.features.items;
 
-import ee.features.NameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import ee.features.NameRegistry;
 
 public class ItemSwiftwolfsRing extends ItemRing
 {
@@ -24,5 +24,9 @@ public class ItemSwiftwolfsRing extends ItemRing
     @Override
     public void doPassive(World world, EntityPlayer player, ItemStack is, int d)
     {
+    }
+    protected boolean useResource()
+    {
+    	return true;
     }
 }

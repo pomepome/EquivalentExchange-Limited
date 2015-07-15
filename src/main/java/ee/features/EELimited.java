@@ -2,13 +2,10 @@ package ee.features;
 
 import static ee.features.Level.*;
 import ic2.api.item.IC2Items;
-import ic2.api.recipe.RecipeInputItemStack;
-import ic2.api.recipe.Recipes;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -43,20 +41,30 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import tconstruct.library.tools.ToolCore;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
+import ee.features.blocks.BlockAggregator;
+import ee.features.blocks.BlockAlchChest;
 import ee.features.blocks.BlockEE;
 import ee.features.blocks.BlockEETorch;
+import ee.features.entity.EntityLavaProjectile;
+import ee.features.entity.EntityMobRandomizer;
+import ee.features.entity.EntityWaterProjectile;
+import ee.features.items.ItemAlchemyBag;
+import ee.features.items.ItemArchangelSmite;
+import ee.features.items.ItemBlackHoleRing;
 import ee.features.items.ItemCovalenceDust;
 import ee.features.items.ItemDMAxe;
 import ee.features.items.ItemDMHoe;
@@ -67,22 +75,28 @@ import ee.features.items.ItemDMSword;
 import ee.features.items.ItemDamageDisabler;
 import ee.features.items.ItemEE;
 import ee.features.items.ItemEvertide;
+import ee.features.items.ItemKleinStar;
 import ee.features.items.ItemPhilToolBase;
 import ee.features.items.ItemPhilToolFMP;
-import ee.features.items.ItemPhilToolGT;
-import ee.features.items.ItemPhilToolGTFMP;
 import ee.features.items.ItemPhilosophersStone;
 import ee.features.items.ItemRepairCharm;
 import ee.features.items.ItemSwiftwolfsRing;
 import ee.features.items.ItemVolcanite;
-import gregtech.api.GregTech_API;
-import gregtech.api.items.GT_MetaGenerated_Tool;
-import gregtech.api.objects.GT_ItemStack;
-import gregtech.api.util.GT_Utility;
+import ee.features.items.entity.ItemLavaOrb;
+import ee.features.items.entity.ItemMobRandomizer;
+import ee.features.items.entity.ItemWaterOrb;
+import ee.features.recipes.FixRecipe;
+import ee.features.recipes.KleinChargeRecipe;
+import ee.features.recipes.KleinUpgradeRecipe;
+import ee.features.tile.TileEntityAlchChest;
+import ee.gui.GuiHandler;
+import ee.gui.TileEntityAggregator;
+import ee.network.PacketHandler;
 
-@Mod(modid = "EELimited",name = "EELimited",version = "rev.a1")
+@Mod(modid = "EELimited",name = "EELimited",version = "RC1")
 public class EELimited {
 
+	@Mod.Instance("EELimited")
 	public static EELimited instance;
     public static CreativeTabs TabEE = new CreativeTabEE();
 
@@ -94,6 +108,26 @@ public class EELimited {
     public Logger logFinder = LogManager.getLogger("EEItemFinder");
 
     /**
+     * Proxies
+     */
+    @SidedProxy(clientSide="ee.features.ClientProxy",serverSide="ee.features.CommonProxy")
+    public static CommonProxy proxy;
+    /**
+     * Gui IDs
+     */
+    public static final int ALCH_BAG_ID = 0;
+    public static final int CRAFT = 1;
+    public static final int ALCH_CHEST = 2;
+    public static final int AGGREGATOR = 3;
+    /**
+     * Render IDs
+     */
+    public static final int RENDER_CHEST = RenderingRegistry.getNextAvailableRenderId();
+    /**
+     * Entity IDs
+     */
+    public static int nextID = 0;
+    /**
      * Options
      */
     public static boolean cutDown;
@@ -102,6 +136,17 @@ public class EELimited {
     public static boolean noBats;
     public static boolean noTeleport;
     public static boolean dontCarry;
+    public static boolean cantPutAlchemyBag;
+    public static boolean disableResource;
+    /**
+     * Klein star damages
+     */
+    public static final int EIN = 0;
+    public static final int ZWEI = 1;
+    public static final int DREI = 2;
+    public static final int VIER = 3;
+    public static final int SPHERE = 4;
+    public static final int OMEGA = 5;
     /**
      * Items
      */
@@ -125,25 +170,103 @@ public class EELimited {
     public static Item NIron;
     public static Item PhilTool;
     public static Item Repair;
+    public static Item AlchBag;
+    public static Item Klein;
+    public static Item BHR;
+    public static Item ArchAngel;
+    /**
+     * Projectiles
+     */
+    public static Item LavaOrb;
+    public static Item WaterOrb;
+    public static Item Randomizer;
     /**
      * Blocks
      */
     public static Block EETorch;
     public static Block DMBlock;
     public static Block AlchChest;
+    public static Block Aggregator;
     /**
      * Addon
      */
-    public static boolean loadGT,loadFMP,loadTinCo;
+    public static boolean loadFMP;
     @EventHandler
     public void init(FMLInitializationEvent e)
     {
+    	FMLCommonHandler.instance().bus().register(new TickEvents());
     	NetworkRegistry.INSTANCE.registerGuiHandler(this,new GuiHandler());
-    	instance = this;
-    	EEProxy.Init(FMLClientHandler.instance().getClient(),this);
+    	PacketHandler.register();
+    	proxy.registerKies();
+    	proxy.registerClientOnlyEvents();
+    	if(FMLCommonHandler.instance().getSide().isClient())
+    	{
+    		EEProxy.Init(FMLClientHandler.instance().getClient(),this);
+    	}
     	loadConfig();
     	Blocks.command_block.setCreativeTab(CreativeTabs.tabRedstone);
     	RecipeSorter.register("eelimited.fixrecipe",FixRecipe.class,Category.SHAPELESS,"after:minecraft:shapeless");
+    	initItems();
+    	/*
+    	 *	register objects
+    	 */
+    	{
+    		/**
+    		 * Register entities
+    		 */
+    		registerEntity(EntityLavaProjectile.class,"lava_orb");
+    		registerEntity(EntityWaterProjectile.class,"water_orb");
+    		registerEntity(EntityMobRandomizer.class,"randomizer");
+    	}
+    	proxy.registerRenderers();
+    	GameRegistry.registerTileEntity(TileEntityAlchChest.class,"alchchest");
+    	GameRegistry.registerTileEntity(TileEntityAggregator.class,"aggregator");
+    	if(Hard)
+    	{
+    		removeRecipes();
+    	}
+    	addRecipe(gs(Items.water_bucket), "S", "B", 'S', Items.snowball, 'B', Items.bucket);
+        addRecipe(gs(Items.lava_bucket), "GRG", " B ", 'G', Items.gunpowder, 'R', Items.redstone, 'B', Items.bucket);
+        addRecipe(gs(Items.milk_bucket), "B", "W", "E", 'B', gs(Items.dye, 1, 0xF), 'W', Items.water_bucket, 'E', Items.bucket);
+        addRecipe(gs(Phil), "RGR", "GSG", "RGR", 'R', Items.redstone, 'G', Items.glowstone_dust, 'S', Items.slime_ball);
+        addRecipe(gs(Phil), "RGR", "GSG", "RGR", 'R', Items.glowstone_dust, 'G', Items.redstone, 'S', Items.slime_ball);
+        addSRecipe(gs(Phil),gs(Phil),gs(Items.slime_ball),gs(Items.glowstone_dust),gs(Items.redstone));
+        addSRecipe(gs(Items.glowstone_dust, 4), gs(Items.coal), gs(Items.redstone));
+        addSRecipe(gs(Items.redstone, 4), gs(Items.coal), gs(Blocks.cobblestone));
+        addSRecipe(gs(DM), gs(DMBlock));
+        addRecipe(gs(DMBlock), "DD", "DD", 'D', DM);
+        ItemStack is = new ItemStack(DMPickaxe);
+        is.addEnchantment(Enchantment.fortune,10);
+        addRecipe(is, "DDD", " X ", " X ", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(DMAxe), "DD ", "DX ", " X ", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(DMShears), " D", "X ", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(DMShovel), "D", "X", "X", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(DMSword), "D", "D", "X", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(DMHoe), "DD ", " X ", " X ", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(DMHoe), " DD", " X ", " X ", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(AlchChest),"LMH","SDS","ICI",'L',getCov(LOW),'M',getCov(MIDDLE),'H',getCov(HIGH),'S',Blocks.stone,'D',Items.diamond,'I',Items.iron_ingot,'C',Blocks.chest);
+        addRecipe(gs(AlchChest),"HML","SDS","ICI",'L',getCov(LOW),'M',getCov(MIDDLE),'H',getCov(HIGH),'S',Blocks.stone,'D',Items.diamond,'I',Items.iron_ingot,'C',Blocks.chest);
+        addSRecipe(gs(Items.potionitem,1,0),Ever,Items.glass_bottle);
+        for(int i = 0;i < 16;i++)
+        {
+        	addRecipe(gs(AlchBag,1,i),"HHH","WCW","WWW",'H',getCov(HIGH),'C',AlchChest,'W',gs(Blocks.wool,1,i));
+        }
+        addORecipe(gs(Klein),"CCC","CDC","CCC",'C',mobiusFuel,'D',"gemDiamond");
+        addRecipe(gs(BHR),"SSS","DID","SSS",'S',Items.string,'D',DM,'I',ironband);
+        addRecipe(gs(ArchAngel),"BFB","DID","BFB",'B',Items.bow,'F',Items.feather,'D',DM,'I',ironband);
+    	addKleinUpgradeRecipe();
+    	addKleinChargeRecipe();
+        addRelicRecipe();
+    	addAlchemicalRecipe();
+    	addCovalenceRecipe();
+    	addFixRecipe();
+    	addRingRecipe();
+    	registerFuel();
+    	registerHarvestLevel();
+    	registerAchievements();
+    }
+    public void initItems()
+    {
     	Phil = new ItemPhilosophersStone();
     	Volc = new ItemVolcanite();
     	Ever = new ItemEvertide();
@@ -162,41 +285,64 @@ public class EELimited {
     	DMBlock = new BlockEE(Material.rock,NameRegistry.DMBlock).setHardness(500);
     	EETorch = new BlockEETorch();
     	ironband = new ItemEE(NameRegistry.IronBand);
-    	PhilTool = new ItemPhilToolBase();
     	Repair = new ItemRepairCharm();
-    	//AlchChest = new BlockAlchChest();
-    	if(Hard)
+    	AlchBag = new ItemAlchemyBag();
+    	AlchChest = new BlockAlchChest();
+    	Klein = new ItemKleinStar();
+    	LavaOrb = new ItemLavaOrb();
+    	WaterOrb = new ItemWaterOrb();
+    	Randomizer = new ItemMobRandomizer();
+    	BHR = new ItemBlackHoleRing();
+    	ArchAngel = new ItemArchangelSmite();
+    	//Aggregator = new BlockAggregator();
+    }
+    public void addKleinChargeRecipe()
+    {
+    	addKleinChargeRecipe(gs(Blocks.cobblestone),1);
+    	addKleinChargeRecipe(gs(Items.coal),4);
+    	addKleinChargeRecipe(gs(Items.redstone),4);
+    	addKleinChargeRecipe(gs(Blocks.redstone_block),36);
+    	addKleinChargeRecipe(gs(Items.glowstone_dust),16);
+    	addKleinChargeRecipe(gs(Blocks.glowstone),64);
+    	addKleinChargeRecipe(gs(Items.gunpowder),64);
+    	addKleinChargeRecipe(gs(Items.diamond),512);
+    	addKleinChargeRecipe(gs(Blocks.diamond_block),4608);
+    	addKleinChargeRecipe(gs(DMBlock),14976);
+    	addKleinChargeRecipe(gs(DM),14976);
+    }
+    public void addKleinChargeRecipe(ItemStack fuel,int EMC)
+    {
+    	for(int i = 0;i < 6;i++)
     	{
-    		removeRecipes();
+    		for(int j = 1;j <= 8;j++)
+    		{
+    			List<ItemStack> list = new ArrayList<ItemStack>();
+    			list.add(gs(Klein,1,i));
+    			for(int k = 0;k < j;k++)
+    			{
+    				list.add(fuel);
+    			}
+    			addRecipe(new KleinChargeRecipe(gs(Klein,1,i),list,EMC*j));
+    		}
     	}
-    	addRecipe(gs(Items.water_bucket), "S", "B", 'S', Items.snowball, 'B', Items.bucket);
-        addRecipe(gs(Items.lava_bucket), "GRG", " B ", 'G', Items.gunpowder, 'R', Items.redstone, 'B', Items.bucket);
-        addRecipe(gs(Items.milk_bucket), "B", "W", "E", 'B', gs(Items.dye, 1, 0xF), 'W', Items.water_bucket, 'E', Items.bucket);
-        addRecipe(gs(Phil), "RGR", "GSG", "RGR", 'R', Items.redstone, 'G', Items.glowstone_dust, 'S', Items.slime_ball);
-        addRecipe(gs(Phil), "RGR", "GSG", "RGR", 'R', Items.glowstone_dust, 'G', Items.redstone, 'S', Items.slime_ball);
-        addSRecipe(gs(Phil),gs(Phil),gs(Items.slime_ball),gs(Items.glowstone_dust),gs(Items.redstone));
-        addSRecipe(gs(Items.glowstone_dust, 4), gs(Items.coal), gs(Items.redstone));
-        addSRecipe(gs(Items.redstone, 4), gs(Items.coal), gs(Blocks.cobblestone));
-        addSRecipe(gs(DM, 4), gs(DMBlock));
-        addRecipe(gs(DMBlock), "DD", "DD", 'D', DM);
-        ItemStack is = new ItemStack(DMPickaxe);
-        is.addEnchantment(Enchantment.fortune,10);
-        addRecipe(is, "DDD", " X ", " X ", 'D', DM, 'X', Items.diamond);
-        addRecipe(gs(DMAxe), "DD ", "DX ", " X ", 'D', DM, 'X', Items.diamond);
-        addRecipe(gs(DMShears), " D", "X ", 'D', DM, 'X', Items.diamond);
-        addRecipe(gs(DMShovel), "D", "X", "X", 'D', DM, 'X', Items.diamond);
-        addRecipe(gs(DMSword), "D", "D", "X", 'D', DM, 'X', Items.diamond);
-        addRecipe(gs(DMHoe), "DD ", " X ", " X ", 'D', DM, 'X', Items.diamond);
-        addRecipe(gs(DMHoe), " DD", " X ", " X ", 'D', DM, 'X', Items.diamond);
-        addSRecipe(gs(Items.potionitem,1,0),Ever,Items.glass_bottle);
-    	addRelicRecipe();
-    	addAlchemicalRecipe();
-    	addCovalenceRecipe();
-    	addFixRecipe();
-    	addRingRecipe();
-    	registerFuel();
-    	registerHarvestLevel();
-    	registerAchievements();
+    }
+    public void addKleinUpgradeRecipe()
+    {
+    	addKleinUpgradeRecipe(EIN,ZWEI);
+    	addKleinUpgradeRecipe(ZWEI,DREI);
+    	addKleinUpgradeRecipe(DREI,VIER);
+    	addKleinUpgradeRecipe(VIER,SPHERE);
+    	addKleinUpgradeRecipe(SPHERE,OMEGA);
+    }
+    public void addKleinUpgradeRecipe(int src,int dest)
+    {
+    	List<ItemStack> list = Arrays.asList(new ItemStack[]{gs(Klein,1,src),gs(Klein,1,src),gs(Klein,1,src),gs(Klein,1,src)});
+    	addRecipe(new KleinUpgradeRecipe(gs(Klein,1,dest),list));
+    }
+    public void registerEntity(Class<? extends Entity> clas,String name)
+    {
+    	EntityRegistry.registerModEntity(clas, name, nextID, this,500,1,false);
+    	nextID++;
     }
     @EventHandler
     public void preInit(FMLPreInitializationEvent e)
@@ -210,26 +356,20 @@ public class EELimited {
     @EventHandler
     public void postInit(FMLPostInitializationEvent e) throws Exception
     {
-    	loadGT = Loader.isModLoaded("gregtech");
     	loadFMP = Loader.isModLoaded("ForgeMultipart");
-    	loadTinCo = Loader.isModLoaded("TConstruct");
-    	if(loadGT&&!loadFMP)
-    	{
-    		PhilTool = new ItemPhilToolGT();
-    	}
-    	else if(loadGT && loadFMP)
-    	{
-    		PhilTool = new ItemPhilToolGTFMP();
-    	}
-    	else if(!loadGT && loadFMP)
+    	if(loadFMP)
     	{
     		PhilTool = new ItemPhilToolFMP();
+    	}
+    	else
+    	{
+    		PhilTool = new ItemPhilToolBase();
     	}
     	MinecraftForge.EVENT_BUS.register(new EEHandler());
     	FMLCommonHandler.instance().bus().register(new CraftingHandler());
     	if(Loader.isModLoaded("IC2"))
     	{
-    		IC2Addon();
+    		IC2Addon.addIC2Recipe(this);
     	}
     	if(Loader.isModLoaded("Tubestuff"))
     	{
@@ -238,10 +378,6 @@ public class EELimited {
     	if(Loader.isModLoaded("ProjRed|Core"))
     	{
     		PRAddon();
-    	}
-    	if(Loader.isModLoaded("gregtech"))
-    	{
-    		GTAddon();
     	}
     }
     /*
@@ -255,20 +391,6 @@ public class EELimited {
 			 * For Vannila Items
 			 */
 			if(item instanceof ItemTool||item instanceof ItemSword||item instanceof ItemShears||item instanceof ItemBow||item instanceof ItemHoe||item instanceof ItemFlintAndSteel)
-			{
-				return true;
-			}
-		}
-		if(loadGT&&loadTinCo)
-		{
-			if(item instanceof ToolCore||item instanceof GT_MetaGenerated_Tool)
-			{
-				return true;
-			}
-		}
-		if(loadTinCo)
-		{
-			if(item instanceof ToolCore)
 			{
 				return true;
 			}
@@ -287,8 +409,9 @@ public class EELimited {
     public void registerHarvestLevel()
     {
     	DMPickaxe.setHarvestLevel("pickaxe",10);
-    	DMShovel.setHarvestLevel("shovel",4);
-    	DMBlock.setHarvestLevel("pickaxe",5);
+    	DMShovel.setHarvestLevel("shovel",10);
+    	DMBlock.setHarvestLevel("pickaxe",10);
+    	AlchChest.setHarvestLevel("pickaxe",2);
     }
     public void loadConfig()
     {
@@ -300,6 +423,8 @@ public class EELimited {
     	noBats= config.getBoolean("noBats",config.CATEGORY_GENERAL,false,"No more bats!");
     	noTeleport= config.getBoolean("noTeleport",config.CATEGORY_GENERAL,false,"now Enderman can't teleport!");
     	dontCarry= config.getBoolean("noCarry",config.CATEGORY_GENERAL,false,"now Enderman can't carry blocks!");
+    	cantPutAlchemyBag = config.getBoolean("can'tPutAlchemyBags",config.CATEGORY_GENERAL,true,"if true,player will be not able to put Alchemy Bag into themselves");
+    	disableResource = config.getBoolean("disableResource",config.CATEGORY_GENERAL,false,"disable this mod's resource system(Unlimited magics!)");
     	config.save();
     }
     public void registerAchievements()
@@ -357,55 +482,6 @@ public class EELimited {
 		}
         addRecipe(BHC, "DDD", "DCD", "DDD", 'D', DM, 'C', Blocks.chest);
     }
-    public void CallGTMethod(String method)
-    {
-    }
-    public void IC2Addon()
-	{
-		addFixRecipe(LOW, IC2Items.getItem("treetap").getItem(), 5);
-	    addFixRecipe(LOW, IC2Items.getItem("hazmatHelmet").getItem(), 4);
-	    addFixRecipe(LOW, IC2Items.getItem("hazmatChestplate").getItem(), 6);
-	    addFixRecipe(LOW, IC2Items.getItem("hazmatLeggings").getItem(), 6);
-	    addFixRecipe(LOW, IC2Items.getItem("hazmatBoots").getItem(), 6);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeHelmet").getItem(), 5);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeChestplate").getItem(), 8);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeLeggings").getItem(), 7);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeBoots").getItem(), 4);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("wrench").getItem(), 6);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzePickaxe"), 3);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeAxe"), 3);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeSword"), 2);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeShovel"), 1);
-	    addFixRecipe(MIDDLE, IC2Items.getItem("bronzeHoe"), 2);
-	    addRecipe(new ShapelessOreRecipe(getIC2("platecopper"),gs(PhilTool),"ingotCopper"));
-	    addRecipe(new ShapelessOreRecipe(getIC2("platetin"),gs(PhilTool),"ingotTin"));
-	    addRecipe(new ShapelessOreRecipe(getIC2("plategold"),gs(PhilTool),gs(Items.gold_ingot)));
-	    addRecipe(new ShapelessOreRecipe(getIC2("plateiron"),gs(PhilTool),gs(Items.iron_ingot)));
-	    addRecipe(new ShapelessOreRecipe(getIC2("platebronze"),gs(PhilTool),"ingotBronze"));
-	    addRecipe(new ShapelessOreRecipe(getIC2("platelead"),gs(PhilTool),"ingotLead"));
-	    addSRecipe(changeAmount(getIC2("ironCableItem"),4),gs(PhilTool),getIC2("plateiron"));
-	    addSRecipe(changeAmount(getIC2("copperCableItem"),4),gs(PhilTool),getIC2("platecopper"));
-	    addSRecipe(changeAmount(getIC2("goldCableItem"),4),gs(PhilTool),getIC2("plategold"));
-	    addSRecipe(changeAmount(getIC2("tinCableItem"),4),gs(PhilTool),getIC2("platetin"));
-	    ItemStack dp = IC2Items.getItem("diamondDust");
-	    Recipes.macerator.addRecipe(new RecipeInputItemStack(gs(Blocks.diamond_ore)), null, changeAmount(dp, 2));
-	    GameRegistry.addSmelting(dp, gs(Items.diamond), 10);
-	    /*{
-	    	IMachineRecipeManager mac = Recipes.macerator;
-	    	List<ItemStack> list = getPhils(3);
-	    	Map<IRecipeInput,RecipeOutput> recipe = mac.getRecipes();
-	    	Set<Entry<IRecipeInput,RecipeOutput>> es = recipe.entrySet();
-	    	Entry<IRecipeInput,RecipeOutput> e = (Entry<IRecipeInput,RecipeOutput>)es.toArray()[0];
-	    	IRecipeInput in = e.getKey();
-	    	RecipeOutput op = e.getValue();
-	    	ItemStack input = in.getInputs().get(0);
-	    	for(int i = 0;i < in.getAmount();i++)
-	    	{
-	    		list.add(input);
-	    	}
-	    	addSRecipe(op.items.get(0),list.toArray());
-	    }*/
-	}
     public void addSawRecipe(ItemStack is,Object obj,int count)
     {
     	if(obj instanceof ItemStack)
@@ -480,19 +556,6 @@ public class EELimited {
     		addExchange(gs(GlowWafer),gs(Silicon),gs(Items.glowstone_dust),gs(Items.glowstone_dust),gs(Items.glowstone_dust),gs(Items.glowstone_dust));
     	}
     	catch(Exception e){}
-    }
-    public void registerTool(ItemStack is,Collection<GT_ItemStack>aToolList)
-    {
-    	aToolList.add(new GT_ItemStack(GT_Utility.copyAmount(1,is)));
-    	GregTech_API.sToolList.add(new GT_ItemStack(GT_Utility.copyAmount(1,is)));
-    }
-    public void GTAddon()
-    {
-    	 registerTool(gs(PhilTool,1,1),GregTech_API.sCrowbarList);
-    	 registerTool(gs(PhilTool,1,2),GregTech_API.sHardHammerList);
-    	 registerTool(gs(PhilTool,1,3),GregTech_API.sScrewdriverList);
-    	 registerTool(gs(PhilTool,1,4),GregTech_API.sSoftHammerList);
-    	 registerTool(gs(PhilTool,1,5),GregTech_API.sWrenchList);
     }
     /*
      * Recipe Remove

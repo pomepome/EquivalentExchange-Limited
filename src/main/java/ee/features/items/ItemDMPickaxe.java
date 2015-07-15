@@ -2,9 +2,6 @@ package ee.features.items;
 
 import java.util.List;
 
-import ee.features.EELimited;
-import ee.features.EEProxy;
-import ee.features.NameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -14,8 +11,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import ee.features.EELimited;
+import ee.features.EEProxy;
+import ee.features.NameRegistry;
 
-public class ItemDMPickaxe extends ItemEE
+public class ItemDMPickaxe extends ItemEETool
 {
     public boolean skip = false;
 
@@ -33,7 +33,7 @@ public class ItemDMPickaxe extends ItemEE
     public float getDigSpeed(ItemStack stack, Block block,int meta)
     {
     	int base = block.getMaterial() == Material.rock ? 30 : 8;
-    	if(stack.getItemDamage() > 0)
+    	if(getChargeLevel(stack) > 0)
     	{
     		base *= 3;
     	}

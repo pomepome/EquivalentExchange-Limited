@@ -1,4 +1,4 @@
-#English Language File
+﻿#English Language File
 
 #CreativeTab
 itemGroup.EELimited=EELimited
@@ -12,7 +12,7 @@ item.Cov_low.name=Covalence Dust(low)
 item.Cov_mid.name=Covalence Dust(mid)
 item.Cov_high.name=Covalence Dust(high)
 item.Swift.name=Swiftwolf's Rending Gale
-item.AlchemicalFuel.name=Alchemical Coal
+item.AlchCoal.name=Alchemical Coal
 item.Mobius.name=Mobius Fuel
 item.DMAxe.name=Darkmatter Axe
 item.DMPickaxe.name=Darkmatter Pickaxe
@@ -30,11 +30,23 @@ item.PhilTool_screw.name=Philosopher's stone(Screwdriver)
 item.PhilTool_shammer.name=Philosopher's stone(SoftHammer)
 item.PhilTool_wrench.name=Philosopher's stone(Wrench)
 item.PhilTool_saw.name=Philosopher's stone(Saw)
-item.Repair.name=Talisman of Repair
+item.repair.name=Talisman of Repair
+item.AlchBag.name=Alchemy Bag
+item.BHRing.name=Black Hole Band
+item.ArchAngel.name=Archangel's Smite
+
+#Klein Star names
+item.Klein_0.name=Klein Star Ein
+item.Klein_1.name=Klein Star Zwei
+item.Klein_2.name=Klein Star Drei
+item.Klein_3.name=Klein Star Vier
+item.Klein_4.name=Klein Star Sphere
+item.Klein_5.name=Klein Star Omega
 
 #Block names
 tile.DMBlock.name=Darkmatter Block
 tile.EETorch.name=Interdiction Torch
+tile.AlchChest.name=Alchemical Chest
 
 #Achievements
 achievement.getPhil=Take the first step!

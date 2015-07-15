@@ -22,5 +22,13 @@ public interface NameRegistry
     String DMBlock = "DMBlock";
     String NuggetIron = "NuggetIron";
     String PhilTool = "PhilTool";
-    String Repair = "Repair";
+    String Repair = "repair";
+    String Bag = "AlchBag";
+    String AlchChest = "AlchChest";
+    String Klein = "Klein";
+    String LavaOrb = "lava_orb";
+    String WaterOrb = "water_orb";
+    String Randomizer = "randomizer";
+    String BHR = "BHRing";
+    String ArchAngel = "ArchAngel";
 }

@@ -1,0 +1,28 @@
+{
+	"items.charge":
+	{
+		"category":"player",
+		"sounds":
+		[
+			"items/charge"
+		]
+	},
+	"items.uncharge":
+	{
+		"category":"player",
+		"sounds":
+		[
+		 	"items/uncharge"
+		 ]
+
+	},
+	"items.transmute":
+	{
+		"category":"player",
+		"sounds":
+		[
+		 	"items/transmute"
+		 ]
+
+	}
+}

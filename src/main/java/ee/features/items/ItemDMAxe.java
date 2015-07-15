@@ -1,16 +1,16 @@
 package ee.features.items;
 
-import ee.features.EELimited;
-import ee.features.NameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import ee.features.EELimited;
+import ee.features.NameRegistry;
 
 
-public class ItemDMAxe extends ItemEEFunctional
+public class ItemDMAxe extends ItemEETool
 {
     public ItemDMAxe()
     {
@@ -31,7 +31,11 @@ public class ItemDMAxe extends ItemEEFunctional
         String name = b.getUnlocalizedName();
         return name.toLowerCase().contains("wood") || name.toLowerCase().contains("log");
     }
-    public boolean isLeave(Block b)
+    public boolean isWood(World w,int x,int y,int z)
+    {
+        return isWood(w.getBlock(x, y, z));
+    }
+    public boolean isLeaves(Block b)
     {
         if (b == null)
         {
@@ -56,10 +60,23 @@ public class ItemDMAxe extends ItemEEFunctional
             w.setBlock(x, y, z, Blocks.air);
         }
     }
+    public void breakWood(World w,int x,int y,int z)
+    {
+    	for(int dx = -3;dx < 4;dx++)
+    	{
+    		for(int dz = -3;dz < 4;dz++)
+    		{
+    			if(isWood(w,x + dx,y,z + dz))
+    			{
+    				breakBlock(w,x + dx,y,z + dz);
+    			}
+    		}
+    	}
+    }
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
         //EEProxy.mc.thePlayer.sendChatMessage(EEProxy.getSide(par2EntityPlayer, par4, par5, par6).name());;
-        if (par1ItemStack.getItemDamage() > 0 && isWood(par3World.getBlock(par4, par5, par6)))
+        if (getChargeLevel(par1ItemStack) > 0 && isWood(par3World.getBlock(par4, par5, par6)))
         {
             if (EELimited.cutDown)
             {
@@ -71,27 +88,14 @@ public class ItemDMAxe extends ItemEEFunctional
             int ox = par4 - 3;
             int oz = par5 - 3;
 
-            for (int i = par5; i < 256; i++)
+            for (int y = par5; y < 256; y++)
             {
-                if (!isWood(par3World.getBlock(par4, i, par6)))
+                if (!isWood(par3World.getBlock(par4, y, par6)))
                 {
                     break;
                 }
 
-                breakBlock(par3World, par4, i, par6);
-                /*
-                for(int x = 0;x < 7;x++)
-                {
-                	for(int z = 0;z < 7;z++)
-                	{
-                		int blockID = getBlockId(par3World,ox + x,i,oz + z);
-                		if(isWood(blockID)||isLeave(blockID))
-                		{
-                			breakBlock(par3World,ox + x,i,oz + z);
-                		}
-                	}
-                }
-                */
+                breakWood(par3World, par4, y, par6);
             }
         }
         else

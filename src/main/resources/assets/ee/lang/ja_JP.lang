@@ -12,7 +12,7 @@ item.Cov_low.name=共有結合粉(低)
 item.Cov_mid.name=共有結合粉(中)
 item.Cov_high.name=共有結合粉(高)
 item.Swift.name=風統べる狼王の指輪
-item.AlchemicalFuel.name=錬金炭
+item.AlchCoal.name=錬金炭
 item.Mobius.name=メビウス燃料
 item.DMAxe.name=暗黒物質のオノ
 item.DMPickaxe.name=暗黒物質のツルハシ
@@ -30,11 +30,23 @@ item.PhilTool_screw.name=賢者の石(ドライバー)
 item.PhilTool_shammer.name=賢者の石(ソフトハンマー)
 item.PhilTool_wrench.name=賢者の石(レンチ)
 item.PhilTool_saw.name=賢者の石(ノコ)
-item.Repair.name=補修の御守
+item.repair.name=補修の御守
+item.AlchBag.name=錬金バッグ
+item.BHRing.name=吸引の指輪
+item.ArchAngel.name=大天使の指輪
+
+#Klein Star names
+item.Klein_0.name=クラインの星(Ⅰ)
+item.Klein_1.name=クラインの星(Ⅱ)
+item.Klein_2.name=クラインの星(Ⅲ)
+item.Klein_3.name=クラインの星(Ⅳ)
+item.Klein_4.name=クラインの星(Ⅴ)
+item.Klein_5.name=クラインの星(Ⅵ)
 
 #Block names
 tile.DMBlock.name=暗黒物質のブロック
 tile.EETorch.name=結界灯火
+tile.AlchChest.name=錬金チェスト
 
 #Achievements
 achievement.getPhil=最初の一歩!

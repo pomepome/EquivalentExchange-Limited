@@ -1,13 +1,13 @@
 [
 {
-  "modid": "EELimited",
-  "name": "EE Limited",
+  "modid": "EELimitedR",
+  "name": "EE LimitedR",
   "description": "Equivalent Exchange Revival Trial mod.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["nicky"],
+  "authorList": ["pome"],
   "credits": "The Forge and FML guys, and Equivalent Exchange Authors and many people",
   "logoFile": "",
   "screenshots": [],

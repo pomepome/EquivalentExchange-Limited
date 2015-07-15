@@ -1,7 +1,5 @@
 package ee.features.items;
 
-import cpw.mods.fml.common.eventhandler.Event;
-import ee.features.NameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,8 +8,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import cpw.mods.fml.common.eventhandler.Event;
+import ee.features.NameRegistry;
 
-public class ItemDMHoe extends ItemEE
+public class ItemDMHoe extends ItemEETool
 {
     public ItemDMHoe()
     {
@@ -27,7 +27,7 @@ public class ItemDMHoe extends ItemEE
         }
         else
         {
-        	if(par1ItemStack.getItemDamage() == 1)
+        	if(getChargeLevel(par1ItemStack) > 0)
         	{
         		int ox = par4 - 2;
         		int oz = par6 - 2;

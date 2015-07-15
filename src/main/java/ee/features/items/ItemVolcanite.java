@@ -1,22 +1,23 @@
 package ee.features.items;
 
-import ee.features.EEProxy;
-import ee.features.NameRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
+import ee.features.EEProxy;
+import ee.features.NameRegistry;
+import ee.features.entity.EntityLavaProjectile;
 
-public class ItemVolcanite extends ItemEE
+public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraFunction,IProjectileShooter
 {
+	private int[] ranges = new int[]{};
+
     public ItemVolcanite()
     {
-        super(NameRegistry.Volc);
-        this.setMaxStackSize(1).setContainerItem(this);
+        super(NameRegistry.Volc,8);
+        this.setMaxStackSize(1).setContainerItem(this).setMaxDamage(3);
     }
 
     public void doVaporize(ItemStack var1, World var2, EntityPlayer var3, int range)
@@ -129,12 +130,16 @@ public class ItemVolcanite extends ItemEE
         return false;
     }
     @Override
-    public final void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5)
-    {
-    	if(par3Entity instanceof EntityPlayer)
-    	{
-    		EntityPlayer p = (EntityPlayer)par3Entity;
-    		p.addPotionEffect(new PotionEffect(Potion.fireResistance.id,0));
-    	}
-    }
+    public final void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5){}
+
+	@Override
+	public void onExtraFunction(EntityPlayer p, ItemStack is) {
+	}
+
+	@Override
+	public boolean shootProcectile(EntityPlayer player, ItemStack is) {
+		player.worldObj.spawnEntityInWorld(new EntityLavaProjectile(player.worldObj, player));
+		player.worldObj.playSoundAtEntity(player, "ee:items.transmute",1.0F,1.0F);
+		return true;
+	}
 }
