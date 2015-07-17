@@ -34,6 +34,7 @@ item.repair.name=Talisman of Repair
 item.AlchBag.name=Alchemy Bag
 item.BHRing.name=Black Hole Band
 item.ArchAngel.name=Archangel's Smite
+item.RM.name=Redmatter
 
 #Klein Star names
 item.Klein_0.name=Klein Star Ein
@@ -53,3 +54,12 @@ achievement.getPhil=Take the first step!
 achievement.getPhil.desc=Make a Philosopher's stone
 achievement.getDM=Invisible Matter
 achievement.getDM.desc=Make a darkmatter
+#Armors
+item.DMArmor_head.name=Darkmatter Helmet
+item.DMArmor_chest.name=Darkmatter Chestplate
+item.DMArmor_legs.name=Darkmatter Leggings
+item.DMArmor_feet.name=Darkmatter Boots
+item.RMArmor_head.name=Redmatter Helmet
+item.RMArmor_chest.name=Redmatter Chestplate
+item.RMArmor_legs.name=Redmatter Leggings
+item.RMArmor_feet.name=Redmatter Boots

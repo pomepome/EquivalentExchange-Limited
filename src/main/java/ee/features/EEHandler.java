@@ -1,5 +1,8 @@
 package ee.features;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import ee.features.items.ItemChargeable;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,9 +18,6 @@ import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import ee.features.items.ItemChargeable;
 
 public class EEHandler {
 
@@ -54,7 +54,6 @@ public class EEHandler {
 			{
 				return;
 			}
-			boolean disableDamage = false;
 			InventoryPlayer inv = p.inventory;
 			ItemStack wolf = EEProxy.getStackFromInv(inv,new ItemStack(EELimited.Swift,1,1));
 			if(wolf == null)
@@ -89,38 +88,6 @@ public class EEHandler {
 				{
 					pc.allowFlying = false;
 					pc.isFlying = false;
-				}
-			}
-			ItemStack dd = EEProxy.getStackFromInv(inv,new ItemStack(EELimited.DD,1,1));
-			if(dd == null)
-			{
-				pc.disableDamage = false;
-			}
-			else
-			{
-				if(dd.getItemDamage() > 0)
-				{
-					if(Timer1s.isTime() && !EEProxy.useResource(p,1,true))
-					{
-						pc.disableDamage = false;
-						dd.setItemDamage(0);
-					}
-					else
-					{
-						if(EEProxy.useResource(p,1,false))
-						{
-							pc.disableDamage = true;
-						}
-						else
-						{
-							pc.disableDamage = false;
-							dd.setItemDamage(0);
-						}
-					}
-				}
-				else
-				{
-					pc.disableDamage = false;
 				}
 			}
 			EEProxy.setEntityImmuneToFire(p, p.inventory.hasItem(EELimited.Volc));

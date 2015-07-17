@@ -1,7 +1,6 @@
 package ee.features;
 
 import static ee.features.Level.*;
-import ic2.api.item.IC2Items;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -9,6 +8,62 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameData;
+import cpw.mods.fml.common.registry.GameRegistry;
+import ee.features.blocks.BlockAlchChest;
+import ee.features.blocks.BlockEE;
+import ee.features.blocks.BlockEETorch;
+import ee.features.entity.EntityLavaProjectile;
+import ee.features.entity.EntityMobRandomizer;
+import ee.features.entity.EntityWaterProjectile;
+import ee.features.items.ItemAlchemyBag;
+import ee.features.items.ItemArchangelSmite;
+import ee.features.items.ItemBlackHoleRing;
+import ee.features.items.ItemCovalenceDust;
+import ee.features.items.ItemDMAxe;
+import ee.features.items.ItemDMHoe;
+import ee.features.items.ItemDMPickaxe;
+import ee.features.items.ItemDMShears;
+import ee.features.items.ItemDMShovel;
+import ee.features.items.ItemDMSword;
+import ee.features.items.ItemEE;
+import ee.features.items.ItemEvertide;
+import ee.features.items.ItemKleinStar;
+import ee.features.items.ItemPhilToolBase;
+import ee.features.items.ItemPhilToolFMP;
+import ee.features.items.ItemPhilosophersStone;
+import ee.features.items.ItemRepairCharm;
+import ee.features.items.ItemSwiftwolfsRing;
+import ee.features.items.ItemVolcanite;
+import ee.features.items.armor.EnumArmorType;
+import ee.features.items.armor.ItemDMArmor;
+import ee.features.items.armor.ItemRMArmor;
+import ee.features.items.entity.ItemLavaOrb;
+import ee.features.items.entity.ItemMobRandomizer;
+import ee.features.items.entity.ItemWaterOrb;
+import ee.features.recipes.FixRecipe;
+import ee.features.recipes.KleinChargeRecipe;
+import ee.features.recipes.KleinUpgradeRecipe;
+import ee.features.tile.TileEntityAlchChest;
+import ee.gui.GuiHandler;
+import ee.gui.TileEntityAggregator;
+import ee.network.PacketHandler;
+import ic2.api.item.IC2Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -38,65 +93,9 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameData;
-import cpw.mods.fml.common.registry.GameRegistry;
-import ee.features.blocks.BlockAggregator;
-import ee.features.blocks.BlockAlchChest;
-import ee.features.blocks.BlockEE;
-import ee.features.blocks.BlockEETorch;
-import ee.features.entity.EntityLavaProjectile;
-import ee.features.entity.EntityMobRandomizer;
-import ee.features.entity.EntityWaterProjectile;
-import ee.features.items.ItemAlchemyBag;
-import ee.features.items.ItemArchangelSmite;
-import ee.features.items.ItemBlackHoleRing;
-import ee.features.items.ItemCovalenceDust;
-import ee.features.items.ItemDMAxe;
-import ee.features.items.ItemDMHoe;
-import ee.features.items.ItemDMPickaxe;
-import ee.features.items.ItemDMShears;
-import ee.features.items.ItemDMShovel;
-import ee.features.items.ItemDMSword;
-import ee.features.items.ItemDamageDisabler;
-import ee.features.items.ItemEE;
-import ee.features.items.ItemEvertide;
-import ee.features.items.ItemKleinStar;
-import ee.features.items.ItemPhilToolBase;
-import ee.features.items.ItemPhilToolFMP;
-import ee.features.items.ItemPhilosophersStone;
-import ee.features.items.ItemRepairCharm;
-import ee.features.items.ItemSwiftwolfsRing;
-import ee.features.items.ItemVolcanite;
-import ee.features.items.entity.ItemLavaOrb;
-import ee.features.items.entity.ItemMobRandomizer;
-import ee.features.items.entity.ItemWaterOrb;
-import ee.features.recipes.FixRecipe;
-import ee.features.recipes.KleinChargeRecipe;
-import ee.features.recipes.KleinUpgradeRecipe;
-import ee.features.tile.TileEntityAlchChest;
-import ee.gui.GuiHandler;
-import ee.gui.TileEntityAggregator;
-import ee.network.PacketHandler;
-
-@Mod(modid = "EELimited",name = "EELimited",version = "RC1")
+@Mod(modid = "EELimitedR",name = "EELimitedR",version = "2")
 public class EELimited {
 
-	@Mod.Instance("EELimited")
 	public static EELimited instance;
     public static CreativeTabs TabEE = new CreativeTabEE();
 
@@ -159,7 +158,6 @@ public class EELimited {
     public static Item DM;
     public static Item Swift;
     public static Item Food;
-    public static Item DD;
     public static Item DMAxe;
     public static Item DMSword;
     public static Item DMPickaxe;
@@ -174,6 +172,7 @@ public class EELimited {
     public static Item Klein;
     public static Item BHR;
     public static Item ArchAngel;
+    public static Item RM;
     /**
      * Projectiles
      */
@@ -191,9 +190,21 @@ public class EELimited {
      * Addon
      */
     public static boolean loadFMP;
+    /**
+     * Armors
+     */
+    public static Item DMHelmet;
+    public static Item DMChest;
+    public static Item DMLegs;
+    public static Item DMBoots;
+    public static Item RMHelmet;
+    public static Item RMChest;
+    public static Item RMLegs;
+    public static Item RMBoots;
     @EventHandler
     public void init(FMLInitializationEvent e)
     {
+    	instance = this;
     	FMLCommonHandler.instance().bus().register(new TickEvents());
     	NetworkRegistry.INSTANCE.registerGuiHandler(this,new GuiHandler());
     	PacketHandler.register();
@@ -261,6 +272,8 @@ public class EELimited {
     	addCovalenceRecipe();
     	addFixRecipe();
     	addRingRecipe();
+    	initArmors();
+    	addArmorRecipe();
     	registerFuel();
     	registerHarvestLevel();
     	registerAchievements();
@@ -280,7 +293,6 @@ public class EELimited {
     	DMShovel = new ItemDMShovel();
     	DMShears = new ItemDMShears();
     	DMPickaxe = new ItemDMPickaxe();
-    	DD = new ItemDamageDisabler();
     	DM = new ItemEE(NameRegistry.DM);
     	DMBlock = new BlockEE(Material.rock,NameRegistry.DMBlock).setHardness(500);
     	EETorch = new BlockEETorch();
@@ -294,7 +306,30 @@ public class EELimited {
     	Randomizer = new ItemMobRandomizer();
     	BHR = new ItemBlackHoleRing();
     	ArchAngel = new ItemArchangelSmite();
+    	RM = new ItemEE("RM");
     	//Aggregator = new BlockAggregator();
+    }
+    public void initArmors()
+    {
+    	DMHelmet = new ItemDMArmor(EnumArmorType.HEAD);
+    	DMChest = new ItemDMArmor(EnumArmorType.CHEST);
+    	DMLegs = new ItemDMArmor(EnumArmorType.LEGS);
+    	DMBoots = new ItemDMArmor(EnumArmorType.FEET);
+    	RMHelmet = new ItemRMArmor(EnumArmorType.HEAD);
+    	RMChest = new ItemRMArmor(EnumArmorType.CHEST);
+    	RMLegs = new ItemRMArmor(EnumArmorType.LEGS);
+    	RMBoots = new ItemRMArmor(EnumArmorType.FEET);
+    }
+    public void addArmorRecipe()
+    {
+    	addRecipe(gs(DMHelmet),"DDD","D D",'D',DM);
+    	addRecipe(gs(DMChest),"D D","DDD","DDD",'D',DM);
+    	addRecipe(gs(DMLegs),"DDD","D D","D D",'D',DM);
+    	addRecipe(gs(DMBoots),"D D","D D",'D',DM);
+    	addRecipe(gs(RMHelmet),"RRR","RDR",'R',RM,'D',DMHelmet);
+    	addRecipe(gs(RMChest),"RDR","RRR","RRR",'R',RM,'D',DMChest);
+    	addRecipe(gs(RMLegs),"RRR","RDR","R R",'R',RM,'D',DMLegs);
+    	addRecipe(gs(RMBoots),"R R","RDR",'R',RM,'D',DMBoots);
     }
     public void addKleinChargeRecipe()
     {
@@ -309,7 +344,9 @@ public class EELimited {
     	addKleinChargeRecipe(gs(Blocks.diamond_block),4608);
     	addKleinChargeRecipe(gs(DMBlock),14976);
     	addKleinChargeRecipe(gs(DM),14976);
+    	addKleinChargeRecipe(gs(RM),14976*4);
     }
+
     public void addKleinChargeRecipe(ItemStack fuel,int EMC)
     {
     	for(int i = 0;i < 6;i++)
@@ -985,7 +1022,6 @@ public class EELimited {
         addRecipe(gs(ironband), "III", "ILI", "III", 'I', Items.iron_ingot, 'L', Items.lava_bucket);
         addRecipe(gs(ironband), "III", "ILI", "III", 'I', Items.iron_ingot, 'L', Volc);
         addRecipe(gs(Swift), "DFD", "FBF", "DFD", 'D', DM, 'F', Items.feather, 'B', ironband);
-        addRecipe(gs(DD), "DDD", "DBD", "DDD", 'D', DM, 'B', ironband);
         addRecipe(gs(Repair),"HML","SPS","LMH",'H',getCov(HIGH),'M',getCov(MIDDLE),'L',getCov(LOW),'S',Items.string,'P',Items.paper);
         addRecipe(gs(Repair),"HML","SPS","LMH",'L',getCov(HIGH),'M',getCov(MIDDLE),'H',getCov(LOW),'S',Items.string,'P',Items.paper);
     }
@@ -1010,6 +1046,7 @@ public class EELimited {
     public void addAlchemicalRecipe()
     {
     	addRecipe(gs(DMBlock), "OMO", "DDD", "OMO", 'D', Blocks.diamond_block, 'M', mobiusFuel, 'O', Blocks.obsidian);
+    	addExchange(gs(RM), DM, 4);
         addExchange(gs(Blocks.diamond_block, 4), DM);
         addExchange(gs(Items.coal), gs(Items.coal, 1, 1));
         // Dirt
