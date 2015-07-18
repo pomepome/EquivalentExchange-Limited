@@ -1,13 +1,14 @@
 package ee.gui;
 
+import cpw.mods.fml.common.network.IGuiHandler;
+import ee.features.EELimited;
+import ee.features.items.ItemAlchemyBag;
+import ee.features.tile.TileEMCCharger;
+import ee.features.tile.TileEntityAlchChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.IGuiHandler;
-import ee.features.EELimited;
-import ee.features.items.ItemAlchemyBag;
-import ee.features.tile.TileEntityAlchChest;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -34,12 +35,12 @@ public class GuiHandler implements IGuiHandler {
 				return new ContainerAlchChest(player.inventory,(TileEntityAlchChest)chest);
 			}
 		}
-		if(ID == EELimited.AGGREGATOR)
+		if(ID == EELimited.CHARGER)
 		{
-			TileEntity tile = world.getTileEntity(x, y, z);
-			if(tile instanceof TileEntityAggregator)
+			TileEntity charger = world.getTileEntity(x, y, z);
+			if(charger instanceof TileEMCCharger)
 			{
-				return new ContainerAggregator(player.inventory,(TileEntityAggregator)tile);
+				return new ContainerCharger(player.inventory,(TileEMCCharger)charger);
 			}
 		}
 		return null;
@@ -69,12 +70,12 @@ public class GuiHandler implements IGuiHandler {
 				return new GuiAlchChest(player.inventory,(TileEntityAlchChest)chest);
 			}
 		}
-		if(ID == EELimited.AGGREGATOR)
+		if(ID == EELimited.CHARGER)
 		{
-			TileEntity tile = world.getTileEntity(x, y, z);
-			if(tile instanceof TileEntityAggregator)
+			TileEntity charger = world.getTileEntity(x, y, z);
+			if(charger instanceof TileEMCCharger)
 			{
-				return new GuiAggregator(player.inventory,(TileEntityAggregator)tile);
+				return new GuiEMCCharger(player.inventory,(TileEMCCharger)charger);
 			}
 		}
 		return null;

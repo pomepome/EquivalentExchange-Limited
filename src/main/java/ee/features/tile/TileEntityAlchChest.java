@@ -11,7 +11,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import ee.features.EELimited;
 import ee.features.EEProxy;
-import ee.features.blocks.TileDirection;
 import ee.features.items.ItemEE;
 
 public class TileEntityAlchChest extends TileDirection implements IInventory

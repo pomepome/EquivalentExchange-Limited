@@ -48,6 +48,11 @@ tile.DMBlock.name=暗黒物質のブロック
 tile.EETorch.name=結界灯火
 tile.AlchChest.name=錬金チェスト
 
+tile.EMCCharger.name=EMCチャージャー
+tile.EMCCollector.name=EMCコレクター
+tile.EMCCollectorMk2.name=EMCコレクターMk2
+tile.EMCCollectorMk3=EMCコレクターMk3
+
 #Achievements
 achievement.getPhil=最初の一歩!
 achievement.getPhil.desc=賢者の石を作る

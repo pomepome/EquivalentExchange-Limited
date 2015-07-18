@@ -14,6 +14,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import ee.features.EELimited;
 import ee.features.EEProxy;
+import ee.features.tile.TileDirection;
 
 public abstract class BlockDirection extends BlockContainer
 {

@@ -9,6 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.items.ItemKleinStar;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
@@ -54,11 +59,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ee.features.items.ItemKleinStar;
 
 public class EEProxy
 {
@@ -320,6 +320,10 @@ public class EEProxy
     {
     	if(is.hasTagCompound())
     	{
+    		if(EMC > getMaxEMC(is))
+    		{
+    			EMC = getMaxEMC(is);
+    		}
     		is.getTagCompound().setInteger("EMC",EMC);
     	}
     }

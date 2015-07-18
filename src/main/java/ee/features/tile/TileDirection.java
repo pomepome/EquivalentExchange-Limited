@@ -1,5 +1,7 @@
-package ee.features.blocks;
+package ee.features.tile;
 
+import ee.network.PacketHandler;
+import ee.network.PacketOrientationSync;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -8,12 +10,10 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
-import ee.network.PacketHandler;
-import ee.network.PacketOrientationSync;
 
 public class TileDirection extends TileEntity
 {
-	private ForgeDirection orientation;
+	protected ForgeDirection orientation;
 	public TileDirection()
 	{
 		this.orientation = ForgeDirection.SOUTH;

@@ -28,6 +28,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import ee.features.blocks.BlockAlchChest;
 import ee.features.blocks.BlockEE;
 import ee.features.blocks.BlockEETorch;
+import ee.features.blocks.BlockEMCCharger;
+import ee.features.blocks.BlockEMCCollector;
+import ee.features.blocks.BlockEMCCollectorMk2;
+import ee.features.blocks.BlockEMCCollectorMk3;
 import ee.features.entity.EntityLavaProjectile;
 import ee.features.entity.EntityMobRandomizer;
 import ee.features.entity.EntityWaterProjectile;
@@ -59,9 +63,12 @@ import ee.features.items.entity.ItemWaterOrb;
 import ee.features.recipes.FixRecipe;
 import ee.features.recipes.KleinChargeRecipe;
 import ee.features.recipes.KleinUpgradeRecipe;
+import ee.features.tile.TileEMCCharger;
+import ee.features.tile.TileEMCCollector;
+import ee.features.tile.TileEMCCollectorMk2;
+import ee.features.tile.TileEMCCollectorMk3;
 import ee.features.tile.TileEntityAlchChest;
 import ee.gui.GuiHandler;
-import ee.gui.TileEntityAggregator;
 import ee.network.PacketHandler;
 import ic2.api.item.IC2Items;
 import net.minecraft.block.Block;
@@ -93,7 +100,7 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = "EELimitedR",name = "EELimitedR",version = "2")
+@Mod(modid = "EELimitedR",name = "EELimitedR",version = "3")
 public class EELimited {
 
 	public static EELimited instance;
@@ -117,7 +124,7 @@ public class EELimited {
     public static final int ALCH_BAG_ID = 0;
     public static final int CRAFT = 1;
     public static final int ALCH_CHEST = 2;
-    public static final int AGGREGATOR = 3;
+    public static final int CHARGER = 3;
     /**
      * Render IDs
      */
@@ -186,6 +193,10 @@ public class EELimited {
     public static Block DMBlock;
     public static Block AlchChest;
     public static Block Aggregator;
+    public static Block EMCCollector;
+    public static Block EMCCollectorMk2;
+    public static Block EMCCollectorMk3;
+    public static Block EMCCharger;
     /**
      * Addon
      */
@@ -231,7 +242,10 @@ public class EELimited {
     	}
     	proxy.registerRenderers();
     	GameRegistry.registerTileEntity(TileEntityAlchChest.class,"alchchest");
-    	GameRegistry.registerTileEntity(TileEntityAggregator.class,"aggregator");
+    	GameRegistry.registerTileEntity(TileEMCCollector.class,"EMCCollector");
+    	GameRegistry.registerTileEntity(TileEMCCollectorMk2.class,"EMCCollectorMk2");
+    	GameRegistry.registerTileEntity(TileEMCCollectorMk3.class,"EMCCollectorMk3");
+    	GameRegistry.registerTileEntity(TileEMCCharger.class,"EMCCharger");
     	if(Hard)
     	{
     		removeRecipes();
@@ -244,7 +258,7 @@ public class EELimited {
         addSRecipe(gs(Phil),gs(Phil),gs(Items.slime_ball),gs(Items.glowstone_dust),gs(Items.redstone));
         addSRecipe(gs(Items.glowstone_dust, 4), gs(Items.coal), gs(Items.redstone));
         addSRecipe(gs(Items.redstone, 4), gs(Items.coal), gs(Blocks.cobblestone));
-        addSRecipe(gs(DM), gs(DMBlock));
+        addSRecipe(gs(DM,2), gs(DMBlock));
         addRecipe(gs(DMBlock), "DD", "DD", 'D', DM);
         ItemStack is = new ItemStack(DMPickaxe);
         is.addEnchantment(Enchantment.fortune,10);
@@ -265,6 +279,10 @@ public class EELimited {
         addORecipe(gs(Klein),"CCC","CDC","CCC",'C',mobiusFuel,'D',"gemDiamond");
         addRecipe(gs(BHR),"SSS","DID","SSS",'S',Items.string,'D',DM,'I',ironband);
         addRecipe(gs(ArchAngel),"BFB","DID","BFB",'B',Items.bow,'F',Items.feather,'D',DM,'I',ironband);
+        addRecipe(gs(EMCCharger),"DDD","DCD","DDD",'D',DMBlock,'C',EMCCollector);
+        addRecipe(gs(EMCCollector),"SGS","SDS","SFS",'S',Blocks.glowstone,'G',Blocks.glass,'D',Blocks.diamond_block,'F',Blocks.furnace);
+        addRecipe(gs(EMCCollectorMk2),"SDS","SCS","SSS",'S',Blocks.glowstone,'D',DM,'C',EMCCollector);
+        addRecipe(gs(EMCCollectorMk3),"SRS","SCS","SSS",'S',Blocks.glowstone,'R',RM,'C',EMCCollectorMk2);
     	addKleinUpgradeRecipe();
     	addKleinChargeRecipe();
         addRelicRecipe();
@@ -307,6 +325,10 @@ public class EELimited {
     	BHR = new ItemBlackHoleRing();
     	ArchAngel = new ItemArchangelSmite();
     	RM = new ItemEE("RM");
+    	EMCCollector = new BlockEMCCollector();
+    	EMCCollectorMk2 = new BlockEMCCollectorMk2();
+    	EMCCollectorMk3 = new BlockEMCCollectorMk3();
+    	EMCCharger = new BlockEMCCharger();
     	//Aggregator = new BlockAggregator();
     }
     public void initArmors()
@@ -343,8 +365,8 @@ public class EELimited {
     	addKleinChargeRecipe(gs(Items.diamond),512);
     	addKleinChargeRecipe(gs(Blocks.diamond_block),4608);
     	addKleinChargeRecipe(gs(DMBlock),14976);
-    	addKleinChargeRecipe(gs(DM),14976);
-    	addKleinChargeRecipe(gs(RM),14976*4);
+    	addKleinChargeRecipe(gs(DM),7488);
+    	addKleinChargeRecipe(gs(RM),7488*4);
     }
 
     public void addKleinChargeRecipe(ItemStack fuel,int EMC)
