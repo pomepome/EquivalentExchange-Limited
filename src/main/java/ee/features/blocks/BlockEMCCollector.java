@@ -5,10 +5,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ee.features.Constants;
 import ee.features.EELimited;
+import ee.features.EEProxy;
 import ee.features.tile.TileEMCCollector;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -41,6 +44,16 @@ public class BlockEMCCollector extends BlockContainer
 		{
 			return top;
 		}
+		if(ori == metadata)
+		{
+			return front;
+		}
 		return side;
     }
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entityLiving, ItemStack stack)
+	{
+		super.onBlockPlacedBy(world, x, y, z, entityLiving, stack);
+		world.setBlockMetadataWithNotify(x, y, z, EEProxy.getRelativeOrientation(entityLiving), 2);
+	}
 }

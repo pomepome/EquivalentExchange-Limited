@@ -1,5 +1,6 @@
 package ee.gui;
 
+import ee.features.items.ItemKleinStar;
 import ee.features.tile.TileEMCCharger;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -32,11 +33,6 @@ public class ContainerCharger extends Container
 	@Override
 	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
 	{
-		if (slotIndex == 0)
-		{
-			return null;
-		}
-
 		Slot slot = this.getSlot(slotIndex);
 
 		if (slot == null || !slot.getHasStack())
@@ -47,14 +43,49 @@ public class ContainerCharger extends Container
 		ItemStack stack = slot.getStack();
 		ItemStack newStack = stack.copy();
 
-		if (slotIndex <= 36)
+		if (slotIndex > 0&&slotIndex <= 27)
 		{
-			if (!this.mergeItemStack(stack, 0, 127, false))
+			//player main inventory shift-clicked
+			if(stack.getItem() instanceof ItemKleinStar)
+			{
+				if (!this.mergeItemStack(stack, 0,1, false))
+				{
+					return null;
+				}
+			}
+			else
+			{
+				if (!this.mergeItemStack(stack,28,36, false))
+				{
+					return null;
+				}
+			}
+		}
+		else if(slotIndex > 27)
+		{
+			//hotbar shift-clicked
+			if(stack.getItem() instanceof ItemKleinStar)
+			{
+				if (!this.mergeItemStack(stack, 0,1, false))
+				{
+					return null;
+				}
+			}
+			else
+			{
+				if (!this.mergeItemStack(stack,1,27, false))
+				{
+					return null;
+				}
+			}
+		}
+		else
+		{
+			if (!this.mergeItemStack(stack, 0,this.inventorySlots.size(), false))
 			{
 				return null;
 			}
 		}
-
 		if (stack.stackSize == 0)
 		{
 			slot.putStack(null);

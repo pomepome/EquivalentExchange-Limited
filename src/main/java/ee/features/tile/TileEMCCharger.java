@@ -1,5 +1,6 @@
 package ee.features.tile;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import ee.features.Constants;
 import ee.features.EEProxy;
 import ee.features.items.ItemKleinStar;
@@ -157,7 +158,22 @@ public class TileEMCCharger extends TileEmc implements IInventory,ISidedInventor
 	}
 	public void updateEntity()
 	{
-		if(getStoredEmc() > 0&&content != null)
+		if(FMLCommonHandler.instance().getEffectiveSide().isClient())
+		{
+			return;
+		}
+		if(content == null)
+		{
+			return;
+		}
+		if(!(content.getItem() instanceof ItemKleinStar))
+		{
+			ItemStack is = content.copy();
+			EEProxy.spawnEntityItem(worldObj, is, xCoord, yCoord + 1, zCoord);
+			setInventorySlotContents(0,null);
+			return;
+		}
+		if(getStoredEmc() > 0 && content.getItem() instanceof ItemKleinStar)
 		{
 			int stored = EEProxy.getEMC(content);
 			int toSend = (int)getStoredEmc();

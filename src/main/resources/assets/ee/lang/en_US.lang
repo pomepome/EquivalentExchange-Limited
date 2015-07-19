@@ -52,7 +52,7 @@ tile.AlchChest.name=Alchemical Chest
 tile.EMCCharger.name=EMC Charger
 tile.EMCCollector.name=EMC Collector
 tile.EMCCollectorMk2.name=EMC Collector Mk2
-tile.EMCCollectorMk3=EMC Collector Mk3
+tile.EMCCollectorMk3.name=EMC Collector Mk3
 
 #Achievements
 achievement.getPhil=Take the first step!

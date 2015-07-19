@@ -13,6 +13,7 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 	public ItemPhilosophersStone()
     {
         super(NameRegistry.Philo);
+        this.setCreativeTab(EELimited.TabEE);
     }
 	public ItemStack onItemRightClick(ItemStack var1, World var2, EntityPlayer p)
     {

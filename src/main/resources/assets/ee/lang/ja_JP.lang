@@ -51,7 +51,7 @@ tile.AlchChest.name=錬金チェスト
 tile.EMCCharger.name=EMCチャージャー
 tile.EMCCollector.name=EMCコレクター
 tile.EMCCollectorMk2.name=EMCコレクターMk2
-tile.EMCCollectorMk3=EMCコレクターMk3
+tile.EMCCollectorMk3.name=EMCコレクターMk3
 
 #Achievements
 achievement.getPhil=最初の一歩!

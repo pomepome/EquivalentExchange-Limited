@@ -1,12 +1,12 @@
 package ee.gui;
 
+import ee.features.tile.TileEntityAlchChest;
 import invtweaks.api.container.ChestContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import ee.features.tile.TileEntityAlchChest;
 
 @ChestContainer(isLargeChest = true,rowSize = 13)
 public class ContainerAlchChest extends Container
