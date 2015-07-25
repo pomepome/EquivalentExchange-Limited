@@ -16,9 +16,9 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ee.features.EELimited;
-import ee.features.EEProxy;
 import ee.features.NameRegistry;
 import ee.gui.BagData;
+import ee.util.EEProxy;
 
 public class ItemAlchemyBag extends ItemEEFunctional {
 

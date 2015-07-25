@@ -9,8 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import ee.features.EEProxy;
 import ee.features.items.ItemKleinStar;
+import ee.util.EEProxy;
 
 public class KleinChargeRecipe extends ShapelessRecipes {
 

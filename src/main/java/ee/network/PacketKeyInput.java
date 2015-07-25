@@ -8,11 +8,11 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import ee.features.EELimited;
-import ee.features.EEProxy;
 import ee.features.items.IChargeable;
 import ee.features.items.IExtraFunction;
 import ee.features.items.IProjectileShooter;
 import ee.features.items.ItemRing;
+import ee.util.EEProxy;
 
 public class PacketKeyInput implements IMessage, IMessageHandler<PacketKeyInput,IMessage> {
 

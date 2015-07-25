@@ -2,7 +2,8 @@ package ee.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import ee.features.tile.TileEMCCharger;
+import ee.features.tiles.TileEMCCharger;
+import ee.gui.container.ContainerCharger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;

@@ -53,6 +53,8 @@ tile.EMCCharger.name=EMC Charger
 tile.EMCCollector.name=EMC Collector
 tile.EMCCollectorMk2.name=EMC Collector Mk2
 tile.EMCCollectorMk3.name=EMC Collector Mk3
+tile.FuelBurner.name=Fuel Burner
+tile.RFConverter.name=EMC2RF Converter
 
 #Achievements
 achievement.getPhil=Take the first step!

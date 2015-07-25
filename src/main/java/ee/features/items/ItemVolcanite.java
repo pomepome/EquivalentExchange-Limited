@@ -1,14 +1,20 @@
 package ee.features.items;
 
+import ee.features.Constants;
+import ee.features.NameRegistry;
+import ee.features.entities.EntityLavaProjectile;
+import ee.handler.PlayerChecks;
+import ee.util.EEProxy;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import ee.features.EEProxy;
-import ee.features.NameRegistry;
-import ee.features.entity.EntityLavaProjectile;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraFunction,IProjectileShooter
 {
@@ -70,6 +76,24 @@ public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraF
 
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
+    	if (!par3World.isRemote)
+		{
+			TileEntity tile = par3World.getTileEntity(par4, par5, par6);
+
+			if (tile instanceof IFluidHandler)
+			{
+				IFluidHandler tank = (IFluidHandler) tile;
+
+				if (EEProxy.canFillTank(tank, FluidRegistry.LAVA, par7))
+				{
+					if (EEProxy.useResource(par2EntityPlayer, 32, true))
+					{
+						EEProxy.fillTank(tank, FluidRegistry.LAVA, par7, 1000);
+						return true;
+					}
+				}
+			}
+		}
         if (par3World.getBlock(par4, par5, par6) != Blocks.air)
         {
             if (par7 == 0)
@@ -130,7 +154,47 @@ public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraF
         return false;
     }
     @Override
-    public final void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5){}
+    public final void onUpdate(ItemStack itemstack, World world, Entity entity, int par4, boolean par5)
+    {
+    	if(entity instanceof EntityPlayer)
+    	{
+    		EntityPlayer player = (EntityPlayer)entity;
+    		int x = (int) Math.floor(player.posX);
+    		int y = (int) (player.posY - player.getYOffset());
+    		int z = (int) Math.floor(player.posZ);
+
+    		if ((world.getBlock(x, y - 1, z) == Blocks.lava || world.getBlock(x, y - 1, z) == Blocks.flowing_lava) && world.getBlock(x, y, z) == Blocks.air)
+    		{
+    			if (!player.isSneaking())
+    			{
+    				player.motionY = 0.0D;
+    				player.fallDistance = 0.0F;
+    				player.onGround = true;
+    			}
+
+    			if (!world.isRemote && player.capabilities.getWalkSpeed() < 0.25F)
+    			{
+    				EEProxy.setPlayerSpeed(player, 0.25F);
+    			}
+    		}
+    		else if (!world.isRemote)
+    		{
+    			if (player.capabilities.getWalkSpeed() != Constants.PLAYER_WALK_SPEED)
+    			{
+    				EEProxy.setPlayerSpeed(player, Constants.PLAYER_WALK_SPEED);
+    			}
+    		}
+    		if (!world.isRemote)
+    		{
+				if (!player.isImmuneToFire())
+				{
+					EEProxy.setEntityImmuneToFire(player, true);
+				}
+
+				PlayerChecks.addPlayerFireChecks((EntityPlayerMP) player);
+			}
+    	}
+    }
 
 	@Override
 	public void onExtraFunction(EntityPlayer p, ItemStack is) {

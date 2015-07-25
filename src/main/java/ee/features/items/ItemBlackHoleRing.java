@@ -12,8 +12,8 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
-import ee.features.EEProxy;
 import ee.features.NameRegistry;
+import ee.util.EEProxy;
 
 public class ItemBlackHoleRing extends ItemRing {
 

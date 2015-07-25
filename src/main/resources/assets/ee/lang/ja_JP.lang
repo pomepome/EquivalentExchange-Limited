@@ -52,6 +52,8 @@ tile.EMCCharger.name=EMCチャージャー
 tile.EMCCollector.name=EMCコレクター
 tile.EMCCollectorMk2.name=EMCコレクターMk2
 tile.EMCCollectorMk3.name=EMCコレクターMk3
+tile.FuelBurner.name=EMC抽出かまど
+tile.RFConverter.name=RFコンバーター
 
 #Achievements
 achievement.getPhil=最初の一歩!

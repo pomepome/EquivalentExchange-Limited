@@ -12,7 +12,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import ee.features.EEProxy;
+import ee.util.EEProxy;
 
 public abstract class ItemRing extends ItemEEFunctional
 {

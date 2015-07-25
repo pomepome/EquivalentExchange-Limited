@@ -5,7 +5,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import ee.features.EEProxy;
+import ee.util.EEProxy;
 
 public class PacketConsumeResource implements IMessage,IMessageHandler<PacketConsumeResource,IMessage>
 {

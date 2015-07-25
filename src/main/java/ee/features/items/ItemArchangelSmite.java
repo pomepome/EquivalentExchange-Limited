@@ -6,9 +6,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import ee.features.EEProxy;
 import ee.features.NameRegistry;
-import ee.features.entity.EntityHomingArrow;
+import ee.features.entities.EntityHomingArrow;
+import ee.util.EEProxy;
 
 public class ItemArchangelSmite extends ItemEEFunctional {
 

@@ -13,8 +13,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import ee.features.EELimited;
-import ee.features.EEProxy;
-import ee.features.tile.TileDirection;
+import ee.features.tiles.TileDirection;
+import ee.util.EEProxy;
 
 public abstract class BlockDirection extends BlockContainer
 {

@@ -2,6 +2,9 @@ package ee.features.items;
 
 import java.util.List;
 
+import ee.features.EELimited;
+import ee.features.NameRegistry;
+import ee.util.EEProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -11,9 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import ee.features.EELimited;
-import ee.features.EEProxy;
-import ee.features.NameRegistry;
 
 public class ItemDMPickaxe extends ItemEETool
 {
@@ -223,7 +223,7 @@ public class ItemDMPickaxe extends ItemEETool
             EEProxy.getPlayer().sendChatMessage(getMaterialName((par3World.getBlock(par4, par5, par6).getMaterial())));
         }
 
-        if (par5 > 0 && par1ItemStack.getItemDamage() > 0 && par3World.getBlock(par4, par5, par6).getBlockHardness(par3World, par4, par5, par6) < 0)
+        if (par5 > 0 && getChargeLevel(par1ItemStack) > 0 && par3World.getBlock(par4, par5, par6).getBlockHardness(par3World, par4, par5, par6) < 0)
         {
             par3World.getBlock(par4, par5, par6).dropBlockAsItem(par3World, par4, par5, par6, par3World.getBlockMetadata(par4, par5, par6), 0);
             par3World.setBlock(par4, par5, par6, Blocks.air);

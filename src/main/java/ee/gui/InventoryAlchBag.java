@@ -1,10 +1,11 @@
 package ee.gui;
 
+import ee.features.EELimited;
+import ee.features.items.ItemAlchemyBag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import ee.features.items.ItemAlchemyBag;
 
 public class InventoryAlchBag implements IInventory
 {
@@ -104,7 +105,7 @@ public class InventoryAlchBag implements IInventory
 	@Override
 	public boolean isItemValidForSlot(int index, ItemStack content)
 	{
-		return false;//return EELimited.cantPutAlchemyBag ? !(content.getItem() instanceof ItemAlchemyBag) : true;
+		return EELimited.cantPutAlchemyBag ? !(content.getItem() instanceof ItemAlchemyBag) : true;
 	}
 
 }

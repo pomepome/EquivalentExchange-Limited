@@ -7,7 +7,9 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import ee.features.tile.TileEntityAlchChest;
+import ee.features.tiles.TileEntityAlchChest;
+import ee.gui.container.ContainerAlchBag;
+import ee.gui.container.ContainerAlchChest;
 
 public class GuiAlchChest extends GuiContainer {
 

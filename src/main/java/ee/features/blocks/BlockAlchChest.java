@@ -12,7 +12,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
-import ee.features.tile.TileEntityAlchChest;
+import ee.features.tiles.TileEntityAlchChest;
 
 public class BlockAlchChest extends BlockDirection implements ITileEntityProvider {
 

@@ -1,10 +1,10 @@
 package ee.features.items;
 
 import ee.features.EELimited;
-import ee.features.EEProxy;
 import ee.features.NameRegistry;
-import ee.features.entity.EntityMobRandomizer;
-import ee.features.tile.TileEmc;
+import ee.features.entities.EntityMobRandomizer;
+import ee.features.tiles.TileEmc;
+import ee.util.EEProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

@@ -5,6 +5,8 @@ import static ee.features.Level.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -28,13 +30,15 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import ee.features.blocks.BlockAlchChest;
 import ee.features.blocks.BlockEE;
 import ee.features.blocks.BlockEETorch;
-import ee.features.blocks.BlockEMCCharger;
-import ee.features.blocks.BlockEMCCollector;
-import ee.features.blocks.BlockEMCCollectorMk2;
-import ee.features.blocks.BlockEMCCollectorMk3;
-import ee.features.entity.EntityLavaProjectile;
-import ee.features.entity.EntityMobRandomizer;
-import ee.features.entity.EntityWaterProjectile;
+import ee.features.blocks.emc.BlockEMCCharger;
+import ee.features.blocks.emc.BlockEMCCollector;
+import ee.features.blocks.emc.BlockEMCCollectorMk2;
+import ee.features.blocks.emc.BlockEMCCollectorMk3;
+import ee.features.blocks.emc.BlockFuelBurner;
+import ee.features.blocks.emc.BlockRFConverter;
+import ee.features.entities.EntityLavaProjectile;
+import ee.features.entities.EntityMobRandomizer;
+import ee.features.entities.EntityWaterProjectile;
 import ee.features.items.ItemAlchemyBag;
 import ee.features.items.ItemArchangelSmite;
 import ee.features.items.ItemBlackHoleRing;
@@ -54,22 +58,27 @@ import ee.features.items.ItemPhilosophersStone;
 import ee.features.items.ItemRepairCharm;
 import ee.features.items.ItemSwiftwolfsRing;
 import ee.features.items.ItemVolcanite;
-import ee.features.items.armor.EnumArmorType;
-import ee.features.items.armor.ItemDMArmor;
-import ee.features.items.armor.ItemRMArmor;
-import ee.features.items.entity.ItemLavaOrb;
-import ee.features.items.entity.ItemMobRandomizer;
-import ee.features.items.entity.ItemWaterOrb;
+import ee.features.items.armors.EnumArmorType;
+import ee.features.items.armors.ItemDMArmor;
+import ee.features.items.armors.ItemRMArmor;
+import ee.features.items.entities.ItemLavaOrb;
+import ee.features.items.entities.ItemMobRandomizer;
+import ee.features.items.entities.ItemWaterOrb;
 import ee.features.recipes.FixRecipe;
 import ee.features.recipes.KleinChargeRecipe;
 import ee.features.recipes.KleinUpgradeRecipe;
-import ee.features.tile.TileEMCCharger;
-import ee.features.tile.TileEMCCollector;
-import ee.features.tile.TileEMCCollectorMk2;
-import ee.features.tile.TileEMCCollectorMk3;
-import ee.features.tile.TileEntityAlchChest;
+import ee.features.tiles.TileEMCCharger;
+import ee.features.tiles.TileEMCCollector;
+import ee.features.tiles.TileEMCCollectorMk2;
+import ee.features.tiles.TileEMCCollectorMk3;
+import ee.features.tiles.TileEntityAlchChest;
 import ee.gui.GuiHandler;
+import ee.handler.ClientHandler;
+import ee.handler.CommonHandler;
+import ee.handler.FuelHandler;
 import ee.network.PacketHandler;
+import ee.proxies.CommonProxy;
+import ee.util.EEProxy;
 import ic2.api.item.IC2Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -116,7 +125,7 @@ public class EELimited {
     /**
      * Proxies
      */
-    @SidedProxy(clientSide="ee.features.ClientProxy",serverSide="ee.features.CommonProxy")
+    @SidedProxy(clientSide="ee.proxies.ClientProxy",serverSide="ee.proxies.CommonProxy")
     public static CommonProxy proxy;
     /**
      * Gui IDs
@@ -125,6 +134,8 @@ public class EELimited {
     public static final int CRAFT = 1;
     public static final int ALCH_CHEST = 2;
     public static final int CHARGER = 3;
+    public static final int BURNER = 4;
+    public static final int RMFURNACE = 5;
     /**
      * Render IDs
      */
@@ -197,6 +208,9 @@ public class EELimited {
     public static Block EMCCollectorMk2;
     public static Block EMCCollectorMk3;
     public static Block EMCCharger;
+    public static Block FuelBurner;
+    public static Block FuelBurnerOn;
+    public static Block RFConverter;
     /**
      * Addon
      */
@@ -212,11 +226,15 @@ public class EELimited {
     public static Item RMChest;
     public static Item RMLegs;
     public static Item RMBoots;
+    /**
+     * @param Fuel Registry
+     */
+    private Map<ItemStack,Integer> fuelMap = new HashMap<ItemStack,Integer>();
+
     @EventHandler
     public void init(FMLInitializationEvent e)
     {
     	instance = this;
-    	FMLCommonHandler.instance().bus().register(new TickEvents());
     	NetworkRegistry.INSTANCE.registerGuiHandler(this,new GuiHandler());
     	PacketHandler.register();
     	proxy.registerKies();
@@ -283,6 +301,7 @@ public class EELimited {
         addRecipe(gs(EMCCollector),"SGS","SDS","SFS",'S',Blocks.glowstone,'G',Blocks.glass,'D',Blocks.diamond_block,'F',Blocks.furnace);
         addRecipe(gs(EMCCollectorMk2),"SDS","SCS","SSS",'S',Blocks.glowstone,'D',DM,'C',EMCCollector);
         addRecipe(gs(EMCCollectorMk3),"SRS","SCS","SSS",'S',Blocks.glowstone,'R',RM,'C',EMCCollectorMk2);
+        addRecipe(gs(FuelBurner),"DFD","FRF","DFD",'D',Items.diamond,'F',Blocks.furnace,'R',Items.redstone);
     	addKleinUpgradeRecipe();
     	addKleinChargeRecipe();
         addRelicRecipe();
@@ -329,6 +348,9 @@ public class EELimited {
     	EMCCollectorMk2 = new BlockEMCCollectorMk2();
     	EMCCollectorMk3 = new BlockEMCCollectorMk3();
     	EMCCharger = new BlockEMCCharger();
+    	FuelBurner = new BlockFuelBurner(false);
+    	FuelBurnerOn = new BlockFuelBurner(true);
+    	RFConverter = new BlockRFConverter();
     	//Aggregator = new BlockAggregator();
     }
     public void initArmors()
@@ -360,15 +382,16 @@ public class EELimited {
     	addKleinChargeRecipe(gs(Items.redstone),4);
     	addKleinChargeRecipe(gs(Blocks.redstone_block),36);
     	addKleinChargeRecipe(gs(Items.glowstone_dust),16);
+    	addKleinChargeRecipe(gs(AlchCoal),64);
     	addKleinChargeRecipe(gs(Blocks.glowstone),64);
     	addKleinChargeRecipe(gs(Items.gunpowder),64);
+    	addKleinChargeRecipe(gs(mobiusFuel),192);
     	addKleinChargeRecipe(gs(Items.diamond),512);
     	addKleinChargeRecipe(gs(Blocks.diamond_block),4608);
     	addKleinChargeRecipe(gs(DMBlock),14976);
     	addKleinChargeRecipe(gs(DM),7488);
     	addKleinChargeRecipe(gs(RM),7488*4);
     }
-
     public void addKleinChargeRecipe(ItemStack fuel,int EMC)
     {
     	for(int i = 0;i < 6;i++)
@@ -384,6 +407,7 @@ public class EELimited {
     			addRecipe(new KleinChargeRecipe(gs(Klein,1,i),list,EMC*j));
     		}
     	}
+    	fuelMap.put(fuel,EMC);
     }
     public void addKleinUpgradeRecipe()
     {
@@ -392,6 +416,26 @@ public class EELimited {
     	addKleinUpgradeRecipe(DREI,VIER);
     	addKleinUpgradeRecipe(VIER,SPHERE);
     	addKleinUpgradeRecipe(SPHERE,OMEGA);
+    }
+    public int getFuelValue(ItemStack item)
+    {
+    	ItemStack stack = normalizeStack(item);
+    	Iterator<ItemStack> i = fuelMap.keySet().iterator();
+    	while(i.hasNext())
+    	{
+    		ItemStack key = i.next();
+    		if(areStacksEqual(stack, key))
+    		{
+    			return fuelMap.get(key);
+    		}
+    	}
+    	return 0;
+    }
+    public ItemStack normalizeStack(ItemStack stack)
+    {
+    	ItemStack copy = stack.copy();
+    	copy.stackSize = 1;
+    	return copy;
     }
     public void addKleinUpgradeRecipe(int src,int dest)
     {
@@ -424,11 +468,15 @@ public class EELimited {
     	{
     		PhilTool = new ItemPhilToolBase();
     	}
-    	MinecraftForge.EVENT_BUS.register(new EEHandler());
-    	FMLCommonHandler.instance().bus().register(new CraftingHandler());
+    	MinecraftForge.EVENT_BUS.register(new ClientHandler());
+    	FMLCommonHandler.instance().bus().register(new CommonHandler());
     	if(Loader.isModLoaded("IC2"))
     	{
-    		IC2Addon.addIC2Recipe(this);
+    		IC2Addon.load(this);
+    	}
+    	if(Loader.isModLoaded("BuildCraft|Energy"))
+    	{
+    		BCAddon.load(this);
     	}
     	if(Loader.isModLoaded("Tubestuff"))
     	{
@@ -634,7 +682,7 @@ public class EELimited {
     	{
     		return false;
     	}
-    	return is1.getItem() == is2.getItem();
+    	return is1.getItem().equals(is2.getItem());
     }
     public static boolean removeSmeltingRecipe(Object aInput) {
 		if (aInput != null) {
@@ -692,7 +740,7 @@ public class EELimited {
     	}
 		return rReturn;
     }
-    public void addSmeltingExchange()
+    public void addSmeltingExchange() throws Exception
     {
     	Map<Object,ItemStack> map = FurnaceRecipes.smelting().getSmeltingList();
     	for(Map.Entry<Object,ItemStack> entry : map.entrySet())
@@ -701,14 +749,6 @@ public class EELimited {
     		list.add(gs(PhilTool));
     		list.add(gs(entry.getKey()));
     		addSRecipe(entry.getValue(),list.toArray());
-    	}
-    	for(Object obj : GameData.getItemRegistry())
-    	{
-    			Item item = (Item)obj;
-    			if(!(item instanceof ItemDMShears)&&isRepairable(item))
-    			{
-    				addFixRecipe(EXTREME,item,1);
-    			}
     	}
     	if(dontCarry)
     	{
@@ -814,10 +854,6 @@ public class EELimited {
         else if (lv == MIDDLE)
         {
             return gs(Cov, 1, 1);
-        }
-        else if (lv == EXTREME)
-        {
-        	return gs(Repair);
         }
 
         return gs(Cov, 1, 2);

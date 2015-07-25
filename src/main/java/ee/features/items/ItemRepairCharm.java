@@ -6,9 +6,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import ee.features.EEProxy;
 import ee.features.NameRegistry;
 import ee.features.PlayerTimers;
+import ee.util.EEProxy;
 
 public class ItemRepairCharm extends ItemEEFunctional
 {

@@ -3,8 +3,13 @@ package ee.gui;
 import cpw.mods.fml.common.network.IGuiHandler;
 import ee.features.EELimited;
 import ee.features.items.ItemAlchemyBag;
-import ee.features.tile.TileEMCCharger;
-import ee.features.tile.TileEntityAlchChest;
+import ee.features.tiles.TileEMCCharger;
+import ee.features.tiles.TileEntityAlchChest;
+import ee.features.tiles.TileFuelBurner;
+import ee.gui.container.ContainerAlchBag;
+import ee.gui.container.ContainerAlchChest;
+import ee.gui.container.ContainerCharger;
+import ee.gui.container.ContainerFuelBurner;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -43,6 +48,14 @@ public class GuiHandler implements IGuiHandler {
 				return new ContainerCharger(player.inventory,(TileEMCCharger)charger);
 			}
 		}
+		if(ID == EELimited.BURNER)
+		{
+			TileEntity charger = world.getTileEntity(x, y, z);
+			if(charger instanceof TileFuelBurner)
+			{
+				return new ContainerFuelBurner(player.inventory,(TileFuelBurner)charger);
+			}
+		}
 		return null;
 	}
 
@@ -76,6 +89,14 @@ public class GuiHandler implements IGuiHandler {
 			if(charger instanceof TileEMCCharger)
 			{
 				return new GuiEMCCharger(player.inventory,(TileEMCCharger)charger);
+			}
+		}
+		if(ID == EELimited.BURNER)
+		{
+			TileEntity charger = world.getTileEntity(x, y, z);
+			if(charger instanceof TileFuelBurner)
+			{
+				return new GuiFuelBurner(player.inventory,(TileFuelBurner)charger);
 			}
 		}
 		return null;

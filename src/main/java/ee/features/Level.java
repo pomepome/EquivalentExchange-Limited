@@ -4,6 +4,5 @@ public enum Level
 {
     LOW,
     MIDDLE,
-    HIGH,
-    EXTREME
+    HIGH
 }

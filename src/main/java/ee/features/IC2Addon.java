@@ -1,6 +1,8 @@
 package ee.features;
 
 import static ee.features.Level.*;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 import ic2.api.item.IC2Items;
 import ic2.api.recipe.RecipeInputItemStack;
 import ic2.api.recipe.Recipes;
@@ -8,12 +10,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-import cpw.mods.fml.common.registry.GameRegistry;
 
-public class IC2Addon {
-	public static void addIC2Recipe(EELimited mod)
+public class IC2Addon
+{
+	public static void load(EELimited mod)
 	{
-
 		mod.addFixRecipe(LOW, IC2Items.getItem("treetap").getItem(), 5);
 		mod.addFixRecipe(LOW, IC2Items.getItem("hazmatHelmet").getItem(), 4);
 		mod.addFixRecipe(LOW, IC2Items.getItem("hazmatChestplate").getItem(), 6);
