@@ -34,6 +34,8 @@ item.repair.name=補修の御守
 item.AlchBag.name=錬金バッグ
 item.BHRing.name=吸引の指輪
 item.ArchAngel.name=大天使の指輪
+item.RM.name=赤色物質
+item.RMPickaxe.name=赤色物質のツルハシ
 
 #Klein Star names
 item.Klein_0.name=クラインの星(Ⅰ)

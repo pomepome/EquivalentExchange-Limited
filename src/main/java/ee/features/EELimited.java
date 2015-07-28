@@ -55,6 +55,7 @@ import ee.features.items.ItemKleinStar;
 import ee.features.items.ItemPhilToolBase;
 import ee.features.items.ItemPhilToolFMP;
 import ee.features.items.ItemPhilosophersStone;
+import ee.features.items.ItemRMPickaxe;
 import ee.features.items.ItemRepairCharm;
 import ee.features.items.ItemSwiftwolfsRing;
 import ee.features.items.ItemVolcanite;
@@ -191,6 +192,7 @@ public class EELimited {
     public static Item BHR;
     public static Item ArchAngel;
     public static Item RM;
+    public static Item RMPickaxe;
     /**
      * Projectiles
      */
@@ -246,6 +248,8 @@ public class EELimited {
     	loadConfig();
     	Blocks.command_block.setCreativeTab(CreativeTabs.tabRedstone);
     	RecipeSorter.register("eelimited.fixrecipe",FixRecipe.class,Category.SHAPELESS,"after:minecraft:shapeless");
+    	RecipeSorter.register("eelimited.kleinupgrecipe",KleinUpgradeRecipe.class,Category.SHAPELESS,"after:minecraft:shapeless");
+    	RecipeSorter.register("eelimited.kleinchargerecipe",KleinChargeRecipe.class,Category.SHAPELESS,"after:minecraft:shapeless");
     	initItems();
     	/*
     	 *	register objects
@@ -287,6 +291,7 @@ public class EELimited {
         addRecipe(gs(DMSword), "D", "D", "X", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMHoe), "DD ", " X ", " X ", 'D', DM, 'X', Items.diamond);
         addRecipe(gs(DMHoe), " DD", " X ", " X ", 'D', DM, 'X', Items.diamond);
+        addRecipe(gs(RMPickaxe), "RRR", " X ", " D ", 'R', RM, 'X', DMPickaxe, 'D', Items.diamond);
         addRecipe(gs(AlchChest),"LMH","SDS","ICI",'L',getCov(LOW),'M',getCov(MIDDLE),'H',getCov(HIGH),'S',Blocks.stone,'D',Items.diamond,'I',Items.iron_ingot,'C',Blocks.chest);
         addRecipe(gs(AlchChest),"HML","SDS","ICI",'L',getCov(LOW),'M',getCov(MIDDLE),'H',getCov(HIGH),'S',Blocks.stone,'D',Items.diamond,'I',Items.iron_ingot,'C',Blocks.chest);
         addSRecipe(gs(Items.potionitem,1,0),Ever,Items.glass_bottle);
@@ -330,6 +335,7 @@ public class EELimited {
     	DMShovel = new ItemDMShovel();
     	DMShears = new ItemDMShears();
     	DMPickaxe = new ItemDMPickaxe();
+    	RMPickaxe = new ItemRMPickaxe();
     	DM = new ItemEE(NameRegistry.DM);
     	DMBlock = new BlockEE(Material.rock,NameRegistry.DMBlock).setHardness(500);
     	EETorch = new BlockEETorch();

@@ -1,5 +1,8 @@
 package ee.features.items;
 
+import static ee.features.EELimited.*;
+import static ee.util.EEProxy.*;
+
 import ee.features.Constants;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityLavaProjectile;
@@ -159,11 +162,8 @@ public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraF
     	if(entity instanceof EntityPlayer)
     	{
     		EntityPlayer player = (EntityPlayer)entity;
-    		int x = (int) Math.floor(player.posX);
-    		int y = (int) (player.posY - player.getYOffset());
-    		int z = (int) Math.floor(player.posZ);
-
-    		if ((world.getBlock(x, y - 1, z) == Blocks.lava || world.getBlock(x, y - 1, z) == Blocks.flowing_lava) && world.getBlock(x, y, z) == Blocks.air)
+    		int y = (int)Math.floor(player.posY);
+    		if (isOnLava(player) && player.posY == y + getFlowHight(player))
     		{
     			if (!player.isSneaking())
     			{
@@ -174,25 +174,30 @@ public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraF
 
     			if (!world.isRemote && player.capabilities.getWalkSpeed() < 0.25F)
     			{
-    				EEProxy.setPlayerSpeed(player, 0.25F);
+    				setPlayerSpeed(player, 0.25F);
     			}
     		}
-    		else if (!world.isRemote)
+    		if(world.isRemote)
     		{
-    			if (player.capabilities.getWalkSpeed() != Constants.PLAYER_WALK_SPEED)
-    			{
-    				EEProxy.setPlayerSpeed(player, Constants.PLAYER_WALK_SPEED);
-    			}
+    			return;
     		}
-    		if (!world.isRemote)
-    		{
-				if (!player.isImmuneToFire())
-				{
-					EEProxy.setEntityImmuneToFire(player, true);
-				}
 
-				PlayerChecks.addPlayerFireChecks((EntityPlayerMP) player);
+    		if (!player.isImmuneToFire())
+			{
+				setEntityImmuneToFire(player, true);
 			}
+    		PlayerChecks.addPlayerFireChecks((EntityPlayerMP) player);
+
+    		ItemStack ever = getStackFromInv(player.inventory, gs(Ever));
+    		if(ever !=null && isOnWater(player))
+    		{
+    			EEProxy.setPlayerSpeed(player, 0.25F);
+    			return;
+    		}
+    		if (player.capabilities.getWalkSpeed() != Constants.PLAYER_WALK_SPEED)
+    		{
+    			setPlayerSpeed(player, Constants.PLAYER_WALK_SPEED);
+    		}
     	}
     }
 

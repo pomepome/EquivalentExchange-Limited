@@ -31,4 +31,5 @@ public interface NameRegistry
     String Randomizer = "randomizer";
     String BHR = "BHRing";
     String ArchAngel = "ArchAngel";
+    String RMPickaxe = "RMPickaxe";
 }

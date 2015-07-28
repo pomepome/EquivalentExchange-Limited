@@ -1,5 +1,8 @@
 package ee.features.items;
 
+import static ee.features.EELimited.*;
+import static ee.util.EEProxy.*;
+
 import ee.features.Constants;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityWaterProjectile;
@@ -22,15 +25,12 @@ public class ItemEvertide extends ItemChargeable implements IProjectileShooter {
         if (par3Entity instanceof EntityPlayer)
         {
             EntityPlayer player = (EntityPlayer)par3Entity;
-            int x = (int) Math.floor(player.posX);
-    		int y = (int) (player.posY - player.getYOffset());
-    		int z = (int) Math.floor(player.posZ);
-
 			if (player.getAir() < 300)
         	{
             	player.setAir(300);
         	}
-    		if ((world.getBlock(x, y - 1, z) == Blocks.water || world.getBlock(x, y - 1, z) == Blocks.flowing_water) && world.getBlock(x, y, z) == Blocks.air)
+			int y = (int)Math.floor(player.posY);
+    		if (isOnWater(player) && player.posY == y + getFlowHight(player))
     		{
     			if (!player.isSneaking())
     			{
@@ -38,8 +38,7 @@ public class ItemEvertide extends ItemChargeable implements IProjectileShooter {
     				player.fallDistance = 0.0F;
     				player.onGround = true;
     			}
-
-    			if (!world.isRemote && player.capabilities.getWalkSpeed() < 0.25F)
+    			if(player.capabilities.getWalkSpeed() < 0.25F)
     			{
     				EEProxy.setPlayerSpeed(player, 0.25F);
     			}
@@ -47,6 +46,12 @@ public class ItemEvertide extends ItemChargeable implements IProjectileShooter {
     		}
     		if(!world.isRemote)
     		{
+    			ItemStack volc = getStackFromInv(player.inventory, gs(Volc));
+    			if(volc !=null && isOnLava(player))
+    			{
+    				EEProxy.setPlayerSpeed(player, 0.25F);
+    				return;
+    			}
     			if (player.capabilities.getWalkSpeed() != Constants.PLAYER_WALK_SPEED)
     			{
     				EEProxy.setPlayerSpeed(player, Constants.PLAYER_WALK_SPEED);

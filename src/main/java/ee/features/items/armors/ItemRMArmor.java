@@ -37,7 +37,7 @@ public class ItemRMArmor extends ItemArmor implements ISpecialArmor
 
 		if (t == EnumArmorType.HEAD && source == DamageSource.fall)
 		{
-			return new ArmorProperties(1, 1.0D, 10);
+			return new ArmorProperties(1, 1.0D, 50);
 		}
 
 		if (t == EnumArmorType.HEAD || t == EnumArmorType.FEET)

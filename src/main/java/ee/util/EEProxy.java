@@ -15,6 +15,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import ee.features.EELimited;
 import ee.features.items.ItemKleinStar;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
@@ -45,6 +47,7 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -85,6 +88,11 @@ public class EEProxy
         mc = var0;
         ee = var1;
     }
+    public static void spawnEntityItem(World world, ItemStack stack, double x, double y, double z)
+	{
+    	float jump = ((float) world.rand.nextGaussian() * 0.05F + 0.2F);
+    	spawnEntityItem(world, stack, x, y, z, jump);
+	}
     public static void spawnEntityItem(World world, ItemStack stack, double x, double y, double z,float jump)
 	{
     	float f = world.rand.nextFloat() * 0.8F + 0.1F;
@@ -110,6 +118,47 @@ public class EEProxy
 				entityitem.getEntityItem().setTagCompound((NBTTagCompound)stack.getTagCompound().copy());
 			}
 		}
+	}
+
+	public static void spawnEntityItem(World world, ItemStack stack, int x, int y, int z)
+	{
+		spawnEntityItem(world,stack, x + 0.5, y + 0.5, z + 0.5);
+	}
+	public static void spawnEntityItem(World world, ItemStack stack, int x, int y, int z,float jump)
+	{
+		spawnEntityItem(world,stack, x + 0.5, y + 0.5, z + 0.5,jump);
+	}
+	public static boolean isOnWater(EntityPlayer player)
+	{
+		World w = player.worldObj;
+		int x,y,z;
+		x = (int)Math.ceil(player.posX);
+		y = (int)Math.ceil(player.posY - player.getYOffset());
+		z = (int)Math.ceil(player.posZ);
+		return w.getBlock(x, y - 1, z).blockMaterial == Material.water && w.getBlock(x, y, z) == Blocks.air;
+	}
+	public static boolean isOnLava(EntityPlayer player)
+	{
+		World w = player.worldObj;
+		int x,y,z;
+		x = (int)Math.ceil(player.posX);
+		y = (int)Math.ceil(player.posY - player.getYOffset());
+		z = (int)Math.ceil(player.posZ);
+		return w.getBlock(x, y - 1, z).blockMaterial == Material.lava && w.getBlock(x, y, z) == Blocks.air;
+	}
+	public static float getFlowHight(EntityPlayer player)
+	{
+		World w = player.worldObj;
+		int x,y,z;
+		x = (int)Math.ceil(player.posX);
+		y = (int)Math.ceil(player.posY - player.getYOffset());
+		z = (int)Math.ceil(player.posZ);
+		int meta = w.getBlockMetadata(x, y - 1, z);
+		if(meta >= 8)
+		{
+			meta = 0;
+		}
+		return 1f - BlockLiquid.getLiquidHeightPercent(meta);
 	}
     public static String getOreDictionaryName(ItemStack stack)
     {
@@ -318,34 +367,6 @@ public class EEProxy
 		}
 
 		return stack.copy();
-	}
-
-	public static void spawnEntityItem(World world, ItemStack stack, int x, int y, int z)
-	{
-		float f = world.rand.nextFloat() * 0.8F + 0.1F;
-		float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
-		EntityItem entityitem;
-
-		for (float f2 = world.rand.nextFloat() * 0.8F + 0.1F; stack.stackSize > 0; world.spawnEntityInWorld(entityitem))
-		{
-			int j1 = world.rand.nextInt(21) + 10;
-
-			if (j1 > stack.stackSize)
-				j1 = stack.stackSize;
-
-			stack.stackSize -= j1;
-			entityitem = new EntityItem(world, (double)((float) x + f), (double)((float) y + f1), (double)((float) z + f2), new ItemStack(stack.getItem(), j1, stack.getItemDamage()));
-			float f3 = 0.05F;
-			entityitem.motionX = (double)((float) world.rand.nextGaussian() * f3);
-			entityitem.motionY = (double)((float) world.rand.nextGaussian() * f3 + 0.2F);
-			entityitem.motionZ = (double)((float) world.rand.nextGaussian() * f3);
-
-			if (stack.hasTagCompound())
-			{
-				entityitem.getEntityItem().setTagCompound((NBTTagCompound)stack.getTagCompound().copy());
-			}
-		}
-
 	}
     public static void chatToPlayer(EntityPlayer p,String message)
     {
