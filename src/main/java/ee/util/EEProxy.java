@@ -435,6 +435,10 @@ public class EEProxy
     	{
     		return true;
     	}
+    	if(doUse && !useResource(player,amount,false))
+    	{
+    		return false;
+    	}
     	Item item = null;
     	InventoryPlayer inv = player.inventory;
     	World w = player.worldObj;
