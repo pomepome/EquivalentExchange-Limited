@@ -1,4 +1,4 @@
-package ee.features.items;
+package ee.features.items.interfaces;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

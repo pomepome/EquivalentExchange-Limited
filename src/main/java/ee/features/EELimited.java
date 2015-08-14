@@ -105,6 +105,8 @@ import net.minecraft.stats.AchievementList;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -261,6 +263,13 @@ public class EELimited {
     		registerEntity(EntityLavaProjectile.class,"lava_orb");
     		registerEntity(EntityWaterProjectile.class,"water_orb");
     		registerEntity(EntityMobRandomizer.class,"randomizer");
+    	}
+    	/*
+    	 * Register FluidContainer
+    	 */
+    	{
+    		FluidContainerRegistry.registerFluidContainer(FluidRegistry.WATER, new ItemStack(Ever), new ItemStack(Ever));
+    		FluidContainerRegistry.registerFluidContainer(FluidRegistry.LAVA, new ItemStack(Volc), new ItemStack(Volc));
     	}
     	proxy.registerRenderers();
     	GameRegistry.registerTileEntity(TileEntityAlchChest.class,"alchchest");

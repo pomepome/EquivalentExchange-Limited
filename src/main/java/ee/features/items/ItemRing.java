@@ -2,6 +2,10 @@ package ee.features.items;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.items.interfaces.IModeChange;
+import ee.util.EEProxy;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -10,11 +14,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ee.util.EEProxy;
 
-public abstract class ItemRing extends ItemEEFunctional
+public abstract class ItemRing extends ItemEEFunctional implements IModeChange
 {
     IIcon On, Off;
     String texture = "";

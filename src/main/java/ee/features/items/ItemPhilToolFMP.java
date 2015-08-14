@@ -2,19 +2,20 @@ package ee.features.items;
 
 import java.util.List;
 
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import codechicken.microblock.Saw;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ee.features.EELimited;
+import ee.features.items.interfaces.IModeChange;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 @Optional.Interface(modid = "ForgeMultipart",iface="codechicken.microblock.Saw")
-public class ItemPhilToolFMP extends ItemPhilToolBase implements Saw
+public class ItemPhilToolFMP extends ItemPhilToolBase implements Saw,IModeChange
 {
 	String[] names = {"smelt","saw"};
 	public ItemPhilToolFMP()
@@ -35,17 +36,21 @@ public class ItemPhilToolFMP extends ItemPhilToolBase implements Saw
 	public int getMaxCuttingStrength() {
 		return 5;
 	}
+	@Override
+	public void onActivated(EntityPlayer player, ItemStack is)
+	{
+		ItemStack id = is.copy();
+		int damage = is.getItemDamage();
+		id.setItemDamage((damage + 1) % 2);
+		player.setCurrentItemOrArmor(0, id);
+	}
 	public ItemStack onItemRightClick(ItemStack var1, World var2, EntityPlayer var3)
     {
-		if(!var3.isSneaking())
+		if(var3.isSneaking())
 		{
-			int damage = var1.getItemDamage();
-			ItemStack is = var1.copy();
-			var3.destroyCurrentEquippedItem();
-			is.setItemDamage((is.getItemDamage() + 1) % 2);
-			return is;
+			return new ItemStack(EELimited.Phil);
 		}
-		return new ItemStack(EELimited.Phil);
+		return var1;
     }
 	public String getUnlocalizedName(ItemStack is)
 	{

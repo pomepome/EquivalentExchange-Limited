@@ -16,7 +16,6 @@ import ee.features.EELimited;
 import ee.features.items.ItemKleinStar;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
 import net.minecraft.entity.Entity;
@@ -47,7 +46,6 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -127,24 +125,6 @@ public class EEProxy
 	public static void spawnEntityItem(World world, ItemStack stack, int x, int y, int z,float jump)
 	{
 		spawnEntityItem(world,stack, x + 0.5, y + 0.5, z + 0.5,jump);
-	}
-	public static boolean isOnWater(EntityPlayer player)
-	{
-		World w = player.worldObj;
-		int x,y,z;
-		x = (int)Math.ceil(player.posX);
-		y = (int)Math.ceil(player.posY - player.getYOffset());
-		z = (int)Math.ceil(player.posZ);
-		return w.getBlock(x, y - 1, z).blockMaterial == Material.water && w.getBlock(x, y, z) == Blocks.air;
-	}
-	public static boolean isOnLava(EntityPlayer player)
-	{
-		World w = player.worldObj;
-		int x,y,z;
-		x = (int)Math.ceil(player.posX);
-		y = (int)Math.ceil(player.posY - player.getYOffset());
-		z = (int)Math.ceil(player.posZ);
-		return w.getBlock(x, y - 1, z).blockMaterial == Material.lava && w.getBlock(x, y, z) == Blocks.air;
 	}
 	public static float getFlowHight(EntityPlayer player)
 	{

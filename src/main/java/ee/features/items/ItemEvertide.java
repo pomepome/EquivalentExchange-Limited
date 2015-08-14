@@ -1,11 +1,10 @@
 package ee.features.items;
 
-import static ee.features.EELimited.*;
-import static ee.util.EEProxy.*;
-
 import ee.features.Constants;
+import ee.features.EELimited;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityWaterProjectile;
+import ee.features.items.interfaces.IProjectileShooter;
 import ee.util.EEProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockCauldron;
@@ -17,9 +16,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class ItemEvertide extends ItemChargeable implements IProjectileShooter {
+public class ItemEvertide extends ItemChargeable implements IProjectileShooter,IFluidContainerItem
+{
 	public void onUpdate(ItemStack par1ItemStack, World world, Entity par3Entity, int par4, boolean par5)
     {
         if (par3Entity instanceof EntityPlayer)
@@ -29,34 +31,37 @@ public class ItemEvertide extends ItemChargeable implements IProjectileShooter {
         	{
             	player.setAir(300);
         	}
-			int y = (int)Math.floor(player.posY);
-    		if (isOnWater(player) && player.posY == y + getFlowHight(player))
-    		{
-    			if (!player.isSneaking())
-    			{
-    				player.motionY = 0.0D;
-    				player.fallDistance = 0.0F;
-    				player.onGround = true;
-    			}
-    			if(player.capabilities.getWalkSpeed() < 0.25F)
-    			{
-    				EEProxy.setPlayerSpeed(player, 0.25F);
-    			}
-    			return;
-    		}
-    		if(!world.isRemote)
-    		{
-    			ItemStack volc = getStackFromInv(player.inventory, gs(Volc));
-    			if(volc !=null && isOnLava(player))
-    			{
-    				EEProxy.setPlayerSpeed(player, 0.25F);
-    				return;
-    			}
-    			if (player.capabilities.getWalkSpeed() != Constants.PLAYER_WALK_SPEED)
-    			{
-    				EEProxy.setPlayerSpeed(player, Constants.PLAYER_WALK_SPEED);
-    			}
-    		}
+			int x = (int) Math.floor(player.posX);
+			int y = (int) (player.posY - player.getYOffset());
+			int z = (int) Math.floor(player.posZ);
+			Block b = world.getBlock(x, y - 1, z);
+			Block bu = world.getBlock(x, y, z);
+
+			if ((b.getMaterial() == Material.water) && bu == Blocks.air)
+			{
+				if (!player.isSneaking())
+				{
+					player.motionY = 0.0D;
+					player.fallDistance = 0.0F;
+					player.onGround = true;
+				}
+
+				if (!world.isRemote && player.capabilities.getWalkSpeed() < 0.25F)
+				{
+					EEProxy.setPlayerSpeed(player, 0.25F);
+				}
+			}
+			else if (!world.isRemote)
+			{
+				if((b.getMaterial() == Material.lava) && bu == Blocks.air && EEProxy.getStackFromInv(player.inventory, new ItemStack(EELimited.Volc)) != null)
+				{
+					return;
+				}
+				if (player.capabilities.getWalkSpeed() != Constants.PLAYER_WALK_SPEED)
+				{
+					EEProxy.setPlayerSpeed(player, Constants.PLAYER_WALK_SPEED);
+				}
+			}
         }
     }
 
@@ -156,5 +161,28 @@ public class ItemEvertide extends ItemChargeable implements IProjectileShooter {
 		player.worldObj.spawnEntityInWorld(new EntityWaterProjectile(player.worldObj, player));
 		player.worldObj.playSoundAtEntity(player, "ee:items.transmute",1.0F,1.0F);
 		return true;
+	}
+
+	@Override
+	public FluidStack getFluid(ItemStack container)
+	{
+		return new FluidStack(FluidRegistry.WATER,1000);
+	}
+
+	@Override
+	public int getCapacity(ItemStack container) {
+		return 1000;
+	}
+
+	@Override
+	public int fill(ItemStack container, FluidStack resource, boolean doFill)
+	{
+		return 1000;
+	}
+
+	@Override
+	public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain)
+	{
+		return new FluidStack(FluidRegistry.WATER,1000);
 	}
 }

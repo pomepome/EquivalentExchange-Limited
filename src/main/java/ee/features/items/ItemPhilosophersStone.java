@@ -3,6 +3,9 @@ package ee.features.items;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityMobRandomizer;
+import ee.features.items.interfaces.IChargeable;
+import ee.features.items.interfaces.IExtraFunction;
+import ee.features.items.interfaces.IProjectileShooter;
 import ee.features.tiles.TileEmc;
 import ee.util.EEProxy;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,7 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
-public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFunction,IProjectileShooter {
+public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFunction,IChargeable,IProjectileShooter
+{
 	public ItemPhilosophersStone()
     {
         super(NameRegistry.Philo);
@@ -50,4 +54,13 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 		}
 		return true;
     }
+	@Override
+	public void changeCharge(EntityPlayer player, ItemStack stack)
+	{
+		player.setCurrentItemOrArmor(0, new ItemStack(EELimited.PhilTool));
+	}
+	@Override
+	public int getChargeLevel(ItemStack is) {
+		return 0;
+	}
 }

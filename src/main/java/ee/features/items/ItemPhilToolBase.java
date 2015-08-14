@@ -6,9 +6,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
-import ee.util.EEProxy;
+import ee.features.items.interfaces.IChargeable;
+import ee.features.items.interfaces.IModeChange;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -17,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.world.World;
 
-public class ItemPhilToolBase extends ItemEEFunctional
+public class ItemPhilToolBase extends ItemEEFunctional implements IChargeable,IModeChange
 {
 	protected String[] names = {"smelt","crowbar","hhammer","screw","shammer","wrench"};
 	public ItemPhilToolBase()
@@ -36,17 +38,17 @@ public class ItemPhilToolBase extends ItemEEFunctional
     {
 		return true;
     }
+	@Override
+	public void onActivated(EntityPlayer player, ItemStack is)
+	{
+	}
 	public ItemStack onItemRightClick(ItemStack var1, World var2, EntityPlayer var3)
     {
-		if(!var3.isSneaking())
+		if(var3.isSneaking())
 		{
-			int damage = var1.getItemDamage();
-			ItemStack is = var1.copy();
-			var3.destroyCurrentEquippedItem();
-			is.setItemDamage((is.getItemDamage() + 1) % 1);
-			return is;
+			return new ItemStack(EELimited.Phil);
 		}
-		return new ItemStack(EELimited.Phil);
+		return var1;
     }
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs p_150895_2_, List list)
@@ -72,22 +74,36 @@ public class ItemPhilToolBase extends ItemEEFunctional
     		{
     			Block b = world.getBlock(x, y, z);
     			int meta = world.getBlockMetadata(x, y, z);
-    			ItemStack smelted = FurnaceRecipes.smelting().getSmeltingResult(EELimited.gs(b, 1, meta));
-    			if(smelted != null)
+    			ItemStack iss = new ItemStack(b, 1, meta);
+    			ItemStack isd = FurnaceRecipes.smelting().getSmeltingResult(iss);
+    			if(isd == null)
     			{
-    				if(smelted.getItem() instanceof ItemBlock)
-    				{
-    					Block smeltedBlock = Block.getBlockFromItem(smelted.getItem());
-    					world.setBlock(x, y, z, smeltedBlock);
-    				}
-    				else
-    				{
-    					world.setBlock(x, y, z, Blocks.air);
-    					EEProxy.spawnEntityItem(world, smelted.copy(), x, y, z,0f);
-    				}
+    				return true;
+    			}
+    			isd = isd.copy();
+    			if(isd.getItem() instanceof ItemBlock)
+    			{
+    				ItemBlock ib = (ItemBlock)isd.getItem();
+    				world.setBlock(x, y, z, ib.field_150939_a);
+    			}
+    			else
+    			{
+    				world.setBlock(x, y, z, Blocks.air);
+    				EntityItem ei = new EntityItem(world, x, y, z, isd);
+    				world.spawnEntityInWorld(ei);
     			}
     		}
 		}
     	return true;
     }
+	@Override
+	public void changeCharge(EntityPlayer player, ItemStack stack)
+	{
+		player.setCurrentItemOrArmor(0, EELimited.gs(EELimited.Phil));
+	}
+	@Override
+	public int getChargeLevel(ItemStack is)
+	{
+		return 0;
+	}
 }

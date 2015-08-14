@@ -1,18 +1,16 @@
 package ee.network;
 
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import ee.features.items.interfaces.IChargeable;
+import ee.features.items.interfaces.IExtraFunction;
+import ee.features.items.interfaces.IModeChange;
+import ee.features.items.interfaces.IProjectileShooter;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
-import ee.features.EELimited;
-import ee.features.items.IChargeable;
-import ee.features.items.IExtraFunction;
-import ee.features.items.IProjectileShooter;
-import ee.features.items.ItemRing;
-import ee.util.EEProxy;
 
 public class PacketKeyInput implements IMessage, IMessageHandler<PacketKeyInput,IMessage> {
 
@@ -43,13 +41,9 @@ public class PacketKeyInput implements IMessage, IMessageHandler<PacketKeyInput,
 		World w = player.worldObj;
 		if(message.code == 0)
 		{
-			if(EELimited.Debug && is.getItemDamage() == 0)
+			if(is != null && is.getItem() instanceof IModeChange)
 			{
-				EEProxy.chatToPlayer(player, "Activated!");
-			}
-			if(is != null && is.getItem() instanceof ItemRing)
-			{
-				((ItemRing)is.getItem()).onActivated(player,is);
+				((IModeChange)is.getItem()).onActivated(player,is);
 			}
 		}
 		if(message.code == 1)

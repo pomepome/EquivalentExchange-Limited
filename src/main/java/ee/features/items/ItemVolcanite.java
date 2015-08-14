@@ -1,13 +1,15 @@
 package ee.features.items;
 
-import static ee.features.EELimited.*;
-import static ee.util.EEProxy.*;
-
 import ee.features.Constants;
+import ee.features.EELimited;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityLavaProjectile;
+import ee.features.items.interfaces.IChargeable;
+import ee.features.items.interfaces.IExtraFunction;
+import ee.features.items.interfaces.IProjectileShooter;
 import ee.handler.PlayerChecks;
 import ee.util.EEProxy;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -162,8 +164,14 @@ public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraF
     	if(entity instanceof EntityPlayer)
     	{
     		EntityPlayer player = (EntityPlayer)entity;
-    		int y = (int)Math.floor(player.posY);
-    		if (isOnLava(player) && player.posY == y + getFlowHight(player))
+
+    		int x = (int) Math.floor(player.posX);
+    		int y = (int) (player.posY - player.getYOffset());
+    		int z = (int) Math.floor(player.posZ);
+			Block b = world.getBlock(x, y - 1, z);
+			Block bu = world.getBlock(x, y, z);
+
+    		if ((b.getMaterial() == Material.lava) && bu == Blocks.air)
     		{
     			if (!player.isSneaking())
     			{
@@ -174,29 +182,29 @@ public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraF
 
     			if (!world.isRemote && player.capabilities.getWalkSpeed() < 0.25F)
     			{
-    				setPlayerSpeed(player, 0.25F);
+    				EEProxy.setPlayerSpeed(player, 0.25F);
     			}
     		}
-    		if(world.isRemote)
+    		else if (!world.isRemote)
     		{
-    			return;
+    			if((b.getMaterial() == Material.water) && bu == Blocks.air && EEProxy.getStackFromInv(player.inventory, new ItemStack(EELimited.Ever)) != null)
+				{
+					return;
+				}
+    			if (player.capabilities.getWalkSpeed() != Constants.PLAYER_WALK_SPEED)
+    			{
+    				EEProxy.setPlayerSpeed(player, Constants.PLAYER_WALK_SPEED);
+    			}
     		}
 
-    		if (!player.isImmuneToFire())
-			{
-				setEntityImmuneToFire(player, true);
-			}
-    		PlayerChecks.addPlayerFireChecks((EntityPlayerMP) player);
+    		if (!world.isRemote)
+    		{
+    			if (!player.isImmuneToFire())
+    			{
+    				EEProxy.setEntityImmuneToFire(player, true);
+    			}
 
-    		ItemStack ever = getStackFromInv(player.inventory, gs(Ever));
-    		if(ever !=null && isOnWater(player))
-    		{
-    			EEProxy.setPlayerSpeed(player, 0.25F);
-    			return;
-    		}
-    		if (player.capabilities.getWalkSpeed() != Constants.PLAYER_WALK_SPEED)
-    		{
-    			setPlayerSpeed(player, Constants.PLAYER_WALK_SPEED);
+    			PlayerChecks.addPlayerFireChecks((EntityPlayerMP) player);
     		}
     	}
     }

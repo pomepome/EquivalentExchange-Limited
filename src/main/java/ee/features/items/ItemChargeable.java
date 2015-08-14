@@ -1,5 +1,6 @@
 package ee.features.items;
 
+import ee.features.items.interfaces.IChargeable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
