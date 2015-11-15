@@ -45,6 +45,9 @@ item.Klein_3.name=クラインの星(Ⅳ)
 item.Klein_4.name=クラインの星(Ⅴ)
 item.Klein_5.name=クラインの星(Ⅵ)
 
+#Container
+container.aggregator=光石製造機
+
 #Block names
 tile.DMBlock.name=暗黒物質のブロック
 tile.EETorch.name=結界灯火
@@ -56,6 +59,7 @@ tile.EMCCollectorMk2.name=EMCコレクターMk2
 tile.EMCCollectorMk3.name=EMCコレクターMk3
 tile.FuelBurner.name=EMC抽出かまど
 tile.RFConverter.name=RFコンバーター
+tile.aggregator.name=光石製造機
 
 #Achievements
 achievement.getPhil=最初の一歩!

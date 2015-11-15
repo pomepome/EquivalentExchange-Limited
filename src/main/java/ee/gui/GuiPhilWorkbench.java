@@ -7,6 +7,8 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import ee.gui.container.ContainerPhilWorkbench;
+
 public class GuiPhilWorkbench extends GuiContainer {
 
 private static final ResourceLocation craftingTableGuiTextures = new ResourceLocation("textures/gui/container/crafting_table.png");

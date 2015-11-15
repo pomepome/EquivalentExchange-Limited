@@ -1,6 +1,7 @@
 package ee.features.tiles;
 
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -83,10 +84,10 @@ public class TileRFConverter extends TileEmc implements IEnergyHandler
 			int y = yCoord + dir.offsetY;
 			int z = zCoord + dir.offsetZ;
 			TileEntity tile = worldObj.getTileEntity(x, y, z);
-			if(tile != null && tile instanceof IEnergyHandler &&!(tile instanceof TileRFConverter))
+			if(tile != null && tile instanceof IEnergyReceiver &&!(tile instanceof TileRFConverter))
 			{
 				int toExtract = this.extractEnergy(200,true);
-				((IEnergyHandler)tile).receiveEnergy(getAgainstDir(i),toExtract,false);
+				((IEnergyReceiver)tile).receiveEnergy(getAgainstDir(i),toExtract,false);
 			}
 		}
 	}

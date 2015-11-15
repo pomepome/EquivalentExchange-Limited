@@ -94,6 +94,10 @@ public class BlockFuelBurner extends BlockContainer
 		{
 			return isOn ? front_on : front_off;
 		}
+		if(metadata == 0 && ori == 4)
+		{
+			return isOn ? front_on : front_off;
+		}
 		return other;
     }
 	@Override

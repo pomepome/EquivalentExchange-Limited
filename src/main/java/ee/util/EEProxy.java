@@ -2,11 +2,16 @@ package ee.util;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -74,6 +79,7 @@ public class EEProxy
     private static List<Class> peacefuls = new ArrayList<Class>();
 	private static List<Class> mobs = new ArrayList<Class>();
 	private static Map<Item,Integer> EMCMap = new HashMap<Item,Integer>();
+	private static final Logger log = LogManager.getLogger("EELimited|Proxy");
 
     public static void Init(Minecraft var0, EELimited var1)
     {
@@ -85,6 +91,125 @@ public class EEProxy
         registerFuels();
         mc = var0;
         ee = var1;
+    }
+    public static ItemStack copyStack(ItemStack stack)
+    {
+    	return stack == null ? null : stack.copy();
+    }
+    public static ItemStack[] copyStacks(ItemStack[] stacks,int size)
+    {
+    	ItemStack[] ret = new ItemStack[size];
+    	for(int i = 0;i < size;i++)
+    	{
+    		if(i >= stacks.length)
+    		{
+    			ret[i] = null;
+    		}
+    		else
+    		{
+    			ret[i] = stacks[i];
+    		}
+    	}
+    	return ret;
+    }
+    public static ItemStack[] copyStacks(ItemStack... stacks)
+    {
+    	ItemStack[] ret = new ItemStack[stacks.length];
+    	for(int i = 0;i < ret.length;i++)
+    	{
+    		ret[i] = copyStack(stacks[i]);
+    	}
+    	return ret;
+    }
+    public static ItemStack[] copyStacks(IInventory inv)
+    {
+    	ItemStack[] ret = new ItemStack[inv.getSizeInventory()];
+    	for(int i = 0;i < inv.getSizeInventory();i++)
+    	{
+    		ret[i] = copyStack(inv.getStackInSlot(i));
+    	}
+    	return ret;
+    }
+    public static ItemStack[] sort(ItemStack[] inventory)
+    {
+    	List<ItemStack> list = new ArrayList<ItemStack>();
+    	List<ItemInfo> itemInfos = new ArrayList<ItemInfo>();
+    	for(int i = 0;i < inventory.length;i++)
+    	{
+    		if(inventory[i] == null)
+        	{
+        		continue;
+        	}
+    		boolean flag = false;
+    		for(int j = 0;j < itemInfos.size();j++)
+    		{
+    			if(areItemStacksEqual(itemInfos.get(j).stack,inventory[i]))
+    			{
+    				itemInfos.get(j).amount += inventory[i].stackSize;
+    				flag = true;
+    				break;
+    			}
+    		}
+    		if(!flag)
+    		{
+    			itemInfos.add(new ItemInfo(inventory[i],inventory[i].stackSize));
+    		}
+    	}
+    	Collections.sort(itemInfos, new ComparatorItemInfo());
+    	for(ItemInfo info : itemInfos)
+    	{
+    		ItemStack key = info.stack;
+    		int limit = Math.min(key.getMaxStackSize(), 64);
+    		int size = info.amount;
+    		while(size > 0)
+    		{
+    			if(size > limit)
+    			{
+    				size -= limit;
+    				list.add(new ItemStack(key.getItem(),limit,key.getItemDamage()));
+    			}
+    			else
+    			{
+    				list.add(new ItemStack(key.getItem(),size,key.getItemDamage()));
+    				size = 0;
+    			}
+    		}
+    	}
+    	return toArray(list);
+    }
+    public static void addToMap(Map<ItemStack,Integer> map,ItemStack is)
+    {
+    	if(is == null)
+    	{
+    		return;
+    	}
+    	Set<Map.Entry<ItemStack,Integer>> entryset = map.entrySet();
+    	for(Map.Entry<ItemStack, Integer> entry : entryset)
+    	{
+    		ItemStack stack = entry.getKey();
+    		if(areItemStacksEqual(is,stack))
+    		{
+    			map.replace(stack, entry.getValue() + is.stackSize);
+    			log.info("replaced:"+is.getDisplayName() + "-" +entry.getValue() + is.stackSize);
+    		}
+    		return;
+    	}
+    	map.put(normalizeStack(is),is.stackSize);
+    }
+    public static ItemStack[] toArray(List<ItemStack> list)
+    {
+    	ItemStack[] ret = new ItemStack[list.size()];
+    	for(int i = 0;i < ret.length;i++)
+    	{
+    		ret[i] = list.get(i);
+    	}
+    	return ret;
+    }
+    public static ItemStack normalizeStack(ItemStack stack)
+    {
+    	ItemStack ret = stack.copy();
+    	ret.stackSize = 1;
+    	return ret;
     }
     public static void spawnEntityItem(World world, ItemStack stack, double x, double y, double z)
 	{
@@ -271,7 +396,39 @@ public class EEProxy
 		}
 		return false;
 	}
-    public static ItemStack pushStackInInv(IInventory inv, ItemStack stack)
+    public static ItemStack pushStackInInv(IInventory inv, ItemStack stack, int low_limit)
+	{
+		for (int i = low_limit; i < inv.getSizeInventory(); i++)
+		{
+			ItemStack invStack = inv.getStackInSlot(i);
+
+			if (invStack == null)
+			{
+				inv.setInventorySlotContents(i, stack);
+				return null;
+			}
+
+			if (areItemStacksEqual(stack, invStack) && invStack.stackSize < invStack.getMaxStackSize())
+			{
+				int remaining = invStack.getMaxStackSize() - invStack.stackSize;
+
+				if (remaining >= stack.stackSize)
+				{
+					invStack.stackSize += stack.stackSize;
+					inv.setInventorySlotContents(i, invStack);
+					inv.markDirty();
+					return null;
+				}
+
+				invStack.stackSize += remaining;
+				inv.setInventorySlotContents(i, invStack);
+				stack.stackSize -= remaining;
+			}
+		}
+
+		return stack.copy();
+	}
+	public static ItemStack pushStackInInv(IInventory inv, ItemStack stack)
 	{
 		int limit;
 
@@ -313,7 +470,63 @@ public class EEProxy
 
 		return stack.copy();
 	}
-
+	public static boolean pushStacksInInv(ItemStack[] inv,boolean actuallyPush,ItemStack... stacks)
+	{
+		int stackLimit = 64;
+		if(actuallyPush)
+		{
+			if(!pushStacksInInv(inv,false,stacks))
+			{
+				return false;
+			}
+			for(ItemStack stack : stacks)
+			{
+				pushStackInInv(inv,stack);
+			}
+			return true;
+		}
+		else
+		{
+			ItemStack[] stackInv = copyStacks(inv,inv.length);
+			for(ItemStack stack : stacks)
+			{
+				if(pushStackInInv(stackInv,stack) != null)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+	public static boolean pushStacksInInv(IInventory inv,boolean actuallyPush,int low_limit,ItemStack... stacks)
+	{
+		int stackLimit = inv.getInventoryStackLimit();
+		if(actuallyPush)
+		{
+			if(!pushStacksInInv(inv,false,low_limit,stacks))
+			{
+				return false;
+			}
+			for(ItemStack stack : stacks)
+			{
+				pushStackInInv(inv,stack);
+			}
+			inv.markDirty();
+			return true;
+		}
+		else
+		{
+			ItemStack[] stackInv = copyStacks(inv);
+			for(ItemStack stack : stacks)
+			{
+				if(pushStackInInv(stackInv,stack) != null)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+	}
 	/**
 	 *	Returns an itemstack if the stack passed could not entirely fit in the inventory, otherwise returns null.
 	 */

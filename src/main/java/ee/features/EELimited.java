@@ -27,6 +27,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
+import ee.features.blocks.BlockAggregator;
 import ee.features.blocks.BlockAlchChest;
 import ee.features.blocks.BlockEE;
 import ee.features.blocks.BlockEETorch;
@@ -72,6 +73,7 @@ import ee.features.tiles.TileEMCCharger;
 import ee.features.tiles.TileEMCCollector;
 import ee.features.tiles.TileEMCCollectorMk2;
 import ee.features.tiles.TileEMCCollectorMk3;
+import ee.features.tiles.TileEntityAggregator;
 import ee.features.tiles.TileEntityAlchChest;
 import ee.gui.GuiHandler;
 import ee.handler.ClientHandler;
@@ -79,6 +81,7 @@ import ee.handler.CommonHandler;
 import ee.handler.FuelHandler;
 import ee.network.PacketHandler;
 import ee.proxies.CommonProxy;
+import ee.util.AggregatorRegistry;
 import ee.util.EEProxy;
 import ic2.api.item.IC2Items;
 import net.minecraft.block.Block;
@@ -112,7 +115,7 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = "EELimitedR",name = "EELimitedR",version = "3")
+@Mod(modid = "EELimitedR",name = "EELimitedR",version = "9")
 public class EELimited {
 
 	public static EELimited instance;
@@ -139,6 +142,7 @@ public class EELimited {
     public static final int CHARGER = 3;
     public static final int BURNER = 4;
     public static final int RMFURNACE = 5;
+    public static final int AGGREGATOR = 6;
     /**
      * Render IDs
      */
@@ -277,6 +281,7 @@ public class EELimited {
     	GameRegistry.registerTileEntity(TileEMCCollectorMk2.class,"EMCCollectorMk2");
     	GameRegistry.registerTileEntity(TileEMCCollectorMk3.class,"EMCCollectorMk3");
     	GameRegistry.registerTileEntity(TileEMCCharger.class,"EMCCharger");
+    	GameRegistry.registerTileEntity(TileEntityAggregator.class,"Aggregator");
     	if(Hard)
     	{
     		removeRecipes();
@@ -328,6 +333,14 @@ public class EELimited {
     	registerFuel();
     	registerHarvestLevel();
     	registerAchievements();
+    	registerAggregatorSources();
+    }
+    public void registerAggregatorSources()
+    {
+    	AggregatorRegistry.register(Blocks.cobblestone, 1.0);
+    	AggregatorRegistry.register(Items.glowstone_dust, 1.1);
+    	AggregatorRegistry.register(Blocks.netherrack, 1.2);
+    	AggregatorRegistry.register(Blocks.soul_sand, 1.5);
     }
     public void initItems()
     {
@@ -366,7 +379,7 @@ public class EELimited {
     	FuelBurner = new BlockFuelBurner(false);
     	FuelBurnerOn = new BlockFuelBurner(true);
     	RFConverter = new BlockRFConverter();
-    	//Aggregator = new BlockAggregator();
+    	Aggregator = new BlockAggregator();
     }
     public void initArmors()
     {

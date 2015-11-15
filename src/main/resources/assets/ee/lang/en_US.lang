@@ -56,12 +56,17 @@ tile.EMCCollectorMk2.name=EMC Collector Mk2
 tile.EMCCollectorMk3.name=EMC Collector Mk3
 tile.FuelBurner.name=Fuel Burner
 tile.RFConverter.name=EMC2RF Converter
+tile.aggregator.name=Aggregator
 
 #Achievements
 achievement.getPhil=Take the first step!
 achievement.getPhil.desc=Make a Philosopher's stone
 achievement.getDM=Invisible Matter
 achievement.getDM.desc=Make a darkmatter
+
+#Containers
+container.aggregator=Aggregator
+
 #Armors
 item.DMArmor_head.name=Darkmatter Helmet
 item.DMArmor_chest.name=Darkmatter Chestplate

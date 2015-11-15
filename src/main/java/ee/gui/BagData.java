@@ -13,8 +13,8 @@ public class BagData extends WorldSavedData {
 	public boolean initialized;
 	public boolean needUpdate;
 
-	public BagData(String p_i2141_1_) {
-		super(p_i2141_1_);
+	public BagData(String data_name) {
+		super(data_name);
 	}
 
 	public void onUpdate(World var1, EntityPlayer var2)

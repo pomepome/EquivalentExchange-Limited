@@ -2,6 +2,12 @@ package ee.features.items;
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.EELimited;
+import ee.features.NameRegistry;
+import ee.gui.BagData;
+import ee.util.EEProxy;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -13,12 +19,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ee.features.EELimited;
-import ee.features.NameRegistry;
-import ee.gui.BagData;
-import ee.util.EEProxy;
 
 public class ItemAlchemyBag extends ItemEEFunctional {
 
@@ -60,14 +60,14 @@ public class ItemAlchemyBag extends ItemEEFunctional {
 						double d3 = (p.posZ - i.posZ);
 						double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
 
-						i.motionX += d1 / d4 * 0.1D;
-						i.motionY += d2 / d4 * 0.1D;
-						i.motionZ += d3 / d4 * 0.1D;
+						i.motionX += d1 / d4 * 0.08D;
+						i.motionY += d2 / d4 * 0.08D;
+						i.motionZ += d3 / d4 * 0.08D;
 
 						i.moveEntity(i.motionX, i.motionY, i.motionZ);
 					}
 
-					AxisAlignedBB pickBBox = p.boundingBox.expand(0.5,0.5,0.5);
+					AxisAlignedBB pickBBox = p.boundingBox.expand(0.25,0.25,0.25);
 					List<EntityItem> itemToPick = world.getEntitiesWithinAABB(EntityItem.class, pickBBox);
 
 					for (EntityItem i : itemToPick)
