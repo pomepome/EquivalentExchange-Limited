@@ -1,6 +1,5 @@
 package ee.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -13,11 +12,13 @@ public class BagData extends WorldSavedData {
 	public boolean initialized;
 	public boolean needUpdate;
 
+	String data_name;
+
 	public BagData(String data_name) {
 		super(data_name);
 	}
 
-	public void onUpdate(World var1, EntityPlayer var2)
+	public void onUpdate(World var1)
 	{
 		if(!initialized)
 		{

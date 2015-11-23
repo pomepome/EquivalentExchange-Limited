@@ -1,8 +1,10 @@
 package ee.features;
 
 import buildcraft.BuildCraftCore;
-import net.minecraft.init.Items;
+import buildcraft.api.transport.IPipeTile;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class BCAddon
 {
@@ -10,6 +12,17 @@ public class BCAddon
 	{
 		ItemStack woodEng = mod.gs(BuildCraftCore.engineBlock);
 		ItemStack woodGear = mod.gs(BuildCraftCore.woodenGearItem);
-		mod.addRecipe(mod.gs(mod.RFConverter),"GCG"," D ","GWG",'G',woodGear,'C',mod.EMCCollector,'D',Items.diamond);
+	}
+	public static boolean isPipe(TileEntity tile)
+	{
+		return tile instanceof IPipeTile;
+	}
+	public static void putItemInPipe(TileEntity tile,ItemStack stack,int side)
+	{
+		if(!isPipe(tile))
+		{
+			return;
+		}
+		((IPipeTile)tile).injectItem(stack, true, ForgeDirection.getOrientation(side),null);
 	}
 }

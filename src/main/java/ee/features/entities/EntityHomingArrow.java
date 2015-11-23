@@ -1,6 +1,8 @@
 package ee.features.entities;
 import java.util.List;
 
+import ee.features.EELimited;
+import ee.util.ReflectionUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
@@ -11,7 +13,6 @@ public class EntityHomingArrow extends EntityArrow
 {
 	EntityLivingBase target;
 	World world;
-	private boolean inGround;
 	public boolean flag;
 	private void init(World world)
 	{
@@ -38,15 +39,14 @@ public class EntityHomingArrow extends EntityArrow
 	public void onUpdate()
 	{
 		super.onUpdate();
-
-		AxisAlignedBB box = this.boundingBox;
-		if(!flag&&isInGround())
+		if(EELimited.Debug && this.isInGround())
 		{
-			setDead();
+			System.out.println("GROUNDDDDDDD!!!!!");
 		}
+		AxisAlignedBB box = this.boundingBox;
 		if (target == null && !isInGround())
 		{
-			AxisAlignedBB bBox = box.expand(9, 2, 9);
+			AxisAlignedBB bBox = box.expand(12, 12, 12);
 			List<EntityLivingBase> list = this.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, bBox);
 
 			double distance = 100000;
@@ -81,7 +81,37 @@ public class EntityHomingArrow extends EntityArrow
 		{
 			if (target.getHealth() == 0)
 			{
-				target = null;
+				AxisAlignedBB bBox = box.expand(12, 12, 12);
+				List<EntityLivingBase> list = this.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, bBox);
+
+				double distance = 100000;
+
+				for (EntityLivingBase entity : list)
+				{
+					if(entity instanceof EntityPlayer)
+					{
+						continue;
+					}
+					double toIt = distanceTo(entity);
+
+					if (distance > toIt)
+					{
+						distance = toIt;
+						target = entity;
+					}
+				}
+
+				if (target == null)
+				{
+					worldObj.removeEntity(this);
+					return;
+				}
+
+				double d5 = target.posX - this.posX;
+				double d6 = target.boundingBox.minY + target.height - this.posY;
+				double d7 = target.posZ - this.posZ;
+
+				this.setThrowableHeading(d5, d6, d7, 2.0F, 0.0F);
 				return;
 			}
 
@@ -92,6 +122,11 @@ public class EntityHomingArrow extends EntityArrow
 			double d7 = target.posZ - this.posZ;
 
 			this.setThrowableHeading(d5, d6, d7, 2.0F, 0.0F);
+		}
+		if(this.motionX == 0 && this.motionY == 0 && this.motionZ == 0)
+		{
+			worldObj.removeEntity(this);
+			this.setDead();
 		}
 	}
 
@@ -114,6 +149,6 @@ public class EntityHomingArrow extends EntityArrow
 
 	private boolean isInGround()
 	{
-		return inGround;
+			return ReflectionUtil.getArrowInGround(this);
 	}
 }

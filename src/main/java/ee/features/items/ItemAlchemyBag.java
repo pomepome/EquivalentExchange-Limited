@@ -44,7 +44,7 @@ public class ItemAlchemyBag extends ItemEEFunctional {
 			if(!world.isRemote)
 			{
 				data = getData(item,world);
-				data.onUpdate(world, p);
+				data.onUpdate(world);
 				data.markDirty();
 				World worldObj = p.worldObj;
 				if (EEProxy.invContainsItem(data.inventory, new ItemStack(EELimited.BHR, 1, 1)))

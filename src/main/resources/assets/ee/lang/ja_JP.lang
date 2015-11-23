@@ -36,6 +36,7 @@ item.BHRing.name=吸引の指輪
 item.ArchAngel.name=大天使の指輪
 item.RM.name=赤色物質
 item.RMPickaxe.name=赤色物質のツルハシ
+item.destCatal.name=破壊の触媒
 
 #Klein Star names
 item.Klein_0.name=クラインの星(Ⅰ)
@@ -47,6 +48,7 @@ item.Klein_5.name=クラインの星(Ⅵ)
 
 #Container
 container.aggregator=光石製造機
+container.locus=増殖炉
 
 #Block names
 tile.DMBlock.name=暗黒物質のブロック
@@ -58,8 +60,11 @@ tile.EMCCollector.name=EMCコレクター
 tile.EMCCollectorMk2.name=EMCコレクターMk2
 tile.EMCCollectorMk3.name=EMCコレクターMk3
 tile.FuelBurner.name=EMC抽出かまど
-tile.RFConverter.name=RFコンバーター
+tile.RMBlcok.name=赤色物質ブロック
 tile.aggregator.name=光石製造機
+tile.locus.name=DM増殖炉
+tile.AlchChest_colored.name=色フィルター付き錬金チェスト
+tile.novaTNT.name=新星触媒
 
 #Achievements
 achievement.getPhil=最初の一歩!

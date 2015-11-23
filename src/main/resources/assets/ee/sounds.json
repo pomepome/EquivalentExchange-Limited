@@ -7,6 +7,14 @@
 			"items/charge"
 		]
 	},
+	"items.action":
+	{
+		"category":"player",
+		"sounds":
+		[
+			"items/action"
+		]
+	},
 	"items.uncharge":
 	{
 		"category":"player",

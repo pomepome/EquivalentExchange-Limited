@@ -32,4 +32,5 @@ public interface NameRegistry
     String BHR = "BHRing";
     String ArchAngel = "ArchAngel";
     String RMPickaxe = "RMPickaxe";
+    String RMBlock = "RMBlock";
 }

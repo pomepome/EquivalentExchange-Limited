@@ -10,7 +10,6 @@ import ee.features.tiles.TileEmc;
 import ee.util.EEProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFunction,IChargeable,IProjectileShooter
@@ -26,7 +25,6 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 		{
 			return var1;
 		}
-		p.addChatMessage(new ChatComponentText(""+EEProxy.getFlowHight(p)));
 		return new ItemStack(EELimited.PhilTool);
     }
 	@Override

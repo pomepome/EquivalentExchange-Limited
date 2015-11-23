@@ -32,20 +32,20 @@ public class ItemRMArmor extends ItemArmor implements ISpecialArmor
 		EnumArmorType t = ((ItemRMArmor)armor.getItem()).type;
 		if (source.isExplosion())
 		{
-			return new ArmorProperties(1, 1.0D, 500);
+			return new ArmorProperties(1, 1.0D, 5000000);
 		}
 
 		if (t == EnumArmorType.HEAD && source == DamageSource.fall)
 		{
-			return new ArmorProperties(1, 1.0D, 50);
+			return new ArmorProperties(1, 1.0D, 1000000);
 		}
 
 		if (t == EnumArmorType.HEAD || t == EnumArmorType.FEET)
 		{
-			return new ArmorProperties(0, 0.2D, 250);
+			return new ArmorProperties(0, 0.2D, 25000000);
 		}
 
-		return new ArmorProperties(0, 0.3D, 350);
+		return new ArmorProperties(0, 0.3D, 3500000);
 	}
 
 	@Override

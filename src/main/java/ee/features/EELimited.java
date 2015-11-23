@@ -29,16 +29,19 @@ import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
 import ee.features.blocks.BlockAggregator;
 import ee.features.blocks.BlockAlchChest;
+import ee.features.blocks.BlockColoredAlchChest;
 import ee.features.blocks.BlockEE;
 import ee.features.blocks.BlockEETorch;
+import ee.features.blocks.BlockLocus;
+import ee.features.blocks.BlockNovaTNT;
 import ee.features.blocks.emc.BlockEMCCharger;
 import ee.features.blocks.emc.BlockEMCCollector;
 import ee.features.blocks.emc.BlockEMCCollectorMk2;
 import ee.features.blocks.emc.BlockEMCCollectorMk3;
 import ee.features.blocks.emc.BlockFuelBurner;
-import ee.features.blocks.emc.BlockRFConverter;
 import ee.features.entities.EntityLavaProjectile;
 import ee.features.entities.EntityMobRandomizer;
+import ee.features.entities.EntityNovaPrimed;
 import ee.features.entities.EntityWaterProjectile;
 import ee.features.items.ItemAlchemyBag;
 import ee.features.items.ItemArchangelSmite;
@@ -50,6 +53,7 @@ import ee.features.items.ItemDMPickaxe;
 import ee.features.items.ItemDMShears;
 import ee.features.items.ItemDMShovel;
 import ee.features.items.ItemDMSword;
+import ee.features.items.ItemDestructionCatalyst;
 import ee.features.items.ItemEE;
 import ee.features.items.ItemEvertide;
 import ee.features.items.ItemKleinStar;
@@ -75,6 +79,8 @@ import ee.features.tiles.TileEMCCollectorMk2;
 import ee.features.tiles.TileEMCCollectorMk3;
 import ee.features.tiles.TileEntityAggregator;
 import ee.features.tiles.TileEntityAlchChest;
+import ee.features.tiles.TileEntityColoredAlchChest;
+import ee.features.tiles.TileEntityLocus;
 import ee.gui.GuiHandler;
 import ee.handler.ClientHandler;
 import ee.handler.CommonHandler;
@@ -83,6 +89,7 @@ import ee.network.PacketHandler;
 import ee.proxies.CommonProxy;
 import ee.util.AggregatorRegistry;
 import ee.util.EEProxy;
+import ee.util.LocusRegistry;
 import ic2.api.item.IC2Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -115,7 +122,7 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = "EELimitedR",name = "EELimitedR",version = "9")
+@Mod(modid = "EELimitedR",name = "EELimitedR",version = "10")
 public class EELimited {
 
 	public static EELimited instance;
@@ -143,10 +150,13 @@ public class EELimited {
     public static final int BURNER = 4;
     public static final int RMFURNACE = 5;
     public static final int AGGREGATOR = 6;
+    public static final int LOCUS = 7;
+    public static final int ALCH_COLORED = 8;
     /**
      * Render IDs
      */
     public static final int RENDER_CHEST = RenderingRegistry.getNextAvailableRenderId();
+    public static final int RENDER_COLORED_CHEST = RenderingRegistry.getNextAvailableRenderId();
     /**
      * Entity IDs
      */
@@ -162,6 +172,7 @@ public class EELimited {
     public static boolean dontCarry;
     public static boolean cantPutAlchemyBag;
     public static boolean disableResource;
+    public static boolean autoEject;
     /**
      * Klein star damages
      */
@@ -199,6 +210,7 @@ public class EELimited {
     public static Item ArchAngel;
     public static Item RM;
     public static Item RMPickaxe;
+    public static Item destCatal;
     /**
      * Projectiles
      */
@@ -212,17 +224,21 @@ public class EELimited {
     public static Block DMBlock;
     public static Block AlchChest;
     public static Block Aggregator;
+    public static Block Locus;
     public static Block EMCCollector;
     public static Block EMCCollectorMk2;
     public static Block EMCCollectorMk3;
     public static Block EMCCharger;
     public static Block FuelBurner;
     public static Block FuelBurnerOn;
-    public static Block RFConverter;
+    public static Block RMBlock;
+    public static Block NovaTNT;
+    public static Block cAlchChest;
     /**
      * Addon
      */
     public static boolean loadFMP;
+    public static boolean loadBC;
     /**
      * Armors
      */
@@ -267,6 +283,7 @@ public class EELimited {
     		registerEntity(EntityLavaProjectile.class,"lava_orb");
     		registerEntity(EntityWaterProjectile.class,"water_orb");
     		registerEntity(EntityMobRandomizer.class,"randomizer");
+    		registerEntity(EntityNovaPrimed.class,"NovaPrimed");
     	}
     	/*
     	 * Register FluidContainer
@@ -282,6 +299,8 @@ public class EELimited {
     	GameRegistry.registerTileEntity(TileEMCCollectorMk3.class,"EMCCollectorMk3");
     	GameRegistry.registerTileEntity(TileEMCCharger.class,"EMCCharger");
     	GameRegistry.registerTileEntity(TileEntityAggregator.class,"Aggregator");
+    	GameRegistry.registerTileEntity(TileEntityLocus.class,"Locus");
+    	GameRegistry.registerTileEntity(TileEntityColoredAlchChest.class,"ColoredAlchChest");
     	if(Hard)
     	{
     		removeRecipes();
@@ -294,7 +313,8 @@ public class EELimited {
         addSRecipe(gs(Phil),gs(Phil),gs(Items.slime_ball),gs(Items.glowstone_dust),gs(Items.redstone));
         addSRecipe(gs(Items.glowstone_dust, 4), gs(Items.coal), gs(Items.redstone));
         addSRecipe(gs(Items.redstone, 4), gs(Items.coal), gs(Blocks.cobblestone));
-        addSRecipe(gs(DM,2), gs(DMBlock));
+        addSRecipe(gs(DM,4), gs(DMBlock));
+        addSRecipe(gs(RM,4), gs(RMBlock));
         addRecipe(gs(DMBlock), "DD", "DD", 'D', DM);
         ItemStack is = new ItemStack(DMPickaxe);
         is.addEnchantment(Enchantment.fortune,10);
@@ -321,7 +341,11 @@ public class EELimited {
         addRecipe(gs(EMCCollectorMk2),"SDS","SCS","SSS",'S',Blocks.glowstone,'D',DM,'C',EMCCollector);
         addRecipe(gs(EMCCollectorMk3),"SRS","SCS","SSS",'S',Blocks.glowstone,'R',RM,'C',EMCCollectorMk2);
         addRecipe(gs(FuelBurner),"DFD","FRF","DFD",'D',Items.diamond,'F',Blocks.furnace,'R',Items.redstone);
-    	addKleinUpgradeRecipe();
+        addRecipe(gs(Aggregator),"GDG","DRD","GFG",'G',Blocks.glowstone,'F',Blocks.furnace,'D',Items.diamond,'R',Items.redstone);
+    	addRecipe(gs(Locus),"DDD","DAD","DDD",'D',DMBlock,'A',Aggregator);
+    	addRecipe(gs(RMBlock),"RR","RR",'R',RM);
+    	addRecipe(gs(destCatal),"TFT","FSF","TFT",'T',NovaTNT,'F',mobiusFuel,'S',Items.flint_and_steel);
+        addKleinUpgradeRecipe();
     	addKleinChargeRecipe();
         addRelicRecipe();
     	addAlchemicalRecipe();
@@ -334,9 +358,18 @@ public class EELimited {
     	registerHarvestLevel();
     	registerAchievements();
     	registerAggregatorSources();
+    	registerLocusSources();
+    }
+    public void registerLocusSources()
+    {
+    	LocusRegistry.registerFuelValue(gs(AlchCoal), 64);
+    	LocusRegistry.registerFuelValue(gs(mobiusFuel), 176);
+    	LocusRegistry.registerDest(gs(DMBlock),114000);
+    	LocusRegistry.registerDest(gs(RMBlock),114000 * 4);
     }
     public void registerAggregatorSources()
     {
+    	AggregatorRegistry.register(Blocks.dirt, 0.8);
     	AggregatorRegistry.register(Blocks.cobblestone, 1.0);
     	AggregatorRegistry.register(Items.glowstone_dust, 1.1);
     	AggregatorRegistry.register(Blocks.netherrack, 1.2);
@@ -378,8 +411,12 @@ public class EELimited {
     	EMCCharger = new BlockEMCCharger();
     	FuelBurner = new BlockFuelBurner(false);
     	FuelBurnerOn = new BlockFuelBurner(true);
-    	RFConverter = new BlockRFConverter();
+    	RMBlock = new BlockEE(Material.rock,NameRegistry.RMBlock).setHardness(800);
     	Aggregator = new BlockAggregator();
+    	Locus = new BlockLocus();
+    	NovaTNT = new BlockNovaTNT();
+    	cAlchChest = new BlockColoredAlchChest();
+    	destCatal = new ItemDestructionCatalyst();
     }
     public void initArmors()
     {
@@ -416,9 +453,10 @@ public class EELimited {
     	addKleinChargeRecipe(gs(mobiusFuel),192);
     	addKleinChargeRecipe(gs(Items.diamond),512);
     	addKleinChargeRecipe(gs(Blocks.diamond_block),4608);
-    	addKleinChargeRecipe(gs(DMBlock),14976);
+    	addKleinChargeRecipe(gs(DMBlock),29952);
     	addKleinChargeRecipe(gs(DM),7488);
-    	addKleinChargeRecipe(gs(RM),7488*4);
+    	addKleinChargeRecipe(gs(RM),7488*16);
+    	addKleinChargeRecipe(gs(RMBlock),7488*64);
     }
     public void addKleinChargeRecipe(ItemStack fuel,int EMC)
     {
@@ -502,8 +540,9 @@ public class EELimited {
     	{
     		IC2Addon.load(this);
     	}
-    	if(Loader.isModLoaded("BuildCraft|Energy"))
+    	if(Loader.isModLoaded("BuildCraft|Transport"))
     	{
+    		loadBC = true;
     		BCAddon.load(this);
     	}
     	if(Loader.isModLoaded("Tubestuff"))
@@ -545,21 +584,24 @@ public class EELimited {
     {
     	DMPickaxe.setHarvestLevel("pickaxe",10);
     	DMShovel.setHarvestLevel("shovel",10);
+    	RMPickaxe.setHarvestLevel("pickaxe", 11);
     	DMBlock.setHarvestLevel("pickaxe",10);
     	AlchChest.setHarvestLevel("pickaxe",2);
+    	RMBlock.setHarvestLevel("pickaxe", 11);
     }
     public void loadConfig()
     {
     	Configuration config = new Configuration(suggestedConfig);
     	config.load();
     	Hard = config.getBoolean("Hard Mode",config.CATEGORY_GENERAL,false,"removes some vanilla recipes and adds harder recipes!");
-    	cutDown = config.getBoolean("Cut Down",config.CATEGORY_GENERAL,true,"cut down from root");
     	Debug = config.getBoolean("Debug",config.CATEGORY_GENERAL,false,"Debug mode");
     	noBats= config.getBoolean("noBats",config.CATEGORY_GENERAL,false,"No more bats!");
     	noTeleport= config.getBoolean("noTeleport",config.CATEGORY_GENERAL,false,"now Enderman can't teleport!");
     	dontCarry= config.getBoolean("noCarry",config.CATEGORY_GENERAL,false,"now Enderman can't carry blocks!");
     	cantPutAlchemyBag = config.getBoolean("can'tPutAlchemyBags",config.CATEGORY_GENERAL,true,"if true,player will be not able to put Alchemy Bag into themselves");
     	disableResource = config.getBoolean("disableResource",config.CATEGORY_GENERAL,false,"disable this mod's resource system(Unlimited magics!)");
+    	autoEject = config.getBoolean("autoEject","misc",true,"If this option is true,Aggregator and Locus will eject their output automatically.(BuildCraft pipe and chests)");
+    	cutDown = config.getBoolean("Cut Down","misc",true,"cut down from root");
     	config.save();
     }
     public void registerAchievements()
@@ -1131,8 +1173,12 @@ public class EELimited {
     }
     public void addAlchemicalRecipe()
     {
-    	addRecipe(gs(DMBlock), "OMO", "DDD", "OMO", 'D', Blocks.diamond_block, 'M', mobiusFuel, 'O', Blocks.obsidian);
-    	addExchange(gs(RM), DM, 4);
+    	addRecipe(gs(DM), "FDF","DPD","FDF",'F',mobiusFuel,'D',Blocks.diamond_block, 'P', Phil);
+    	addRecipe(gs(DM), "FDF","DPD","FDF",'F',Blocks.diamond_block,'D',mobiusFuel, 'P', Phil);
+    	addRecipe(gs(NovaTNT,2),"TFT","FPF","TFT",'T',Blocks.tnt,'F',mobiusFuel,'P',Phil);
+    	addRecipe(gs(NovaTNT,6),"TFT","FPF","TFT",'T',Blocks.tnt,'F',mobiusFuel,'P',destCatal);
+    	addExchange(gs(cAlchChest),AlchChest,gs(AlchBag,1,-1));
+    	addExchange(gs(RM), DMBlock, 4);
         addExchange(gs(Blocks.diamond_block, 4), DM);
         addExchange(gs(Items.coal), gs(Items.coal, 1, 1));
         // Dirt

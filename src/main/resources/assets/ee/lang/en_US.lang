@@ -3,6 +3,9 @@
 #CreativeTab
 itemGroup.EELimited=EELimited
 
+#enchantment
+enchantment.level.20=XX
+
 #Item names
 item.phil.name=Philosopher's stone
 item.NuggetIron.name=Iron Nugget
@@ -36,6 +39,7 @@ item.BHRing.name=Black Hole Band
 item.ArchAngel.name=Archangel's Smite
 item.RM.name=Redmatter
 item.RMPickaxe.name=Redmatter Pickaxe
+item.destCatal.name=Destruction Catalyst
 
 #Klein Star names
 item.Klein_0.name=Klein Star Ein
@@ -55,8 +59,11 @@ tile.EMCCollector.name=EMC Collector
 tile.EMCCollectorMk2.name=EMC Collector Mk2
 tile.EMCCollectorMk3.name=EMC Collector Mk3
 tile.FuelBurner.name=Fuel Burner
-tile.RFConverter.name=EMC2RF Converter
-tile.aggregator.name=Aggregator
+tile.RMBlock.name=Redmatter Block
+tile.aggregator.name=Glowstone Aggregator
+tile.locus.name=Darkmatter Locus
+tile.AlchChest_colored.name=Color Filtered Alchemical Chest
+tile.novaTNT.name=Nova Catalyst
 
 #Achievements
 achievement.getPhil=Take the first step!
@@ -66,6 +73,7 @@ achievement.getDM.desc=Make a darkmatter
 
 #Containers
 container.aggregator=Aggregator
+container.locus=Locus
 
 #Armors
 item.DMArmor_head.name=Darkmatter Helmet

@@ -45,7 +45,7 @@ public class BlockEMCCollectorMk2 extends BlockContainer
 		{
 			return top;
 		}
-		if(metadata == 0 && ori == 4)
+		if(metadata == 0 && ori == 3)
 		{
 			return front;
 		}

@@ -6,12 +6,16 @@ import ee.features.items.ItemAlchemyBag;
 import ee.features.tiles.TileEMCCharger;
 import ee.features.tiles.TileEntityAggregator;
 import ee.features.tiles.TileEntityAlchChest;
+import ee.features.tiles.TileEntityColoredAlchChest;
+import ee.features.tiles.TileEntityLocus;
 import ee.features.tiles.TileFuelBurner;
 import ee.gui.container.ContainerAggregator;
 import ee.gui.container.ContainerAlchBag;
 import ee.gui.container.ContainerAlchChest;
 import ee.gui.container.ContainerCharger;
+import ee.gui.container.ContainerColoredAlchChest;
 import ee.gui.container.ContainerFuelBurner;
+import ee.gui.container.ContainerLocus;
 import ee.gui.container.ContainerPhilWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -67,6 +71,22 @@ public class GuiHandler implements IGuiHandler {
 				return new ContainerAggregator((TileEntityAggregator)aggregator,player);
 			}
 		}
+		if(ID == EELimited.LOCUS)
+		{
+			TileEntity locus = world.getTileEntity(x, y, z);
+			if(locus instanceof TileEntityLocus)
+			{
+				return new ContainerLocus((TileEntityLocus)locus,player.inventory);
+			}
+		}
+		if(ID == EELimited.ALCH_COLORED)
+		{
+			TileEntity alch = world.getTileEntity(x, y, z);
+			if(alch instanceof TileEntityColoredAlchChest)
+			{
+				return new ContainerColoredAlchChest(player.inventory,(TileEntityColoredAlchChest)alch);
+			}
+		}
 		return null;
 	}
 
@@ -116,6 +136,22 @@ public class GuiHandler implements IGuiHandler {
 			if(aggregator instanceof TileEntityAggregator)
 			{
 				return new GuiAggregator((TileEntityAggregator)aggregator,player);
+			}
+		}
+		if(ID == EELimited.LOCUS)
+		{
+			TileEntity locus = world.getTileEntity(x, y, z);
+			if(locus instanceof TileEntityLocus)
+			{
+				return new GuiLocus((TileEntityLocus)locus,player);
+			}
+		}
+		if(ID == EELimited.ALCH_COLORED)
+		{
+			TileEntity alch = world.getTileEntity(x, y, z);
+			if(alch instanceof TileEntityColoredAlchChest)
+			{
+				return new GuiColoredAlchChest(player.inventory,(TileEntityColoredAlchChest)alch);
 			}
 		}
 		return null;

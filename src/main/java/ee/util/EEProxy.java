@@ -1,5 +1,7 @@
 package ee.util;
 
+import static net.minecraftforge.common.util.ForgeDirection.*;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +15,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.collect.Lists;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -23,6 +27,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityClientPlayerMP;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -57,6 +63,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.MathHelper;
@@ -130,6 +137,46 @@ public class EEProxy
     	}
     	return ret;
     }
+    public static ItemStack[] decrItem(ItemStack[] inv,ItemStack obj, int count)
+    {
+    	ItemStack[] inv2 = copyStacks(inv);
+    	for(int i = 0;i < inv.length;i++)
+    	{
+    		if(inv2[i] == null)
+    		{
+    			continue;
+    		}
+    		if(areItemStacksEqual(inv2[i],obj))
+    		{
+    			int toReduce = Math.min(inv2[i].stackSize, count);
+    			count -= toReduce;
+    			inv2[i].stackSize -= toReduce;
+    		}
+    		if(inv2[i].stackSize == 0)
+    		{
+    			inv2[i] = null;
+    		}
+    		if(count == 0)
+    		{
+    			break;
+    		}
+    	}
+    	return inv2;
+    }
+
+	public static ForgeDirection getOpSide(ForgeDirection dir)
+	{
+		switch(dir)
+		{
+			case UP : return DOWN;
+			case DOWN : return UP;
+			case SOUTH : return NORTH;
+			case NORTH : return SOUTH;
+			case EAST : return WEST;
+			case WEST : return EAST;
+			default : return UNKNOWN;
+		}
+	}
     public static ItemStack[] sort(ItemStack[] inventory)
     {
     	List<ItemStack> list = new ArrayList<ItemStack>();
@@ -207,6 +254,10 @@ public class EEProxy
     }
     public static ItemStack normalizeStack(ItemStack stack)
     {
+    	if(stack == null)
+    	{
+    		return null;
+    	}
     	ItemStack ret = stack.copy();
     	ret.stackSize = 1;
     	return ret;
@@ -616,6 +667,19 @@ public class EEProxy
     	}
     	return ret;
     }
+    public static int getItemCount(ItemStack[] inv,ItemStack item)
+    {
+    	int ret = 0;
+    	for(int i = 0;i < inv.length;i++)
+    	{
+    		ItemStack is = inv[i];
+    		if(is != null && areItemStacksEqual(item, is))
+    		{
+    			ret += is.stackSize;
+    		}
+    	}
+    	return ret;
+    }
     public static int getBlockCount(InventoryPlayer inv,Block b)
     {
     	int ret = 0;
@@ -631,6 +695,10 @@ public class EEProxy
     }
     public static void decrItem(InventoryPlayer inv,Item item,int amount)
     {
+    	if(inv.player.capabilities.isCreativeMode)
+    	{
+    		return;
+    	}
     	for(int i = 0;i < amount;i++)
     	{
     		inv.consumeInventoryItem(item);
@@ -803,7 +871,7 @@ public class EEProxy
         return false;
     }
 
-    public static Object getTileEntity(IBlockAccess var0, int var1, int var2, int var3, Class var4)
+    public static TileEntity getTileEntity(IBlockAccess var0, int var1, int var2, int var3, Class var4)
     {
         if (var2 < 0)
         {
@@ -954,6 +1022,10 @@ public class EEProxy
 	}
 	private static ItemStack getNormalizedStack(ItemStack stack1)
 	{
+		if(stack1 == null)
+		{
+			return null;
+		}
 		ItemStack stack = stack1.copy();
 		stack.stackSize = 1;
 		return stack;
@@ -1061,5 +1133,88 @@ public class EEProxy
 	public static void fillTank(IFluidHandler tank, Fluid fluid, int side, int quantity)
 	{
 		tank.fill(ForgeDirection.getOrientation(side), new FluidStack(fluid, quantity), true);
+	}
+	public static ArrayList<ItemStack> getBlockDrops(World world, EntityPlayer player, Block block, ItemStack stack, int x, int y, int z)
+	{
+		int meta = world.getBlockMetadata(x, y, z);
+
+		if (EnchantmentHelper.getEnchantmentLevel(Enchantment.silkTouch.effectId, stack) > 0 && block.canSilkHarvest(world, player, x, y, z, meta))
+		{
+			return Lists.newArrayList(new ItemStack(block, 1, meta));
+		}
+
+		return block.getDrops(world, x, y, z, meta, EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, stack));
+	}
+
+	/**
+	 * Gets an AABB for AOE digging operations. The offset increases both the breadth and depth of the box.
+	 */
+	public static AxisAlignedBB getBroadDeepBox(Coordinates coords, ForgeDirection direction, int offset)
+	{
+		if (direction.offsetX > 0)
+		{
+			return AxisAlignedBB.getBoundingBox(coords.x - offset, coords.y - offset, coords.z - offset, coords.x, coords.y + offset, coords.z + offset);
+		}
+		else if (direction.offsetX < 0)
+		{
+			return AxisAlignedBB.getBoundingBox(coords.x, coords.y - offset, coords.z - offset, coords.x + offset, coords.y + offset, coords.z + offset);
+		}
+		else if (direction.offsetY > 0)
+		{
+			return AxisAlignedBB.getBoundingBox(coords.x - offset, coords.y - offset, coords.z - offset, coords.x + offset, coords.y, coords.z + offset);
+		}
+		else if (direction.offsetY < 0)
+		{
+			return AxisAlignedBB.getBoundingBox(coords.x - offset, coords.y, coords.z - offset, coords.x + offset, coords.y + offset, coords.z + offset);
+		}
+		else if (direction.offsetZ > 0)
+		{
+			return AxisAlignedBB.getBoundingBox(coords.x - offset, coords.y - offset, coords.z - offset, coords.x + offset, coords.y + offset, coords.z);
+		}
+		else if (direction.offsetZ < 0)
+		{
+			return AxisAlignedBB.getBoundingBox(coords.x - offset, coords.y - offset, coords.z, coords.x + offset, coords.y + offset, coords.z + offset);
+		}
+		return AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
+	}
+
+	/**
+	 * Returns in AABB that is always 3x3 orthogonal to the side hit, but varies in depth in the direction of the side hit
+	 */
+	public static AxisAlignedBB getDeepBox(Coordinates coords, ForgeDirection direction, int depth)
+	{
+		if (direction.offsetX != 0)
+		{
+			if (direction.offsetX > 0)
+			{
+				return AxisAlignedBB.getBoundingBox(coords.x - depth, coords.y - 1, coords.z - 1, coords.x, coords.y + 1, coords.z + 1);
+			}
+			else return AxisAlignedBB.getBoundingBox(coords.x, coords.y - 1, coords.z - 1, coords.x + depth, coords.y + 1, coords.z + 1);
+		}
+		else if (direction.offsetY != 0)
+		{
+			if (direction.offsetY > 0)
+			{
+				return AxisAlignedBB.getBoundingBox(coords.x - 1, coords.y - depth, coords.z - 1, coords.x + 1, coords.y, coords.z + 1);
+			}
+			else return AxisAlignedBB.getBoundingBox(coords.x - 1, coords.y, coords.z - 1, coords.x + 1, coords.y + depth, coords.z + 1);
+		}
+		else
+		{
+			if (direction.offsetZ > 0)
+			{
+				return AxisAlignedBB.getBoundingBox(coords.x - 1, coords.y - 1, coords.z - depth, coords.x + 1, coords.y + 1, coords.z);
+			}
+			else return AxisAlignedBB.getBoundingBox(coords.x - 1, coords.y - 1, coords.z, coords.x + 1, coords.y + 1, coords.z + depth);
+		}
+	}
+
+	/**
+	 * Gets an AABB for AOE digging operations. The charge increases only the breadth of the box.
+	 * Y level remains constant. As such, a direction hit is unneeded.
+	 */
+	public static AxisAlignedBB getFlatYBox(Coordinates coords, int offset)
+	{
+		return AxisAlignedBB.getBoundingBox(coords.x - offset, coords.y, coords.z - offset, coords.x + offset, coords.y, coords.z + offset);
 	}
 }
