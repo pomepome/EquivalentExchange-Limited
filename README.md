@@ -1,4 +1,4 @@
 EquivalentExchange-Limited
 ==========================
 
-This mod adds some recipes and items and blocks.they're like Equivalent Exchange 5
+This mod adds some recipes and items and blocks.They originates from Equivalent Exchange 4.
