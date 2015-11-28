@@ -6,7 +6,7 @@ public class ItemEEFunctional extends ItemEE {
 
 	public ItemEEFunctional(String name) {
 		super(name);
-		this.setContainerItem(this).setMaxStackSize(1);
+		this.setContainerItem(this).setMaxStackSize(1).setNoRepair();
 	}
 	public ItemEEFunctional(String name,int damage) {
 		super(name,damage);
