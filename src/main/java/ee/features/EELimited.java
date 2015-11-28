@@ -338,7 +338,7 @@ public class EELimited {
         addRecipe(gs(AlchChest),"LMH","SDS","ICI",'L',getCov(LOW),'M',getCov(MIDDLE),'H',getCov(HIGH),'S',Blocks.stone,'D',Items.diamond,'I',Items.iron_ingot,'C',Blocks.chest);
         addRecipe(gs(AlchChest),"HML","SDS","ICI",'L',getCov(LOW),'M',getCov(MIDDLE),'H',getCov(HIGH),'S',Blocks.stone,'D',Items.diamond,'I',Items.iron_ingot,'C',Blocks.chest);
         addSRecipe(gs(Items.potionitem,1,0),Ever,Items.glass_bottle);
-        addRecipe(gs(miniumStone),Items.iron_ingot,Items.redstone,Blocks.stone);
+        addSRecipe(gs(miniumStone),Items.iron_ingot,Items.redstone,Blocks.stone);
         for(int i = 0;i < 16;i++)
         {
         	addRecipe(gs(AlchBag,1,i),"HHH","WCW","WWW",'H',getCov(HIGH),'C',AlchChest,'W',gs(Blocks.wool,1,i));
