@@ -1,8 +1,9 @@
-package ee.features;
+package ee.addins.ic2;
 
 import static ee.features.Level.*;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import ee.features.EELimited;
 import ic2.api.item.IC2Items;
 import ic2.api.recipe.RecipeInputItemStack;
 import ic2.api.recipe.Recipes;

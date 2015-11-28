@@ -16,6 +16,7 @@ public class BagData extends WorldSavedData {
 
 	public BagData(String data_name) {
 		super(data_name);
+		this.data_name = data_name;
 	}
 
 	public void onUpdate(World var1)
@@ -33,6 +34,11 @@ public class BagData extends WorldSavedData {
 			markDirty();
 			needUpdate = false;
 		}
+	}
+
+	public String getDataName()
+	{
+		return data_name;
 	}
 
 	@Override

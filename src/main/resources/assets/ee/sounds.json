@@ -32,5 +32,14 @@
 		 	"items/transmute"
 		 ]
 
+	},
+	"items.heal":
+	{
+		"category":"player",
+		"sounds":
+		[
+		 	"items/heal"
+		 ]
+
 	}
 }

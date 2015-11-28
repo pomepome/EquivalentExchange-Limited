@@ -1,7 +1,7 @@
 [
 {
   "modid": "EELimitedR",
-  "name": "EE LimitedR",
+  "name": "EELimitedR",
   "description": "Equivalent Exchange Revival Trial mod.",
   "version": "${version}",
   "mcversion": "${mcversion}",

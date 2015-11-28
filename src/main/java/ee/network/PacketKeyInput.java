@@ -7,6 +7,7 @@ import ee.features.items.interfaces.IChargeable;
 import ee.features.items.interfaces.IExtraFunction;
 import ee.features.items.interfaces.IModeChange;
 import ee.features.items.interfaces.IProjectileShooter;
+import ee.util.EEProxy;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -43,6 +44,10 @@ public class PacketKeyInput implements IMessage, IMessageHandler<PacketKeyInput,
 		{
 			if(is != null && is.getItem() instanceof IModeChange)
 			{
+				if(is.getItemDamage() == 0)
+				{
+					EEProxy.playSoundAtPlayer("ee:items.heal", player, 1.0f, 1.0f);
+				}
 				((IModeChange)is.getItem()).onActivated(player,is);
 			}
 		}

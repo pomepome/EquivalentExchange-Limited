@@ -3,7 +3,7 @@ package ee.features.tiles;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ee.features.BCAddon;
+import ee.addins.bc.BCAddon;
 import ee.features.EELimited;
 import ee.util.EEProxy;
 import ee.util.LocusRegistry;

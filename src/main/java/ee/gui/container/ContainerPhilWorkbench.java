@@ -1,5 +1,9 @@
 package ee.gui.container;
 
+import java.util.List;
+
+import ee.features.EELimited;
+import ee.gui.InventoryPhilWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -8,13 +12,15 @@ import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
 public class ContainerPhilWorkbench extends Container {
 
-	private InventoryCrafting craftMatrix = new InventoryCrafting(this, 3, 3);
+	private InventoryPhilWorkbench craftMatrix;
 	private IInventory craftResult = new InventoryCraftResult();
 	private World worldObj;
 
@@ -22,6 +28,8 @@ public class ContainerPhilWorkbench extends Container {
 	{
 		worldObj = invPlayer.player.worldObj;
 
+		craftMatrix = new InventoryPhilWorkbench(this, invPlayer.player.worldObj);
+		
 		//CraftingResult
 		this.addSlotToContainer(new SlotCrafting(invPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));
 
@@ -41,18 +49,15 @@ public class ContainerPhilWorkbench extends Container {
 
 		this.onCraftMatrixChanged(craftMatrix);
 	}
-
-	@Override
-	public void onCraftMatrixChanged(IInventory inv)
-	{
-		craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj));
-	}
-
+	
 	@Override
 	public void onContainerClosed(EntityPlayer player)
 	{
 		super.onContainerClosed(player);
-
+		if(EELimited.keepPhilInventory)
+		{
+			return;
+		}
 		if (!this.worldObj.isRemote)
 		{
 			for (int i = 0; i < 9; ++i)
@@ -65,6 +70,12 @@ public class ContainerPhilWorkbench extends Container {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void onCraftMatrixChanged(IInventory inv)
+	{
+		craftResult.setInventorySlotContents(0, CraftingManager.getInstance().findMatchingRecipe(craftMatrix, worldObj));
 	}
 
 	@Override
@@ -137,5 +148,4 @@ public class ContainerPhilWorkbench extends Container {
 	{
 		return slot.inventory != this.craftResult && super.func_94530_a(stack, slot);
 	}
-
 }

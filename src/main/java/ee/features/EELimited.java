@@ -27,6 +27,9 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
+import ee.addins.bc.BCAddon;
+import ee.addins.ic2.IC2Addon;
+import ee.addins.nei.NEIAddon;
 import ee.features.blocks.BlockAggregator;
 import ee.features.blocks.BlockAlchChest;
 import ee.features.blocks.BlockColoredAlchChest;
@@ -57,6 +60,7 @@ import ee.features.items.ItemDestructionCatalyst;
 import ee.features.items.ItemEE;
 import ee.features.items.ItemEvertide;
 import ee.features.items.ItemKleinStar;
+import ee.features.items.ItemMiniumStone;
 import ee.features.items.ItemPhilToolBase;
 import ee.features.items.ItemPhilToolFMP;
 import ee.features.items.ItemPhilosophersStone;
@@ -90,6 +94,8 @@ import ee.proxies.CommonProxy;
 import ee.util.AggregatorRegistry;
 import ee.util.EEProxy;
 import ee.util.LocusRegistry;
+import ee.wailacompat.ColorUtil;
+import ee.wailacompat.WailaAddon;
 import ic2.api.item.IC2Items;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -122,7 +128,7 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = "EELimitedR",name = "EELimitedR",version = "10")
+@Mod(modid = "EELimitedR",name = "EELimitedR",version = "beta 1.0.2",dependencies="after:WailaHarvestability;after:NotEnoughItems")
 public class EELimited {
 
 	public static EELimited instance;
@@ -173,6 +179,7 @@ public class EELimited {
     public static boolean cantPutAlchemyBag;
     public static boolean disableResource;
     public static boolean autoEject;
+    public static boolean keepPhilInventory;
     /**
      * Klein star damages
      */
@@ -211,6 +218,7 @@ public class EELimited {
     public static Item RM;
     public static Item RMPickaxe;
     public static Item destCatal;
+    public static Item miniumStone;
     /**
      * Projectiles
      */
@@ -263,6 +271,7 @@ public class EELimited {
     	PacketHandler.register();
     	proxy.registerKies();
     	proxy.registerClientOnlyEvents();
+    	ColorUtil.init();
     	if(FMLCommonHandler.instance().getSide().isClient())
     	{
     		EEProxy.Init(FMLClientHandler.instance().getClient(),this);
@@ -359,6 +368,7 @@ public class EELimited {
     	registerAchievements();
     	registerAggregatorSources();
     	registerLocusSources();
+    	proxy.registerNEIAddon();
     }
     public void registerLocusSources()
     {
@@ -417,6 +427,7 @@ public class EELimited {
     	NovaTNT = new BlockNovaTNT();
     	cAlchChest = new BlockColoredAlchChest();
     	destCatal = new ItemDestructionCatalyst();
+    	miniumStone = new ItemMiniumStone();
     }
     public void initArmors()
     {
@@ -553,6 +564,10 @@ public class EELimited {
     	{
     		PRAddon();
     	}
+    	if(Loader.isModLoaded("Waila"))
+    	{
+    		WailaAddon.register();
+    	}
     }
     /*
      * Repair Check
@@ -587,6 +602,7 @@ public class EELimited {
     	RMPickaxe.setHarvestLevel("pickaxe", 11);
     	DMBlock.setHarvestLevel("pickaxe",10);
     	AlchChest.setHarvestLevel("pickaxe",2);
+    	cAlchChest.setHarvestLevel("pickaxe",2);
     	RMBlock.setHarvestLevel("pickaxe", 11);
     }
     public void loadConfig()
@@ -598,10 +614,11 @@ public class EELimited {
     	noBats= config.getBoolean("noBats",config.CATEGORY_GENERAL,false,"No more bats!");
     	noTeleport= config.getBoolean("noTeleport",config.CATEGORY_GENERAL,false,"now Enderman can't teleport!");
     	dontCarry= config.getBoolean("noCarry",config.CATEGORY_GENERAL,false,"now Enderman can't carry blocks!");
-    	cantPutAlchemyBag = config.getBoolean("can'tPutAlchemyBags",config.CATEGORY_GENERAL,true,"if true,player will be not able to put Alchemy Bag into themselves");
+    	cantPutAlchemyBag = config.getBoolean("can'tPutAlchemyBags","inventory",true,"if true,player will be not able to put Alchemy Bag into themselves");
     	disableResource = config.getBoolean("disableResource",config.CATEGORY_GENERAL,false,"disable this mod's resource system(Unlimited magics!)");
     	autoEject = config.getBoolean("autoEject","misc",true,"If this option is true,Aggregator and Locus will eject their output automatically.(BuildCraft pipe and chests)");
     	cutDown = config.getBoolean("Cut Down","misc",true,"cut down from root");
+    	keepPhilInventory = config.getBoolean("keepPhilCraftingInventory", "inventory", true, "wether Philosopher's stone's crafting inventory keeps their contents or not.");
     	config.save();
     }
     public void registerAchievements()
@@ -961,6 +978,15 @@ public class EELimited {
 
         addRecipe(new FixRecipe(gs(item), list));
     }
+    public static List<ItemStack> copy(List<ItemStack> list)
+    {
+    	List<ItemStack> ret = new ArrayList<ItemStack>();
+    	for(ItemStack stack : list)
+    	{
+    		ret.add(stack);
+    	}
+    	return ret;
+    }
     public void addExchange(ItemStack dest, Object obj, int amount)
     {
         List<ItemStack> list = new ArrayList<ItemStack>();
@@ -969,11 +995,14 @@ public class EELimited {
         {
             list.add(gs(obj));
         }
-        list.add(gs(Phil));
-        if(list.size() > 9)
+        List<ItemStack> stackP = copy(list);
+        list.add(gs(miniumStone,1,-1));
+        stackP.add(gs(Phil));
+        if(stackP.size() > 9)
         {
         	return;
         }
+        addSRecipe(dest, stackP.toArray());
         addSRecipe(dest, list.toArray());
     }
     public void addExchange(ItemStack dest, Object obj, int amount,int phil)
@@ -984,14 +1013,17 @@ public class EELimited {
         {
             list.add(gs(obj));
         }
+        List<ItemStack> listP = copy(list);
         for(int i = 0;i < phil;i++)
         {
-        	list.add(gs(Phil));
+        	list.add(gs(miniumStone,1,-1));
+        	listP.add(gs(Phil));
         }
         if(list.size() > 9)
         {
         	return;
         }
+        addSRecipe(dest, listP.toArray());
         addSRecipe(dest, list.toArray());
     }
     public void addExchange(ItemStack dest, Object... objs)
@@ -1002,23 +1034,14 @@ public class EELimited {
         {
             list.add(gs(objs[i]));
         }
-        list.add(gs(Phil));
+        List<ItemStack> listP = copy(list);
+        list.add(gs(miniumStone,1,-1));
+        listP.add(gs(Phil));
         if(list.size() > 9)
         {
         	return;
         }
         addSRecipe(dest, list.toArray());
-    }
-    public List<ItemStack> getPhils(int count)
-    {
-        List<ItemStack> list = new ArrayList<ItemStack>();
-
-        for (int i = 0; i < count; i++)
-        {
-            list.add(gs(Phil));
-        }
-
-        return list;
     }
 
     public void addRingRecipe(Object obj, int count)
@@ -1026,9 +1049,13 @@ public class EELimited {
         for (int i = 0; i < count; i++)
         {
             ArrayList<ItemStack> list = new ArrayList<ItemStack>();
+            ArrayList<ItemStack> listP = new ArrayList<ItemStack>();
             list.add(gs(Phil));
+            listP.add(gs(miniumStone,1,-1));
             list.add(gs(obj, 1, i));
+            listP.add(gs(obj,1,i));
             addSRecipe(gs(obj, 1, (i + 1) % count), list.toArray());
+            addSRecipe(gs(obj, 1, (i + 1) % count), listP.toArray());
         }
     }
     public void addRingRecipe(Object[] objs)

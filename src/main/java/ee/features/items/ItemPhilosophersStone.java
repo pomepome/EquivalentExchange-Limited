@@ -7,13 +7,19 @@ import ee.features.items.interfaces.IChargeable;
 import ee.features.items.interfaces.IExtraFunction;
 import ee.features.items.interfaces.IProjectileShooter;
 import ee.features.tiles.TileEmc;
+import ee.gui.BagData;
+import ee.gui.PhilData;
 import ee.util.EEProxy;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFunction,IChargeable,IProjectileShooter
 {
+	
+	PhilData data;
+	
 	public ItemPhilosophersStone()
     {
         super(NameRegistry.Philo);
@@ -31,6 +37,19 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 	public void onExtraFunction(EntityPlayer p, ItemStack is)
 	{
 		p.openGui(EELimited.instance,EELimited.CRAFT,p.worldObj,(int)p.posX,(int)p.posY, (int)p.posZ);
+	}
+	@Override
+	public void onUpdate(ItemStack stack, World world, Entity entity, int par4, boolean par5)
+	{
+		if(entity instanceof EntityPlayer)
+		{
+			EntityPlayer p = (EntityPlayer)entity;
+			if(!world.isRemote)
+			{
+				data = getData(world);
+				data.markDirty();
+			}
+		}
 	}
 	@Override
 	public boolean shootProcectile(EntityPlayer player, ItemStack is) {
@@ -60,5 +79,28 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 	@Override
 	public int getChargeLevel(ItemStack is) {
 		return 0;
+	}
+	public PhilData getData(World world)
+	{
+		PhilData pData = null;
+		
+		pData = (PhilData)world.loadItemData(PhilData.class, "Phil");
+		if(pData == null)
+		{
+			pData = new PhilData("Phil");
+			pData.markDirty();
+			world.setItemData("Phil", pData);
+		}
+		
+		return pData;
+	}
+	public static PhilData getPhilData(ItemStack item, World world)
+	{
+		PhilData data = null;
+		if(item != null && item.getItem() instanceof ItemPhilosophersStone)
+		{
+			data = ((ItemPhilosophersStone)item.getItem()).getData(world);
+		}
+		return data;
 	}
 }

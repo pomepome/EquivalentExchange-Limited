@@ -1,7 +1,8 @@
-package ee.features;
+package ee.addins.bc;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.transport.IPipeTile;
+import ee.features.EELimited;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;

@@ -2,6 +2,9 @@ package ee.features.blocks;
 
 import java.util.Random;
 
+import ee.features.EELimited;
+import ee.features.tiles.TileDirection;
+import ee.util.EEProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -12,9 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import ee.features.EELimited;
-import ee.features.tiles.TileDirection;
-import ee.util.EEProxy;
 
 public abstract class BlockDirection extends BlockContainer
 {
@@ -58,8 +58,7 @@ public abstract class BlockDirection extends BlockContainer
 
 		for (int i = 0; i < tile.getSizeInventory(); i++)
 		{
-			ItemStack stack = tile.getStackInSlot(i);
-
+			ItemStack stack = tile.getStackInSlotOnClosing(i);
 			if (stack == null)
 			{
 				continue;

@@ -69,6 +69,10 @@ public class TileEntityColoredAlchChest extends TileDirection implements ISidedI
 		}
 		return null;
 	}
+	public ItemStack getStackInSlotWhenBagNull(int slot)
+	{
+		return mainInventory[slot];
+	}
 	@Override
 	public ItemStack getStackInSlot(int slot)
 	{

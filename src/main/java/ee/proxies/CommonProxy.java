@@ -10,4 +10,5 @@ public class CommonProxy {
 	public void registerRenderers() {}
 	public void registerKies(){}
 	public void registerClientOnlyEvents(){}
+	public void registerNEIAddon(){}
 }
