@@ -5,7 +5,7 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
-import ee.addins.nei.NEIAddon;
+import ee.addons.nei.NEIAddon;
 import ee.features.EELimited;
 import ee.features.KeyRegistry;
 import ee.features.entities.EntityLavaProjectile;

@@ -1,10 +1,15 @@
 package ee.network;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import ee.addons.extrautil.AddonExtraUtilities;
+import ee.features.EELimited;
+import ee.util.EEProxy;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 public class PacketSetFlying implements IMessageHandler<PacketSetFlying, IMessage>, IMessage
 {
@@ -26,11 +31,12 @@ public class PacketSetFlying implements IMessageHandler<PacketSetFlying, IMessag
 	@Override
 	public IMessage onMessage(PacketSetFlying message, MessageContext ctx)
 	{
-		Minecraft.getMinecraft().thePlayer.capabilities.allowFlying = message.flag;
+		EntityPlayer p = Minecraft.getMinecraft().thePlayer;
+		p.capabilities.allowFlying = message.flag;
 
 		if (!flag)
 		{
-			Minecraft.getMinecraft().thePlayer.capabilities.isFlying = false;
+			p.capabilities.isFlying = false;
 		}
 		return null;
 	}

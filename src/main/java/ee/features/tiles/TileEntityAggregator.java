@@ -3,7 +3,7 @@ package ee.features.tiles;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ee.addins.bc.BCAddon;
+import ee.addons.bc.BCAddon;
 import ee.features.EELimited;
 import ee.util.AggregatorRegistry;
 import ee.util.EEProxy;
@@ -227,7 +227,7 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 	}
 	private void sortInventory()
 	{
-		ItemStack[] sortedOutput = EEProxy.sort(getOutputCopy());
+		ItemStack[] sortedOutput = EEProxy.sort(getOutputCopy(),false);
 		for(int i = 0;i < 5;i++)
 		{
 			inventory[9 - i] = null;

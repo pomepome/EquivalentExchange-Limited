@@ -15,9 +15,9 @@ public class ComparatorItemInfo implements Comparator<ItemInfo> {
 		int id2 = Item.getIdFromItem(i2);
 		if(id1 == id2)
 		{
-			return 0;
+			return o1.stack.getItemDamage() - o2.stack.getItemDamage();
 		}
-		return id1 > id2 ? 1 : -1;
+		return id1 - id2;
 	}
 
 }

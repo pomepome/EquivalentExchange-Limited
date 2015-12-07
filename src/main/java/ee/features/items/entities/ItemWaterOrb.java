@@ -7,6 +7,7 @@ public class ItemWaterOrb extends ItemEE {
 
 	public ItemWaterOrb() {
 		super(NameRegistry.WaterOrb);
+		this.setCreativeTab(null);
 	}
 
 }

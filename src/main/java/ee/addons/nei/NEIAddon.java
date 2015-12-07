@@ -1,4 +1,4 @@
-package ee.addins.nei;
+package ee.addons.nei;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

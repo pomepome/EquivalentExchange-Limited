@@ -3,7 +3,7 @@ package ee.features.tiles;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ee.addins.bc.BCAddon;
+import ee.addons.bc.BCAddon;
 import ee.features.EELimited;
 import ee.util.EEProxy;
 import ee.util.LocusRegistry;
@@ -91,7 +91,7 @@ public class TileEntityLocus extends TileDirection implements ISidedInventory
 	}
 	public void sortInventory()
 	{
-		ItemStack[] sorted = EEProxy.sort(getInputCopy());
+		ItemStack[] sorted = EEProxy.sort(getInputCopy(),false);
 		for(int i = 0;i < 9;i++)
 		{
 			inventory[i] = null;

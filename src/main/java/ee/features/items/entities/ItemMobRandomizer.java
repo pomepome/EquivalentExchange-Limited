@@ -8,6 +8,7 @@ public class ItemMobRandomizer extends ItemEE {
 	public ItemMobRandomizer()
 	{
 		super(NameRegistry.Randomizer);
+		this.setCreativeTab(null);
 	}
 
 }

@@ -1,4 +1,4 @@
-package ee.addins.bc;
+package ee.addons.bc;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.transport.IPipeTile;

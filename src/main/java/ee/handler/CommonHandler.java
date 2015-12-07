@@ -6,8 +6,10 @@ import static ee.util.EEProxy.*;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
+import ee.addons.extrautil.AddonExtraUtilities;
 import ee.features.EELimited;
 import ee.features.PlayerTimers;
+import ee.util.EEProxy;
 import ee.util.Timer1s;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -19,6 +21,8 @@ public class CommonHandler
 	@SubscribeEvent
 	public void onPlayerUpdate(TickEvent.PlayerTickEvent e) throws Exception
 	{
+		PlayerChecks.update();
+		Timer1s.Tick();
 		EntityPlayer p = e.player;
 		if(!hasStarted)
 		{
@@ -27,6 +31,11 @@ public class CommonHandler
 		}
 		if(!p.worldObj.isRemote)
 		{
+			return;
+		}
+		if(EELimited.loadEU && AddonExtraUtilities.isAngelEnabled(p))
+		{
+			p.capabilities.allowFlying = true;
 			return;
 		}
 		if(p.capabilities.isCreativeMode)
@@ -52,8 +61,6 @@ public class CommonHandler
 			p.capabilities.allowFlying = false;
 			p.capabilities.isFlying = false;
 		}
-		PlayerChecks.update();
-		Timer1s.Tick();
 	}
 	@SubscribeEvent
 	public void onCrafted(PlayerEvent.ItemCraftedEvent e)

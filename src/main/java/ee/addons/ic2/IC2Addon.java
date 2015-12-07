@@ -1,4 +1,4 @@
-package ee.addins.ic2;
+package ee.addons.ic2;
 
 import static ee.features.Level.*;
 

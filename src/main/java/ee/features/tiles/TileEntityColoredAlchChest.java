@@ -1,13 +1,20 @@
 package ee.features.tiles;
 
+import java.util.List;
+
 import ee.features.EELimited;
+import ee.features.blocks.BlockColoredAlchChest;
 import ee.features.items.ItemAlchemyBag;
+import ee.features.items.ItemEE;
 import ee.gui.BagData;
+import ee.util.EEProxy;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.AxisAlignedBB;
 
 public class TileEntityColoredAlchChest extends TileDirection implements ISidedInventory
 {
@@ -123,7 +130,8 @@ public class TileEntityColoredAlchChest extends TileDirection implements ISidedI
 	public void updateEntity()
 	{
 		super.updateEntity();
-
+		markDirty();
+		updateChest();
 		if(bag == null)
 		{
 			bag = getBagData();
@@ -136,9 +144,95 @@ public class TileEntityColoredAlchChest extends TileDirection implements ISidedI
 				bag.markDirty();
 			}
 		}
+		if (this.worldObj.isRemote)
+		{
+			ItemStack rTalisman = EEProxy.getStackFromInv(this, new ItemStack(EELimited.Repair));
 
-		updateChest();
-		markDirty();
+			if (rTalisman != null)
+			{
+				byte coolDown = rTalisman.stackTagCompound.getByte("Cooldown");
+
+				if (coolDown > 0)
+				{
+					rTalisman.stackTagCompound.setByte("Cooldown", (byte) (coolDown - 1));
+				}
+				else
+				{
+					boolean hasAction = false;
+
+					for (int i = 0; i < 104; i++)
+					{
+						ItemStack invStack = this.getStackInSlot(i);
+
+						if (invStack == null || invStack.getItem() instanceof ItemEE)
+						{
+							continue;
+						}
+
+						if (!invStack.getHasSubtypes() && invStack.getMaxDamage() != 0 && invStack.getItemDamage() > 0)
+						{
+							invStack.setItemDamage(invStack.getItemDamage() - 1);
+							this.setInventorySlotContents(i, invStack);
+
+							if (!hasAction)
+							{
+								hasAction = true;
+							}
+						}
+					}
+
+					if (hasAction)
+					{
+						rTalisman.stackTagCompound.setByte("Cooldown", (byte) 19);
+					}
+				}
+			}
+		}
+
+		ItemStack blackHoleBand = EEProxy.getStackFromInv(this, new ItemStack(EELimited.BHR, 1, 1));
+
+		if (blackHoleBand != null)
+		{
+			AxisAlignedBB box = AxisAlignedBB.getBoundingBox(this.xCoord - 5, this.yCoord - 5, this.zCoord - 5, this.xCoord + 5, this.yCoord + 5, this.zCoord + 5);
+
+			List<EntityItem> itemList = this.worldObj.getEntitiesWithinAABB(EntityItem.class, box);
+			for (EntityItem item : itemList)
+			{
+				if (getDistanceFrom(item.posX, item.posY, item.posZ) <= 1f)
+				{
+					if (!this.worldObj.isRemote)
+					{
+
+						if (EEProxy.hasSpace(this, item.getEntityItem()))
+						{
+							ItemStack remain = EEProxy.pushStackInInv(this, item.getEntityItem(),0,104);
+							worldObj.playSoundEffect(item.posX,item.posY,item.posZ,"random.pop", 0.2F, ((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+							if (remain == null)
+							{
+								item.setDead();
+							}
+						}
+					}
+				}
+				else
+				{
+					double d1 = (this.xCoord - item.posX);
+					double d2 = (this.yCoord - item.posY);
+					double d3 = (this.zCoord - item.posZ);
+					double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+
+					item.motionX += d1 / d4 * 0.1D;
+					item.motionY += d2 / d4 * 0.1D;
+					item.motionZ += d3 / d4 * 0.1D;
+
+					item.moveEntity(item.motionX, item.motionY, item.motionZ);
+				}
+			}
+		}
+	}
+	public BlockColoredAlchChest getChest()
+	{
+		return (BlockColoredAlchChest)worldObj.getBlock(xCoord, yCoord, zCoord);
 	}
 	private void updateChest() {
 		if (++ticksSinceSync % 20 * 4 == 0)

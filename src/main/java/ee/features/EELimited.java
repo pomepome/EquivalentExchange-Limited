@@ -27,9 +27,10 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameData;
 import cpw.mods.fml.common.registry.GameRegistry;
-import ee.addins.bc.BCAddon;
-import ee.addins.ic2.IC2Addon;
-import ee.addins.nei.NEIAddon;
+import ee.addons.bc.BCAddon;
+import ee.addons.extrautil.AddonExtraUtilities;
+import ee.addons.ic2.IC2Addon;
+import ee.addons.nei.NEIAddon;
 import ee.features.blocks.BlockAggregator;
 import ee.features.blocks.BlockAlchChest;
 import ee.features.blocks.BlockColoredAlchChest;
@@ -247,6 +248,7 @@ public class EELimited {
      */
     public static boolean loadFMP;
     public static boolean loadBC;
+    public static boolean loadEU;
     /**
      * Armors
      */
@@ -569,6 +571,11 @@ public class EELimited {
     	{
     		WailaAddon.register();
     	}
+    	if(Loader.isModLoaded("ExtraUtilities"))
+    	{
+    		AddonExtraUtilities.load();
+    		loadEU = true;
+    	}
     }
     /*
      * Repair Check
@@ -624,8 +631,8 @@ public class EELimited {
     }
     public void registerAchievements()
     {
-    	getPhil = new Achievement("getPhil","getPhil",0,0,Phil,AchievementList.portal);
-    	getDM = new Achievement("getDM","getDM",2,1,DM,getPhil);
+    	getPhil = new Achievement("getPhil","getPhil",0,0,Phil,AchievementList.portal).registerStat();
+    	getDM = new Achievement("getDM","getDM",2,1,DM,getPhil).registerStat();
     	AchievementPage page = new AchievementPage("EELimited",getPhil,getDM);
     	AchievementPage.registerAchievementPage(page);
     }

@@ -5,8 +5,10 @@ import ee.features.items.ItemEE;
 
 public class ItemLavaOrb extends ItemEE {
 
-	public ItemLavaOrb() {
+	public ItemLavaOrb()
+	{
 		super(NameRegistry.LavaOrb);
+		this.setCreativeTab(null);
 	}
 
 }

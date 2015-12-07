@@ -18,11 +18,9 @@ public class PlayerChecks
 
 	public static void update()
 	{
-		Iterator<EntityPlayerMP> iter = fireChecks.iterator();
-
-		while (iter.hasNext())
+		for(int i = 0;i < fireChecks.size();i++)
 		{
-			EntityPlayerMP player = iter.next();
+			EntityPlayerMP player = fireChecks.get(i);
 
 			if (!isPlayerFireImmune(player))
 			{
@@ -31,7 +29,7 @@ public class PlayerChecks
 					EEProxy.setEntityImmuneToFire(player, false);
 				}
 
-				iter.remove();
+				fireChecks.remove(i);
 				EELimited.instance.log.debug("Removed " + player.getCommandSenderName() + " from fire checks.");
 			}
 		}
@@ -48,13 +46,11 @@ public class PlayerChecks
 	{
 		if (fireChecks.contains(player))
 		{
-			Iterator<EntityPlayerMP> iterator = fireChecks.iterator();
-
-			while (iterator.hasNext())
+			for(int i = 0;i < fireChecks.size();i++)
 			{
-				if (iterator.next().equals(player))
+				if (fireChecks.get(i).equals(player))
 				{
-					iterator.remove();
+					fireChecks.remove(i);
 					EELimited.instance.log.debug("Removed " + player + " from fire checks.");
 					return;
 				}

@@ -4,23 +4,27 @@ import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import ee.util.EEProxy;
+import ee.util.EnumSounds;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketSound implements IMessage, IMessageHandler<PacketSound, IMessage>
 {
+	int sound;
 	float volume,pitch;
 	
 	public PacketSound(){}
-	public PacketSound(float soundVolume,float soundPitch)
+	public PacketSound(EnumSounds eSound,float soundVolume,float soundPitch)
 	{
 		volume = soundVolume;
 		pitch = soundPitch;
+		sound = eSound.getID();
 	}
 	
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
+		sound = buf.readInt();
 		volume = buf.readFloat();
 		pitch = buf.readFloat();
 	}
@@ -28,6 +32,7 @@ public class PacketSound implements IMessage, IMessageHandler<PacketSound, IMess
 	@Override
 	public void toBytes(ByteBuf buf)
 	{
+		buf.writeInt(sound);
 		buf.writeFloat(volume);
 		buf.writeFloat(pitch);
 	}
@@ -36,7 +41,7 @@ public class PacketSound implements IMessage, IMessageHandler<PacketSound, IMess
 	public IMessage onMessage(PacketSound message, MessageContext ctx)
 	{
 		EntityPlayer p = ctx.getServerHandler().playerEntity;
-		EEProxy.playSoundAtPlayer("random.break", p, message.volume, message.pitch);
+		EEProxy.playSoundAtPlayer(EnumSounds.getFromID(message.sound).getPath(), p, message.volume, message.pitch);
 		return null;
 	}
 

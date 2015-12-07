@@ -1,6 +1,12 @@
 package ee.util;
 
-import static net.minecraftforge.common.util.ForgeDirection.*;
+import static net.minecraftforge.common.util.ForgeDirection.DOWN;
+import static net.minecraftforge.common.util.ForgeDirection.EAST;
+import static net.minecraftforge.common.util.ForgeDirection.NORTH;
+import static net.minecraftforge.common.util.ForgeDirection.SOUTH;
+import static net.minecraftforge.common.util.ForgeDirection.UNKNOWN;
+import static net.minecraftforge.common.util.ForgeDirection.UP;
+import static net.minecraftforge.common.util.ForgeDirection.WEST;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -177,7 +183,15 @@ public class EEProxy
 			default : return UNKNOWN;
 		}
 	}
-    public static ItemStack[] sort(ItemStack[] inventory)
+	public static void clearInventory(IInventory inv)
+	{
+		for(int i = 0;i < inv.getSizeInventory();i++)
+		{
+			inv.setInventorySlotContents(i, null);
+		}
+		inv.markDirty();
+	}
+    public static ItemStack[] sort(ItemStack[] inventory,boolean optSize)
     {
     	List<ItemStack> list = new ArrayList<ItemStack>();
     	List<ItemInfo> itemInfos = new ArrayList<ItemInfo>();
@@ -219,6 +233,16 @@ public class EEProxy
     			{
     				list.add(new ItemStack(key.getItem(),size,key.getItemDamage()));
     				size = 0;
+    			}
+    		}
+    	}
+    	if(optSize)
+    	{
+    		if(list.size() < inventory.length)
+    		{
+    			for(int i = list.size();i < inventory.length;i++)
+    			{
+    				list.add(null);
     			}
     		}
     	}
@@ -447,9 +471,41 @@ public class EEProxy
 		}
 		return false;
 	}
-    public static ItemStack pushStackInInv(IInventory inv, ItemStack stack, int low_limit)
+	public static ItemStack pushStackInInv(IInventory inv, ItemStack stack, int low_limit)
 	{
 		for (int i = low_limit; i < inv.getSizeInventory(); i++)
+		{
+			ItemStack invStack = inv.getStackInSlot(i);
+
+			if (invStack == null)
+			{
+				inv.setInventorySlotContents(i, stack);
+				return null;
+			}
+
+			if (areItemStacksEqual(stack, invStack) && invStack.stackSize < invStack.getMaxStackSize())
+			{
+				int remaining = invStack.getMaxStackSize() - invStack.stackSize;
+
+				if (remaining >= stack.stackSize)
+				{
+					invStack.stackSize += stack.stackSize;
+					inv.setInventorySlotContents(i, invStack);
+					inv.markDirty();
+					return null;
+				}
+
+				invStack.stackSize += remaining;
+				inv.setInventorySlotContents(i, invStack);
+				stack.stackSize -= remaining;
+			}
+		}
+
+		return stack.copy();
+	}
+	public static ItemStack pushStackInInv(IInventory inv, ItemStack stack, int low_limit,int high_limit)
+	{
+		for (int i = low_limit; i < high_limit; i++)
 		{
 			ItemStack invStack = inv.getStackInSlot(i);
 
@@ -771,6 +827,17 @@ public class EEProxy
     	p.inventory.markDirty();
     	p.inventoryContainer.detectAndSendChanges();
     }
+    public static boolean basicAreStacksEqualWide(ItemStack stack1, Item item)
+	{
+    	if(stack1 != null)
+    	{
+    		return stack1.getItem() == item;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+	}
     public static boolean basicAreStacksEqual(ItemStack stack1, ItemStack stack2)
 	{
 		return (stack1.getItem() == stack2.getItem()) && (stack1.getItemDamage() == stack2.getItemDamage());
@@ -785,8 +852,14 @@ public class EEProxy
 			{
 				continue;
 			}
-
-			if (basicAreStacksEqual(stack, s))
+			if(stack.getItemDamage() > 10000)
+			{
+				if(basicAreStacksEqualWide(s, stack.getItem()))
+				{
+					return s;
+				}
+			}
+			else if (basicAreStacksEqual(stack, s))
 			{
 				return s;
 			}
@@ -803,8 +876,14 @@ public class EEProxy
 			{
 				continue;
 			}
-
-			if (basicAreStacksEqual(stack, s))
+			if(stack.getItemDamage() > 10000)
+			{
+				if(basicAreStacksEqualWide(s, stack.getItem()))
+				{
+					return s;
+				}
+			}
+			else if (basicAreStacksEqual(stack, s))
 			{
 				return s;
 			}
@@ -1098,6 +1177,7 @@ public class EEProxy
 	private static void registerFuels()
 	{
 		registerFuelEMC(Items.redstone,4);
+		registerFuelEMC(Items.coal,4);
 		registerFuelEMC(Items.glowstone_dust,16);
 		registerFuelEMC(Items.gunpowder,48);
 	}
