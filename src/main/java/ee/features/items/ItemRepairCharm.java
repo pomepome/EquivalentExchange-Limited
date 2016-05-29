@@ -43,7 +43,7 @@ public class ItemRepairCharm extends ItemEEFunctional
 		{
 			return c == m - 1;
 		}
-		else if(c >= (m / covStack.stackSize))
+		else if(c >= (m - m / covStack.stackSize))
 		{
 			return true;
 		}

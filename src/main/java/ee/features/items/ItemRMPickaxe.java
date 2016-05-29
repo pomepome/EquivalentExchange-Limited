@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 
 public class ItemRMPickaxe extends ItemEETool
 {
-    public boolean skip = false;
 
     public ItemRMPickaxe()
     {
@@ -219,11 +218,10 @@ public class ItemRMPickaxe extends ItemEETool
         	return false;
         }
         int metadata = par3World.getBlockMetadata(par4, par5, par6);
-        skip = !skip;
 
-        if (skip)
+        if(par3World.isRemote)
         {
-            return true;
+        	return true;
         }
 
         if (EELimited.Debug)

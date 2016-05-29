@@ -96,6 +96,22 @@ public class ItemAlchemyBag extends ItemEEFunctional {
 				}
 			}
 		}
+		if(EEItems.Ever != null)
+		{
+			ItemStack ever = EEProxy.getStackFromInv(data.inventory, new ItemStack(EEItems.Ever));
+			if(ever != null && p.getAir() < 300)
+	        {
+				p.setAir(300);
+			}
+		}
+		if(EEItems.Volc != null)
+		{
+			ItemStack volc = EEProxy.getStackFromInv(data.inventory, new ItemStack(EEItems.Volc));
+			if(volc != null)
+			{
+				EEProxy.setEntityImmuneToFire(p, true);
+			}
+		}
 		if(EEItems.Repair != null)
 		{
 			ItemStack rTalisman = EEProxy.getStackFromInv(data.inventory, new ItemStack(EEItems.Repair));
