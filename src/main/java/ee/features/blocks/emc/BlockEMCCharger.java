@@ -23,6 +23,7 @@ public class BlockEMCCharger extends BlockContainer
 		super(Material.rock);
 		this.setCreativeTab(EELimited.TabEE).setBlockName("EMCCharger").setBlockTextureName("cobblestone").setHardness(1000f);
 		GameRegistry.registerBlock(this,"EMCCharger");
+		this.setLightLevel(0);
 	}
 
 	@Override

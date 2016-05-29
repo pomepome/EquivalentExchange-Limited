@@ -16,6 +16,7 @@ public class ContainerAggregator extends Container
 	TileEntityAggregator tile;
 
 	double lastProgress;
+	int lastLightLevel;
 
 	public ContainerAggregator(TileEntityAggregator agg, EntityPlayer p)
 	{
@@ -50,6 +51,7 @@ public class ContainerAggregator extends Container
     {
 		super.addCraftingToCrafters(crafting);
 		crafting.sendProgressBarUpdate(this, 0, (int)(tile.progress * 10000));
+		crafting.sendProgressBarUpdate(this, 1, tile.savedLightValue);
     }
 	public void detectAndSendChanges()
     {
@@ -63,9 +65,14 @@ public class ContainerAggregator extends Container
             {
                 icrafting.sendProgressBarUpdate(this, 0, (int)(this.tile.progress * 10000));
             }
+            if (this.lastLightLevel != tile.savedLightValue)
+            {
+            	icrafting.sendProgressBarUpdate(this, 1, lastLightLevel);
+            }
         }
 
         this.lastProgress = this.tile.progress;
+        this.lastLightLevel = this.tile.savedLightValue;
     }
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -74,6 +81,10 @@ public class ContainerAggregator extends Container
         if (ID == 0)
         {
             this.tile.progress = (double)value / 10000;
+        }
+        if (ID == 1)
+        {
+        	this.tile.savedLightValue = value;
         }
     }
 	@Override

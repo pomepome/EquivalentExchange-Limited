@@ -1,23 +1,35 @@
 package ee.network;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
+import ee.util.EEProxy;
 
 public class PacketHandler
 {
 	private final static int MAX_PACKET = 256;
+	private static int next_ID;
 	private static final SimpleNetworkWrapper HANDLER = NetworkRegistry.INSTANCE.newSimpleChannel("eelimited");
 	public static void register()
 	{
-		HANDLER.registerMessage(PacketKeyInput.class,PacketKeyInput.class,0,Side.SERVER);
-		HANDLER.registerMessage(PacketOrientationSync.class,PacketOrientationSync.class,1,Side.CLIENT);
-		HANDLER.registerMessage(PacketSpawnParticle.class,PacketSpawnParticle.class,2,Side.CLIENT);
-		HANDLER.registerMessage(PacketSetFlying.class,PacketSetFlying.class,3,Side.CLIENT);
-		HANDLER.registerMessage(PacketSound.class,PacketSound.class,4,Side.SERVER);
+		HANDLER.registerMessage(PacketKeyInput.class,PacketKeyInput.class,getNextID(),Side.SERVER);
+		HANDLER.registerMessage(PacketSound.class,PacketSound.class,getNextID(),Side.SERVER);
+		HANDLER.registerMessage(PacketChatMessage.class,PacketChatMessage.class,getNextID(),Side.SERVER);
+		HANDLER.registerMessage(PacketAlchChestUpdate.class,PacketAlchChestUpdate.class,getNextID(),Side.SERVER);
+		if(EEProxy.getSide().isClient())
+		{
+			HANDLER.registerMessage(PacketOrientationSync.class,PacketOrientationSync.class,getNextID(),Side.CLIENT);
+			HANDLER.registerMessage(PacketSpawnParticle.class,PacketSpawnParticle.class,getNextID(),Side.CLIENT);
+			HANDLER.registerMessage(PacketSetFlying.class,PacketSetFlying.class,getNextID(),Side.CLIENT);
+		}
+	}
+	public static int getNextID()
+	{
+		return ++next_ID;
 	}
 	/**
 	 * Sends a packet to the server.<br>

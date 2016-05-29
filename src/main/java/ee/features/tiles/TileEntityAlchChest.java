@@ -2,16 +2,21 @@ package ee.features.tiles;
 
 import java.util.List;
 
+import ee.features.EEBlocks;
+import ee.features.EEItems;
+import ee.features.items.ItemEE;
+import ee.network.PacketAlchChestUpdate;
+import ee.network.PacketChatMessage;
+import ee.network.PacketHandler;
+import ee.util.EEProxy;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
-import ee.features.EELimited;
-import ee.features.items.ItemEE;
-import ee.util.EEProxy;
 
 public class TileEntityAlchChest extends TileDirection implements IInventory
 {
@@ -21,7 +26,8 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 	public int numPlayersUsing;
 	private int ticksSinceSync;
 
-	public int lightLevel;
+	public boolean isEETorchOn;
+	private boolean prevEETorchOn;
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
@@ -87,14 +93,17 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 			{
 				stack = stack.splitStack(var2);
 				if (stack.stackSize == 0)
+				{
 					inventory[var1] = null;
+				}
 			}
 		}
 		return stack;
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
+	public ItemStack getStackInSlotOnClosing(int slot)
+	{
 		if (inventory[slot] != null)
 		{
 			ItemStack stack = inventory[slot];
@@ -108,12 +117,7 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 	public void setInventorySlotContents(int slot, ItemStack stack)
 	{
 		inventory[slot] = stack;
-
-		if (stack != null && stack.stackSize > this.getInventoryStackLimit())
-		{
-			stack.stackSize = this.getInventoryStackLimit();
-		}
-
+		this.onInventoryChanged();
 		this.markDirty();
 	}
 
@@ -133,7 +137,9 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 	}
 
 	@Override
-	public void markDirty() {
+	public void markDirty()
+	{
+		super.markDirty();
 	}
 
 	@Override
@@ -156,14 +162,14 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 	public void openInventory()
 	{
 		++numPlayersUsing;
-		worldObj.addBlockEvent(xCoord, yCoord, zCoord, EELimited.AlchChest, 1, numPlayersUsing);
+		worldObj.addBlockEvent(xCoord, yCoord, zCoord, EEBlocks.AlchChest, 1, numPlayersUsing);
 	}
 
 	@Override
 	public void closeInventory()
 	{
 		--numPlayersUsing;
-		worldObj.addBlockEvent(xCoord, yCoord, zCoord, EELimited.AlchChest, 1, numPlayersUsing);
+		worldObj.addBlockEvent(xCoord, yCoord, zCoord, EEBlocks.AlchChest, 1, numPlayersUsing);
 	}
 
 	@Override
@@ -174,12 +180,32 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 	public void updateEntity()
 	{
 		super.updateEntity();
-
-		if (++ticksSinceSync % 20 * 4 == 0)
+		updateChest();
+		updateRelic();
+	}
+	private void onInventoryChanged()
+	{
+		if(EEBlocks.EETorch == null)
 		{
-			worldObj.addBlockEvent(xCoord, yCoord, zCoord, EELimited.AlchChest, 1, numPlayersUsing);
+			return;
 		}
-
+		isEETorchOn = EEProxy.getStackFromInv(inventory, new ItemStack(EEBlocks.EETorch)) != null;
+		if(isEETorchOn != prevEETorchOn)
+		{
+			prevEETorchOn = isEETorchOn;
+			PacketHandler.sendToServer(new PacketAlchChestUpdate(xCoord, yCoord, zCoord));
+		}
+	}
+	private void updateChest()
+	{
+		if (++ticksSinceSync % 20 == 0)
+		{
+			worldObj.addBlockEvent(xCoord, yCoord, zCoord, EEBlocks.AlchChest, 1, numPlayersUsing);
+		}
+		if(ticksSinceSync % 2 == 0)
+		{
+			onInventoryChanged();
+		}
 		prevLidAngle = lidAngle;
 		float angleIncrement = 0.1F;
 		double adjustedXCoord, adjustedZCoord;
@@ -221,94 +247,93 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 				lidAngle = 0.0F;
 			}
 		}
-
+	}
+	private void updateRelic()
+	{
 		if (!this.worldObj.isRemote)
 		{
-			ItemStack rTalisman = EEProxy.getStackFromInv(this, new ItemStack(EELimited.Repair));
-
-			if (rTalisman != null)
+			if(EEItems.Repair != null)
 			{
-				byte coolDown = rTalisman.stackTagCompound.getByte("Cooldown");
+				ItemStack rTalisman = EEProxy.getStackFromInv(this, new ItemStack(EEItems.Repair));
 
-				if (coolDown > 0)
+				if (rTalisman != null)
 				{
-					rTalisman.stackTagCompound.setByte("Cooldown", (byte) (coolDown - 1));
-				}
-				else
-				{
-					boolean hasAction = false;
+						byte coolDown = rTalisman.stackTagCompound.getByte("Cooldown");
 
-					for (int i = 0; i < 104; i++)
-					{
-						ItemStack invStack = inventory[i];
-
-						if (invStack == null || invStack.getItem() instanceof ItemEE)
+						if (coolDown > 0)
 						{
-							continue;
+							rTalisman.stackTagCompound.setByte("Cooldown", (byte) (coolDown - 1));
 						}
-
-						if (!invStack.getHasSubtypes() && invStack.getMaxDamage() != 0 && invStack.getItemDamage() > 0)
+						else
 						{
-							invStack.setItemDamage(invStack.getItemDamage() - 1);
-							inventory[i] = invStack;
+							boolean hasAction = false;
 
-							if (!hasAction)
+							for (int i = 0; i < 104; i++)
 							{
-								hasAction = true;
+								ItemStack invStack = this.getStackInSlot(i);
+
+								if (invStack == null || invStack.getItem() instanceof ItemEE)
+								{
+									continue;
+								}
+
+								if (!invStack.getHasSubtypes() && invStack.getMaxDamage() != 0 && invStack.getItemDamage() > 0)
+								{
+									invStack.setItemDamage(invStack.getItemDamage() - 1);
+									this.setInventorySlotContents(i, invStack);
+
+									if (!hasAction)
+									{
+										hasAction = true;
+									}
+								}
 							}
-						}
-					}
 
-					if (hasAction)
-					{
-						rTalisman.stackTagCompound.setByte("Cooldown", (byte) 19);
-					}
-				}
-			}
-		}
-
-		ItemStack blackHoleBand = EEProxy.getStackFromInv(this, new ItemStack(EELimited.BHR, 1, 1));
-
-		if (blackHoleBand != null)
-		{
-			AxisAlignedBB box = AxisAlignedBB.getBoundingBox(this.xCoord - 5, this.yCoord - 5, this.zCoord - 5, this.xCoord + 5, this.yCoord + 5, this.zCoord + 5);
-
-			List<EntityItem> itemList = this.worldObj.getEntitiesWithinAABB(EntityItem.class, box);
-			for (EntityItem item : itemList)
-			{
-				if (getDistanceFrom(item.posX, item.posY, item.posZ) <= 1f)
-				{
-					if (!this.worldObj.isRemote)
-					{
-
-						if (EEProxy.hasSpace(this, item.getEntityItem()))
-						{
-							ItemStack remain = EEProxy.pushStackInInv(this, item.getEntityItem());
-							worldObj.playSoundEffect(item.posX,item.posY,item.posZ,"random.pop", 0.2F, ((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-							if (remain == null)
+							if (hasAction)
 							{
-								item.setDead();
+								rTalisman.stackTagCompound.setByte("Cooldown", (byte) 19);
 							}
 						}
 					}
 				}
-				else
+				if(EEItems.BHR != null)
 				{
-					double d1 = (this.xCoord - item.posX);
-					double d2 = (this.yCoord - item.posY);
-					double d3 = (this.zCoord - item.posZ);
-					double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+					ItemStack blackHoleBand = EEProxy.getStackFromInv(this, new ItemStack(EEItems.BHR, 1, 1));
 
-					item.motionX += d1 / d4 * 0.1D;
-					item.motionY += d2 / d4 * 0.1D;
-					item.motionZ += d3 / d4 * 0.1D;
+					if (blackHoleBand != null)
+					{
+						AxisAlignedBB box = AxisAlignedBB.getBoundingBox(this.xCoord - 5, this.yCoord - 5, this.zCoord - 5, this.xCoord + 5, this.yCoord + 5, this.zCoord + 5);
 
-					item.moveEntity(item.motionX, item.motionY, item.motionZ);
+						List<EntityItem> itemList = this.worldObj.getEntitiesWithinAABB(EntityItem.class, box);
+						for (EntityItem item : itemList)
+						{
+							if (getDistanceFrom(item.posX, item.posY, item.posZ) <= 1.0f)
+							{
+								PacketHandler.sendToServer(new PacketChatMessage("Picked up "+ item.getEntityItem().getDisplayName()));
+								if (EEProxy.hasSpace(this, item.getEntityItem()))
+								{
+									ItemStack remain = EEProxy.pushStackInInv(this, item.getEntityItem());
+									worldObj.playSoundEffect(item.posX,item.posY,item.posZ,"random.pop", 0.2F, ((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+									if (remain == null)
+									{
+										item.setDead();
+									}
+								}
+							}
+							else
+							{
+								double d1 = (this.xCoord - item.posX);
+								double d2 = (this.yCoord - item.posY);
+								double d3 = (this.zCoord - item.posZ);
+								double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+
+								item.motionX += d1 / d4 * 0.03D;
+								item.motionY += d2 / d4 * 0.03D;
+								item.motionZ += d3 / d4 * 0.03D;
+							}
+						}
+					}
 				}
-			}
 		}
-		ItemStack torch = EEProxy.getStackFromInv(this,new ItemStack(EELimited.EETorch));
-		lightLevel = (torch != null) ? 15 : 0;
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 }

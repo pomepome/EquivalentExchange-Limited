@@ -1,4 +1,4 @@
-package ee.gui;
+package ee.handler;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 import ee.features.EELimited;
@@ -9,6 +9,15 @@ import ee.features.tiles.TileEntityAlchChest;
 import ee.features.tiles.TileEntityColoredAlchChest;
 import ee.features.tiles.TileEntityLocus;
 import ee.features.tiles.TileFuelBurner;
+import ee.gui.GuiAggregator;
+import ee.gui.GuiAlchChest;
+import ee.gui.GuiColoredAlchChest;
+import ee.gui.GuiEMCCharger;
+import ee.gui.GuiFuelBurner;
+import ee.gui.GuiLocus;
+import ee.gui.GuiMiniumWorkbench;
+import ee.gui.GuiPhilWorkbench;
+import ee.gui.InventoryAlchBag;
 import ee.gui.container.ContainerAggregator;
 import ee.gui.container.ContainerAlchBag;
 import ee.gui.container.ContainerAlchChest;
@@ -16,7 +25,10 @@ import ee.gui.container.ContainerCharger;
 import ee.gui.container.ContainerColoredAlchChest;
 import ee.gui.container.ContainerFuelBurner;
 import ee.gui.container.ContainerLocus;
+import ee.gui.container.ContainerMiniumWorkbench;
 import ee.gui.container.ContainerPhilWorkbench;
+import ee.network.PacketChatMessage;
+import ee.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -38,6 +50,10 @@ public class GuiHandler implements IGuiHandler {
 		if(ID == EELimited.CRAFT)
 		{
 			return new ContainerPhilWorkbench(player.inventory);
+		}
+		if(ID == EELimited.MINIUM_CRAFT)
+		{
+			return new ContainerMiniumWorkbench(player.inventory);
 		}
 		if(ID == EELimited.ALCH_CHEST)
 		{
@@ -105,6 +121,10 @@ public class GuiHandler implements IGuiHandler {
 		if(ID == EELimited.CRAFT)
 		{
 			return new GuiPhilWorkbench(player.inventory);
+		}
+		if(ID == EELimited.MINIUM_CRAFT)
+		{
+			return new GuiMiniumWorkbench(player.inventory);
 		}
 		if(ID == EELimited.ALCH_CHEST)
 		{

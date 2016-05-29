@@ -1,7 +1,7 @@
 package ee.features.items;
 
 import ee.features.Constants;
-import ee.features.EELimited;
+import ee.features.EEItems;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityLavaProjectile;
 import ee.features.items.interfaces.IChargeable;
@@ -187,7 +187,7 @@ public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraF
     		}
     		else if (!world.isRemote)
     		{
-    			if((b.getMaterial() == Material.water) && bu == Blocks.air && EEProxy.getStackFromInv(player.inventory, new ItemStack(EELimited.Ever)) != null)
+    			if((b.getMaterial() == Material.water) && bu == Blocks.air && EEProxy.getStackFromInv(player.inventory, new ItemStack(EEItems.Ever)) != null)
 				{
 					return;
 				}

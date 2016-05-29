@@ -1,22 +1,20 @@
 package ee.gui;
 
+import org.lwjgl.opengl.GL11;
+
+import ee.gui.container.ContainerMiniumWorkbench;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import org.lwjgl.opengl.GL11;
-
-import ee.gui.container.ContainerPhilWorkbench;
-
-public class GuiPhilWorkbench extends GuiContainer
+public class GuiMiniumWorkbench extends GuiContainer
 {
-
 	private static final ResourceLocation craftingTableGuiTextures = new ResourceLocation("textures/gui/container/crafting_table.png");
 
-	public GuiPhilWorkbench(InventoryPlayer inventoryPlayer)
+	public GuiMiniumWorkbench(InventoryPlayer inventoryPlayer)
 	{
-		super(new ContainerPhilWorkbench(inventoryPlayer));
+		super(new ContainerMiniumWorkbench(inventoryPlayer));
 	}
 
 	protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_)
@@ -33,5 +31,4 @@ public class GuiPhilWorkbench extends GuiContainer
 		int l = (this.height - this.ySize) / 2;
 		this.drawTexturedModalRect(k, l, 0, 0, this.xSize, this.ySize);
 	}
-
 }

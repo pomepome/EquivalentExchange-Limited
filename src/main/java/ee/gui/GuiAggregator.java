@@ -40,22 +40,29 @@ public class GuiAggregator extends GuiContainer
 		this.drawTexturedModalRect((width - xSize) / 2, (height - ySize) / 2, 0, 0, xSize, ySize);
 		int k = (this.width - this.xSize) / 2;
         int l = (this.height - this.ySize) / 2;
-		if(tile.canProcess())
         {
+        	// draw progress bar
         	int i1 = this.tile.getProcessScaled(24);
             this.drawTexturedModalRect(k + 79, l + 34, 176, 14, i1 + 1, 16);
         }
 		{
+			// draw light level
 			int sunLevel = tile.getSunLevelScaled(14);
 			int s = 14 - sunLevel;
     		this.drawTexturedModalRect(k + 56, l + 36 + 12 - 13 + s, 176, 12 - 14 + s, 14, sunLevel);
 		}
     	double multiplier = tile.getMultiplierLight();
 		double d = (multiplier * AggregatorRegistry.get(tile.getStackInSlot(4)));
-		BigDecimal bd = new BigDecimal(d);
-		bd = bd.setScale(3, RoundingMode.HALF_UP);
-		String s = "multiplier:"+ bd.toString() + "x";
+		String s = "multiplier:"+ getFormattedValue(d,3) + "x";
         fontRendererObj.drawString(s, k + 80, l + 65, 0x404040);
 	}
-
+	private double getFormattedValue(double val,int index)
+	{
+		int i1 = 1;
+		for(int i = 0;i < index;i++)
+		{
+			i1 *= 10;
+		}
+		return (double)((int)(val * i1)) / i1;
+	}
 }

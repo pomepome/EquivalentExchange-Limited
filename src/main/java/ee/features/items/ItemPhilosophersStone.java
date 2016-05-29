@@ -1,5 +1,6 @@
 package ee.features.items;
 
+import ee.features.EEItems;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityMobRandomizer;
@@ -31,7 +32,7 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 		{
 			return var1;
 		}
-		return new ItemStack(EELimited.PhilTool);
+		return new ItemStack(EEItems.PhilTool);
     }
 	@Override
 	public void onExtraFunction(EntityPlayer p, ItemStack is)
@@ -46,7 +47,7 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 			EntityPlayer p = (EntityPlayer)entity;
 			if(!world.isRemote)
 			{
-				data = getData(world);
+				data = getPhilData(world);
 				data.markDirty();
 			}
 		}
@@ -74,13 +75,13 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 	@Override
 	public void changeCharge(EntityPlayer player, ItemStack stack)
 	{
-		player.setCurrentItemOrArmor(0, new ItemStack(EELimited.PhilTool));
+		player.setCurrentItemOrArmor(0, new ItemStack(EEItems.PhilTool));
 	}
 	@Override
 	public int getChargeLevel(ItemStack is) {
 		return 0;
 	}
-	public PhilData getData(World world)
+	public static PhilData getPhilData(World world)
 	{
 		PhilData pData = null;
 		
@@ -93,14 +94,5 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 		}
 		
 		return pData;
-	}
-	public static PhilData getPhilData(ItemStack item, World world)
-	{
-		PhilData data = null;
-		if(item != null && item.getItem() instanceof ItemPhilosophersStone)
-		{
-			data = ((ItemPhilosophersStone)item.getItem()).getData(world);
-		}
-		return data;
 	}
 }

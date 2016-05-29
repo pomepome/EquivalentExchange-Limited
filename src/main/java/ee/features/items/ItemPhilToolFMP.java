@@ -6,7 +6,7 @@ import codechicken.microblock.Saw;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import ee.features.EELimited;
+import ee.features.EEItems;
 import ee.features.items.interfaces.IModeChange;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,7 +48,7 @@ public class ItemPhilToolFMP extends ItemPhilToolBase implements Saw,IModeChange
     {
 		if(var3.isSneaking())
 		{
-			return new ItemStack(EELimited.Phil);
+			return new ItemStack(EEItems.Phil);
 		}
 		return var1;
     }

@@ -1,16 +1,19 @@
 package ee.handler;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import ee.features.EEItems;
 import ee.features.EELimited;
 import ee.features.items.ItemChargeable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 
@@ -30,6 +33,15 @@ public class ClientHandler
 		}
 	 }
 	@SubscribeEvent
+	public void livingUpdate(LivingEvent.LivingUpdateEvent event)
+	{
+		EntityLivingBase living = event.entityLiving;
+		if(living instanceof EntityBat && EELimited.noBats)
+		{
+			living.attackEntityFrom(DamageSource.outOfWorld, 1000);
+		}
+	}
+	@SubscribeEvent
 	public void livingHurt(LivingHurtEvent event)
 	{
 		EntityLivingBase e = event.entityLiving;
@@ -46,7 +58,7 @@ public class ClientHandler
 		{
 			EntityPlayer p = (EntityPlayer)cause;
 			ItemStack current = p.getCurrentEquippedItem();
-			if(current != null&&current.getItem() == EELimited.DMSword)
+			if(current != null&&current.getItem() == EEItems.DMSword)
 			{
 				if(((ItemChargeable)current.getItem()).getChargeLevel(current) > 0)
 				e.setFire(30);

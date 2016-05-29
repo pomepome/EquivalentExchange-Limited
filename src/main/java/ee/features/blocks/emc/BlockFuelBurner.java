@@ -5,6 +5,7 @@ import java.util.Random;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.EEBlocks;
 import ee.features.EELimited;
 import ee.features.tiles.TileFuelBurner;
 import ee.util.EEProxy;
@@ -45,11 +46,11 @@ public class BlockFuelBurner extends BlockContainer
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if(isActive)
 		{
-			world.setBlock(x, y, z,EELimited.FuelBurnerOn);
+			world.setBlock(x, y, z,EEBlocks.FuelBurnerOn);
 		}
 		else
 		{
-			world.setBlock(x, y, z, EELimited.FuelBurner);
+			world.setBlock(x, y, z, EEBlocks.FuelBurner);
 		}
 		world.setBlockMetadataWithNotify(x, y, z, meta, 2);
 		if(tile != null)
@@ -62,7 +63,7 @@ public class BlockFuelBurner extends BlockContainer
 	@Override
 	public Item getItemDropped(int no, Random rand, int clue)
 	{
-		return Item.getItemFromBlock(EELimited.FuelBurner);
+		return Item.getItemFromBlock(EEBlocks.FuelBurner);
 	}
 	@Override
 	public TileEntity createNewTileEntity(World p_149915_1_, int p_149915_2_)

@@ -2,6 +2,7 @@ package ee.features.blocks;
 
 import java.util.Random;
 
+import ee.features.EEItems;
 import ee.features.EELimited;
 import ee.features.tiles.TileDirection;
 import ee.util.EEProxy;
@@ -81,7 +82,7 @@ public abstract class BlockDirection extends BlockContainer
 
 		ItemStack stack = player.getHeldItem();
 
-		if (stack != null && stack.getItem() == EELimited.Phil)
+		if (stack != null && stack.getItem() == EEItems.Phil)
 		{
 			TileEntity tile = world.getTileEntity(x, y, z);
 

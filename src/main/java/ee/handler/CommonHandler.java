@@ -1,15 +1,18 @@
 package ee.handler;
 
-import static ee.features.EELimited.*;
-import static ee.util.EEProxy.*;
+import static ee.features.EELimited.getDM;
+import static ee.features.EELimited.getPhil;
+import static ee.features.EELimited.gs;
+import static ee.util.EEProxy.getStackFromInv;
+import static ee.util.EEProxy.useResource;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import ee.addons.extrautil.AddonExtraUtilities;
+import ee.features.EEItems;
 import ee.features.EELimited;
 import ee.features.PlayerTimers;
-import ee.util.EEProxy;
 import ee.util.Timer1s;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -42,7 +45,7 @@ public class CommonHandler
 		{
 			return;
 		}
-		ItemStack wolf = getStackFromInv(p.inventory,gs(Swift,1,1));
+		ItemStack wolf = getStackFromInv(p.inventory,gs(EEItems.Swift,1,1));
 		if(wolf != null)
 		{
 			if(Timer1s.isTime()&&useResource(p, 1, true))
@@ -67,11 +70,11 @@ public class CommonHandler
 	{
 		EntityPlayer p = e.player;
 		Item i = e.crafting.getItem();
-		if(i == Phil)
+		if(i == EEItems.Phil)
 		{
 			p.triggerAchievement(getPhil);
 		}
-		if(i == DM)
+		if(i == EEItems.DM)
 		{
 			p.triggerAchievement(getDM);
 		}

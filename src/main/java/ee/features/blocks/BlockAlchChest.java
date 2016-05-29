@@ -65,7 +65,7 @@ public class BlockAlchChest extends BlockDirection implements ITileEntityProvide
 		TileEntity tile = var1.getTileEntity(var2, var3, var4);
 		if(tile instanceof TileEntityAlchChest)
 		{
-			return ((TileEntityAlchChest)tile).lightLevel;
+			return ((TileEntityAlchChest)tile).isEETorchOn ? 15 : 0;
 		}
 		return 0;
     }

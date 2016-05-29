@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import codechicken.nei.api.API;
 import codechicken.nei.recipe.DefaultOverlayHandler;
 import codechicken.nei.recipe.ShapelessRecipeHandler;
+import ee.gui.GuiMiniumWorkbench;
 import ee.gui.GuiPhilWorkbench;
 
 public class NEIAddon
@@ -17,6 +18,8 @@ public class NEIAddon
 		log.log(Level.INFO, "registering GUI overlay...");
 		API.registerGuiOverlay(GuiPhilWorkbench.class, "crafting");
 		API.registerGuiOverlayHandler(GuiPhilWorkbench.class, new DefaultOverlayHandler(), "crafting");
+		API.registerGuiOverlay(GuiMiniumWorkbench.class, "craftimg");
+		API.registerGuiOverlayHandler(GuiMiniumWorkbench.class, new DefaultOverlayHandler(), "crafting");
 		log.log(Level.INFO, "registering ended!");
 	}
 }

@@ -23,6 +23,7 @@ public class BlockEMCCollectorMk2 extends BlockContainer
 		super(Material.rock);
 		this.setCreativeTab(EELimited.TabEE).setLightLevel(Constants.COLLECTOR_LIGHT_VALS[1]).setBlockName("EMCCollectorMk2").setBlockTextureName("stone").setHardness(2000f);
 		GameRegistry.registerBlock(this,"EMCCollectorMk2");
+		this.setLightLevel(0);
 	}
 
 	@Override

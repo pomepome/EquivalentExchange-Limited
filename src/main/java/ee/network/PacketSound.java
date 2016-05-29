@@ -6,6 +6,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import ee.util.EEProxy;
 import ee.util.EnumSounds;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketSound implements IMessage, IMessageHandler<PacketSound, IMessage>
@@ -40,8 +41,7 @@ public class PacketSound implements IMessage, IMessageHandler<PacketSound, IMess
 	@Override
 	public IMessage onMessage(PacketSound message, MessageContext ctx)
 	{
-		EntityPlayer p = ctx.getServerHandler().playerEntity;
-		EEProxy.playSoundAtPlayer(EnumSounds.getFromID(message.sound).getPath(), p, message.volume, message.pitch);
+		EEProxy.playSoundAtPlayer(EnumSounds.getFromID(message.sound).getPath(), ctx.getServerHandler().playerEntity, message.volume, message.pitch);
 		return null;
 	}
 

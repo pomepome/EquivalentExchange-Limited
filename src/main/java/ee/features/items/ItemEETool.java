@@ -11,6 +11,7 @@ import ee.util.EEProxy;
 import ee.util.EnumSounds;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -108,7 +109,7 @@ public class ItemEETool extends ItemChargeable
 		}
 		if(flag)
 		{
-			PacketHandler.sendToServer(new PacketSound(EnumSounds.CHARGE,1.0f,1.0f));
+			EEProxy.playSoundAtPlayer(EnumSounds.CHARGE.getPath(), player, 1.0f, 1.0f);
 		}
 		player.swingItem();
 	}

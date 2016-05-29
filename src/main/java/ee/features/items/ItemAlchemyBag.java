@@ -4,9 +4,13 @@ import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.EEBlocks;
+import ee.features.EEItems;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
 import ee.gui.BagData;
+import ee.network.PacketAlchChestUpdate;
+import ee.network.PacketHandler;
 import ee.util.EEProxy;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -43,90 +47,96 @@ public class ItemAlchemyBag extends ItemEEFunctional {
 			EntityPlayer p = (EntityPlayer)entity;
 			if(!world.isRemote)
 			{
-				data = getData(item,world);
-				data.onUpdate(world);
-				data.markDirty();
-				World worldObj = p.worldObj;
-				if (EEProxy.invContainsItem(data.inventory, new ItemStack(EELimited.BHR, 1, 1)))
+				updateRelic(item, world, p);
+			}
+		}
+	}
+	private void updateRelic(ItemStack item, World world, EntityPlayer p)
+	{
+		data = getData(item,world);
+		data.onUpdate(world);
+		data.markDirty();
+		if (EEProxy.getStackFromInv(data.inventory, new ItemStack(EEItems.BHR,1,1)) != null)
+		{
+			AxisAlignedBB bBox = p.boundingBox.expand(9, 9, 9);
+			List<EntityItem> itemList = world.getEntitiesWithinAABB(EntityItem.class, bBox);
+
+			for (EntityItem i : itemList)
+			{
+				i.delayBeforeCanPickup = 20;
+				double d1 = (p.posX - i.posX);
+				double d2 = (p.posY + (double)p.getEyeHeight() - i.posY);
+				double d3 = (p.posZ - i.posZ);
+				double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
+
+				i.motionX += d1 / d4 * 0.1D;
+				i.motionY += d2 / d4 * 0.1D;
+				i.motionZ += d3 / d4 * 0.1D;
+
+				i.moveEntity(i.motionX, i.motionY, i.motionZ);
+			}
+
+			AxisAlignedBB pickBBox = p.boundingBox.expand(0.1,0.1,0.1);
+			List<EntityItem> itemToPick = world.getEntitiesWithinAABB(EntityItem.class, pickBBox);
+
+			for (EntityItem i : itemToPick)
+			{
+				if(i.isDead)
 				{
-					AxisAlignedBB bBox = p.boundingBox.expand(7, 7, 7);
-					List<EntityItem> itemList = world.getEntitiesWithinAABB(EntityItem.class, bBox);
-
-					for (EntityItem i : itemList)
+					break;
+				}
+				if (EEProxy.hasSpace(data.inventory, i.getEntityItem()))
+				{
+					ItemStack remain = EEProxy.pushStackInInv(data.inventory, i.getEntityItem());
+					world.playSoundEffect(i.posX,i.posY,i.posZ,"random.pop", 0.2F, ((world.rand.nextFloat() - world.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+					if (remain == null)
 					{
-						i.delayBeforeCanPickup = 20;
-						double d1 = (p.posX - i.posX);
-						double d2 = (p.posY + (double)p.getEyeHeight() - i.posY);
-						double d3 = (p.posZ - i.posZ);
-						double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
-
-						i.motionX += d1 / d4 * 0.08D;
-						i.motionY += d2 / d4 * 0.08D;
-						i.motionZ += d3 / d4 * 0.08D;
-
-						i.moveEntity(i.motionX, i.motionY, i.motionZ);
-					}
-
-					AxisAlignedBB pickBBox = p.boundingBox.expand(0.25,0.25,0.25);
-					List<EntityItem> itemToPick = world.getEntitiesWithinAABB(EntityItem.class, pickBBox);
-
-					for (EntityItem i : itemToPick)
-					{
-						if(i.isDead)
-						{
-							break;
-						}
-						if (EEProxy.hasSpace(data.inventory, i.getEntityItem()))
-						{
-							ItemStack remain = EEProxy.pushStackInInv(data.inventory, i.getEntityItem());
-							worldObj.playSoundEffect(i.posX,i.posY,i.posZ,"random.pop", 0.2F, ((worldObj.rand.nextFloat() - worldObj.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-							if (remain == null)
-							{
-								i.setDead();
-							}
-						}
+						i.setDead();
 					}
 				}
+			}
+		}
+		if(EEItems.Repair != null)
+		{
+			ItemStack rTalisman = EEProxy.getStackFromInv(data.inventory, new ItemStack(EEItems.Repair));
 
-				ItemStack rTalisman = EEProxy.getStackFromInv(data.inventory, new ItemStack(EELimited.Repair));
+			if (rTalisman != null)
+			{
+				byte coolDown = rTalisman.stackTagCompound.getByte("Cooldown");
 
-				if (rTalisman != null)
+				if (coolDown > 0)
 				{
-					byte coolDown = rTalisman.stackTagCompound.getByte("Cooldown");
+					rTalisman.stackTagCompound.setByte("Cooldown", (byte) (coolDown - 1));
+				}
+				else
+				{
+					boolean hasAction = false;
 
-					if (coolDown > 0)
+					for (int i = 0; i < data.inventory.length; i++)
 					{
-						rTalisman.stackTagCompound.setByte("Cooldown", (byte) (coolDown - 1));
+						ItemStack invStack = data.inventory[i];
+
+						if (invStack == null || invStack.getItem() instanceof ItemEE)
+						{
+							continue;
+						}
+
+						if (!invStack.getHasSubtypes() && invStack.getMaxDamage() != 0 && invStack.getItemDamage() > 0)
+						{
+							invStack.setItemDamage(invStack.getItemDamage() - 1);
+							data.inventory[i] = invStack;
+
+							if (!hasAction)
+							{
+								hasAction = true;
+							}
+						}
 					}
-					else
+
+					if (hasAction)
 					{
-						boolean hasAction = false;
-
-						for (int i = 0; i < data.inventory.length; i++)
-						{
-							ItemStack invStack = data.inventory[i];
-
-							if (invStack == null || invStack.getItem() instanceof ItemEE)
-							{
-								continue;
-							}
-
-							if (!invStack.getHasSubtypes() && invStack.getMaxDamage() != 0 && invStack.getItemDamage() > 0)
-							{
-								invStack.setItemDamage(invStack.getItemDamage() - 1);
-								data.inventory[i] = invStack;
-
-								if (!hasAction)
-								{
-									hasAction = true;
-								}
-							}
-						}
-
-						if (hasAction)
-						{
-							rTalisman.stackTagCompound.setByte("Cooldown", (byte) 19);
-						}
+						rTalisman.stackTagCompound.setByte("Cooldown", (byte) 19);
+						data.needUpdate = true;
 					}
 				}
 			}

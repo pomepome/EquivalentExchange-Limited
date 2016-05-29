@@ -1,6 +1,7 @@
 package ee.features;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 
 public class CreativeTabEE extends CreativeTabs {
@@ -11,7 +12,11 @@ public class CreativeTabEE extends CreativeTabs {
 
 	@Override
 	public Item getTabIconItem() {
-		return EELimited.Phil;
+		if(EEItems.Phil == null)
+		{
+			return EEItems.miniumStone;
+		}
+		return EEItems.Phil;
 	}
 
 }

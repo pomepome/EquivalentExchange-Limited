@@ -1,8 +1,10 @@
 package ee.features.blocks;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import ee.features.EEBlocks;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
+import ee.features.tiles.TileEntityAlchChest;
 import ee.features.tiles.TileEntityColoredAlchChest;
 import ee.util.EEProxy;
 import net.minecraft.block.material.Material;
@@ -13,7 +15,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class BlockColoredAlchChest extends BlockDirection {
+public class BlockColoredAlchChest extends BlockDirection
+{
 
 	public BlockColoredAlchChest()
 	{
@@ -55,11 +58,13 @@ public class BlockColoredAlchChest extends BlockDirection {
 	}
 	public int getLightValue(IBlockAccess var1, int var2, int var3, int var4)
     {
+		/*
 		TileEntity tile = var1.getTileEntity(var2, var3, var4);
 		if(tile instanceof TileEntityColoredAlchChest)
 		{
-			return EEProxy.getStackFromInv((IInventory)tile, new ItemStack(EELimited.EETorch)) != null ? 15 : 0;
+			return ((TileEntityColoredAlchChest)tile).isEETorchOn ? 15 : 0;
 		}
+		*/
 		return 0;
     }
 }

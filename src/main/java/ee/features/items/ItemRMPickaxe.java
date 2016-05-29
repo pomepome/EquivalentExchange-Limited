@@ -207,9 +207,17 @@ public class ItemRMPickaxe extends ItemEETool
 
         return "unknown";
     }
+    public int getMaxItemUseDuration(ItemStack p_77626_1_)
+    {
+    	return 1;
+    }
     public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
     {
         Block block = par3World.getBlock(par4, par5, par6);
+        if(block == Blocks.air)
+        {
+        	return false;
+        }
         int metadata = par3World.getBlockMetadata(par4, par5, par6);
         skip = !skip;
 
@@ -220,15 +228,14 @@ public class ItemRMPickaxe extends ItemEETool
 
         if (EELimited.Debug)
         {
-            EEProxy.getPlayer().sendChatMessage(getMaterialName((par3World.getBlock(par4, par5, par6).getMaterial())));
+            //EEProxy.getPlayer().sendChatMessage(getMaterialName((par3World.getBlock(par4, par5, par6).getMaterial())));
         }
 
         if (par5 > 0 && getChargeLevel(par1ItemStack) > 0 && par3World.getBlock(par4, par5, par6).getBlockHardness(par3World, par4, par5, par6) < 0)
         {
-            par3World.getBlock(par4, par5, par6).dropBlockAsItem(par3World, par4, par5, par6, par3World.getBlockMetadata(par4, par5, par6), 0);
-            par3World.setBlock(par4, par5, par6, Blocks.air);
-            par1ItemStack.setItemDamage(1);
-            return true;
+            par3World.setBlockToAir(par4, par5, par6);
+            block.dropBlockAsItem(par3World, par4, par5, par6, metadata, 0);
+            return false;
         }
 
         /*

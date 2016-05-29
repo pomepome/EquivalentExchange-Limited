@@ -1,6 +1,7 @@
 package ee.gui;
 
 import ee.features.EEItems;
+import ee.features.items.ItemMiniumStone;
 import ee.features.items.ItemPhilosophersStone;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -8,12 +9,12 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class InventoryPhilWorkbench extends InventoryCrafting
+public class InventoryMiniumWorkbench extends InventoryCrafting
 {
 	Container container;
 	World world;
 	
-	public InventoryPhilWorkbench(Container c,World w)
+	public InventoryMiniumWorkbench(Container c,World w)
 	{
 		super(c, 3, 3);
 		container = c;
@@ -28,7 +29,7 @@ public class InventoryPhilWorkbench extends InventoryCrafting
 
 	private PhilData getData()
 	{
-		return ItemPhilosophersStone.getPhilData(world);
+		return ItemMiniumStone.getPhilData(new ItemStack(EEItems.miniumStone), world);
 	}
 	
 	@Override
@@ -158,5 +159,4 @@ public class InventoryPhilWorkbench extends InventoryCrafting
 	{
 		return true;
 	}
-
 }

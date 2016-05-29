@@ -2,7 +2,7 @@ package ee.features.renderers;
 
 import org.lwjgl.opengl.GL11;
 
-import ee.features.EELimited;
+import ee.features.EEBlocks;
 import ee.features.entities.EntityNovaPrimed;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.Render;
@@ -54,7 +54,7 @@ public class RenderNovaTNTPrimed extends Render
 
         f2 = (1.0F - ((float)p_76986_1_.fuse - p_76986_9_ + 1.0F) / 100.0F) * 0.8F;
         bindTexture(this.getEntityTexture(null));
-        this.blockRenderer.renderBlockAsItem(EELimited.NovaTNT, 0, p_76986_1_.getBrightness(p_76986_9_));
+        this.blockRenderer.renderBlockAsItem(EEBlocks.NovaTNT, 0, p_76986_1_.getBrightness(p_76986_9_));
 
         if (p_76986_1_.fuse / 5 % 2 == 0)
         {
@@ -63,7 +63,7 @@ public class RenderNovaTNTPrimed extends Render
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_DST_ALPHA);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, f2);
-            this.blockRenderer.renderBlockAsItem(EELimited.NovaTNT, 0, 1.0F);
+            this.blockRenderer.renderBlockAsItem(EEBlocks.NovaTNT, 0, 1.0F);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_LIGHTING);

@@ -62,9 +62,12 @@ public class ContainerAlchChest extends Container
 
 		if (slotIndex < 104)
 		{
-			if (!this.mergeItemStack(stack, 104, this.inventorySlots.size(), false))
+			if (!this.mergeItemStack(stack, 131, this.inventorySlots.size(), false))
 			{
-				return null;
+				if(!this.mergeItemStack(stack, 104, 130, false))
+				{
+					return null;
+				}
 			}
 		}
 		else if (!this.mergeItemStack(stack, 0, 104, false))

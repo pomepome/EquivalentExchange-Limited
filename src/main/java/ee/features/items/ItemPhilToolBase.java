@@ -4,6 +4,7 @@ import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.EEItems;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
 import ee.features.items.interfaces.IChargeable;
@@ -46,7 +47,7 @@ public class ItemPhilToolBase extends ItemEEFunctional implements IChargeable,IM
     {
 		if(var3.isSneaking())
 		{
-			return new ItemStack(EELimited.Phil);
+			return new ItemStack(EEItems.Phil);
 		}
 		return var1;
     }
@@ -99,7 +100,7 @@ public class ItemPhilToolBase extends ItemEEFunctional implements IChargeable,IM
 	@Override
 	public void changeCharge(EntityPlayer player, ItemStack stack)
 	{
-		player.setCurrentItemOrArmor(0, EELimited.gs(EELimited.Phil));
+		player.setCurrentItemOrArmor(0, EELimited.gs(EEItems.Phil));
 	}
 	@Override
 	public int getChargeLevel(ItemStack is)

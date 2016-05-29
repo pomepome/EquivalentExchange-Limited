@@ -22,9 +22,13 @@ public class PacketOrientationSync implements IMessage,IMessageHandler<PacketOri
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		orientation = buf.readInt();
+		try
+		{
 		x = buf.readInt();
 		y = buf.readInt();
 		z = buf.readInt();
+		}
+		catch(Exception e){}
 	}
 
 	@Override

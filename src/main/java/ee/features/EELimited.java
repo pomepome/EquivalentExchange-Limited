@@ -1,6 +1,47 @@
 package ee.features;
 
-import static ee.features.Level.*;
+import static ee.features.EEBlocks.Aggregator;
+import static ee.features.EEBlocks.AlchChest;
+import static ee.features.EEBlocks.DMBlock;
+import static ee.features.EEBlocks.EETorch;
+import static ee.features.EEBlocks.EMCCharger;
+import static ee.features.EEBlocks.EMCCollector;
+import static ee.features.EEBlocks.EMCCollectorMk2;
+import static ee.features.EEBlocks.EMCCollectorMk3;
+import static ee.features.EEBlocks.FuelBurner;
+import static ee.features.EEBlocks.Locus;
+import static ee.features.EEBlocks.NovaTNT;
+import static ee.features.EEBlocks.RMBlock;
+import static ee.features.EEBlocks.cAlchChest;
+import static ee.features.EEItems.AlchBag;
+import static ee.features.EEItems.AlchCoal;
+import static ee.features.EEItems.ArchAngel;
+import static ee.features.EEItems.BHR;
+import static ee.features.EEItems.Cov;
+import static ee.features.EEItems.DM;
+import static ee.features.EEItems.DMAxe;
+import static ee.features.EEItems.DMHoe;
+import static ee.features.EEItems.DMPickaxe;
+import static ee.features.EEItems.DMShears;
+import static ee.features.EEItems.DMShovel;
+import static ee.features.EEItems.DMSword;
+import static ee.features.EEItems.Ever;
+import static ee.features.EEItems.Klein;
+import static ee.features.EEItems.NIron;
+import static ee.features.EEItems.Phil;
+import static ee.features.EEItems.PhilTool;
+import static ee.features.EEItems.RM;
+import static ee.features.EEItems.RMPickaxe;
+import static ee.features.EEItems.Repair;
+import static ee.features.EEItems.Swift;
+import static ee.features.EEItems.Volc;
+import static ee.features.EEItems.destCatal;
+import static ee.features.EEItems.ironband;
+import static ee.features.EEItems.miniumStone;
+import static ee.features.EEItems.mobiusFuel;
+import static ee.features.Level.HIGH;
+import static ee.features.Level.LOW;
+import static ee.features.Level.MIDDLE;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,51 +71,17 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import ee.addons.bc.BCAddon;
 import ee.addons.extrautil.AddonExtraUtilities;
 import ee.addons.ic2.IC2Addon;
-import ee.addons.nei.NEIAddon;
-import ee.features.blocks.BlockAggregator;
-import ee.features.blocks.BlockAlchChest;
-import ee.features.blocks.BlockColoredAlchChest;
-import ee.features.blocks.BlockEE;
-import ee.features.blocks.BlockEETorch;
-import ee.features.blocks.BlockLocus;
-import ee.features.blocks.BlockNovaTNT;
-import ee.features.blocks.emc.BlockEMCCharger;
-import ee.features.blocks.emc.BlockEMCCollector;
-import ee.features.blocks.emc.BlockEMCCollectorMk2;
-import ee.features.blocks.emc.BlockEMCCollectorMk3;
-import ee.features.blocks.emc.BlockFuelBurner;
 import ee.features.entities.EntityLavaProjectile;
 import ee.features.entities.EntityMobRandomizer;
 import ee.features.entities.EntityNovaPrimed;
 import ee.features.entities.EntityWaterProjectile;
-import ee.features.items.ItemAlchemyBag;
-import ee.features.items.ItemArchangelSmite;
-import ee.features.items.ItemBlackHoleRing;
-import ee.features.items.ItemCovalenceDust;
-import ee.features.items.ItemDMAxe;
-import ee.features.items.ItemDMHoe;
-import ee.features.items.ItemDMPickaxe;
 import ee.features.items.ItemDMShears;
-import ee.features.items.ItemDMShovel;
-import ee.features.items.ItemDMSword;
-import ee.features.items.ItemDestructionCatalyst;
 import ee.features.items.ItemEE;
-import ee.features.items.ItemEvertide;
-import ee.features.items.ItemKleinStar;
-import ee.features.items.ItemMiniumStone;
 import ee.features.items.ItemPhilToolBase;
 import ee.features.items.ItemPhilToolFMP;
-import ee.features.items.ItemPhilosophersStone;
-import ee.features.items.ItemRMPickaxe;
-import ee.features.items.ItemRepairCharm;
-import ee.features.items.ItemSwiftwolfsRing;
-import ee.features.items.ItemVolcanite;
 import ee.features.items.armors.EnumArmorType;
 import ee.features.items.armors.ItemDMArmor;
 import ee.features.items.armors.ItemRMArmor;
-import ee.features.items.entities.ItemLavaOrb;
-import ee.features.items.entities.ItemMobRandomizer;
-import ee.features.items.entities.ItemWaterOrb;
 import ee.features.recipes.FixRecipe;
 import ee.features.recipes.KleinChargeRecipe;
 import ee.features.recipes.KleinUpgradeRecipe;
@@ -86,20 +93,20 @@ import ee.features.tiles.TileEntityAggregator;
 import ee.features.tiles.TileEntityAlchChest;
 import ee.features.tiles.TileEntityColoredAlchChest;
 import ee.features.tiles.TileEntityLocus;
-import ee.gui.GuiHandler;
 import ee.handler.ClientHandler;
 import ee.handler.CommonHandler;
 import ee.handler.FuelHandler;
+import ee.handler.GuiHandler;
 import ee.network.PacketHandler;
 import ee.proxies.CommonProxy;
 import ee.util.AggregatorRegistry;
+import ee.util.EELimitedException;
 import ee.util.EEProxy;
 import ee.util.LocusRegistry;
 import ee.wailacompat.ColorUtil;
 import ee.wailacompat.WailaAddon;
 import ic2.api.item.IC2Items;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
@@ -129,7 +136,7 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = "EELimitedR",name = "EELimitedR",version = "beta 1.0.2.1",dependencies="after:WailaHarvestability;after:NotEnoughItems")
+@Mod(modid = "EELimitedR",name = "EELimitedR",version = "beta 1.0.3",dependencies="after:WailaHarvestability;after:NotEnoughItems")
 public class EELimited {
 
 	public static EELimited instance;
@@ -159,6 +166,7 @@ public class EELimited {
     public static final int AGGREGATOR = 6;
     public static final int LOCUS = 7;
     public static final int ALCH_COLORED = 8;
+    public static final int MINIUM_CRAFT = 9;
     /**
      * Render IDs
      */
@@ -191,59 +199,6 @@ public class EELimited {
     public static final int SPHERE = 4;
     public static final int OMEGA = 5;
     /**
-     * Items
-     */
-    public static Item Phil;
-    public static Item AlchCoal;
-    public static Item Cov;
-    public static Item mobiusFuel;
-    public static Item Volc;
-    public static Item Ever;
-    public static Item DM;
-    public static Item Swift;
-    public static Item Food;
-    public static Item DMAxe;
-    public static Item DMSword;
-    public static Item DMPickaxe;
-    public static Item DMShovel;
-    public static Item ironband;
-    public static Item DMShears;
-    public static Item DMHoe;
-    public static Item NIron;
-    public static Item PhilTool;
-    public static Item Repair;
-    public static Item AlchBag;
-    public static Item Klein;
-    public static Item BHR;
-    public static Item ArchAngel;
-    public static Item RM;
-    public static Item RMPickaxe;
-    public static Item destCatal;
-    public static Item miniumStone;
-    /**
-     * Projectiles
-     */
-    public static Item LavaOrb;
-    public static Item WaterOrb;
-    public static Item Randomizer;
-    /**
-     * Blocks
-     */
-    public static Block EETorch;
-    public static Block DMBlock;
-    public static Block AlchChest;
-    public static Block Aggregator;
-    public static Block Locus;
-    public static Block EMCCollector;
-    public static Block EMCCollectorMk2;
-    public static Block EMCCollectorMk3;
-    public static Block EMCCharger;
-    public static Block FuelBurner;
-    public static Block FuelBurnerOn;
-    public static Block RMBlock;
-    public static Block NovaTNT;
-    public static Block cAlchChest;
-    /**
      * Addon
      */
     public static boolean loadFMP;
@@ -263,16 +218,17 @@ public class EELimited {
     /**
      * @param Fuel Registry
      */
-    private Map<ItemStack,Integer> fuelMap = new HashMap<ItemStack,Integer>();
+    private static Map<ItemStack,Integer> fuelMap = new HashMap<ItemStack,Integer>();
+    private static Map<Item,ItemStack> fixMap = new HashMap<Item,ItemStack>();
 
     @EventHandler
-    public void init(FMLInitializationEvent e)
+    public void init(FMLInitializationEvent e) throws EELimitedException
     {
     	instance = this;
     	NetworkRegistry.INSTANCE.registerGuiHandler(this,new GuiHandler());
-    	PacketHandler.register();
     	proxy.registerKies();
     	proxy.registerClientOnlyEvents();
+    	PacketHandler.register();
     	ColorUtil.init();
     	if(FMLCommonHandler.instance().getSide().isClient())
     	{
@@ -283,7 +239,12 @@ public class EELimited {
     	RecipeSorter.register("eelimited.fixrecipe",FixRecipe.class,Category.SHAPELESS,"after:minecraft:shapeless");
     	RecipeSorter.register("eelimited.kleinupgrecipe",KleinUpgradeRecipe.class,Category.SHAPELESS,"after:minecraft:shapeless");
     	RecipeSorter.register("eelimited.kleinchargerecipe",KleinChargeRecipe.class,Category.SHAPELESS,"after:minecraft:shapeless");
-    	initItems();
+    	EEItems.init();
+    	EEBlocks.init();
+    	if(EEItems.Phil == null && EEItems.miniumStone == null)
+    	{
+    		throw new EELimitedException("Philosopher\'s stone or Minium stone is required.Please turn on at least one of them.");
+    	}
     	/*
     	 *	register objects
     	 */
@@ -388,50 +349,6 @@ public class EELimited {
     	AggregatorRegistry.register(Blocks.netherrack, 1.2);
     	AggregatorRegistry.register(Blocks.soul_sand, 1.5);
     }
-    public void initItems()
-    {
-    	Phil = new ItemPhilosophersStone();
-    	Volc = new ItemVolcanite();
-    	Ever = new ItemEvertide();
-    	Cov = new ItemCovalenceDust();
-    	Swift = new ItemSwiftwolfsRing();
-    	AlchCoal = new ItemEE(NameRegistry.AlchemicalCoal);
-    	mobiusFuel = new ItemEE(NameRegistry.Mobius);
-    	DMAxe = new ItemDMAxe();
-    	DMHoe = new ItemDMHoe();
-    	DMSword = new ItemDMSword();
-    	DMShovel = new ItemDMShovel();
-    	DMShears = new ItemDMShears();
-    	DMPickaxe = new ItemDMPickaxe();
-    	RMPickaxe = new ItemRMPickaxe();
-    	DM = new ItemEE(NameRegistry.DM);
-    	DMBlock = new BlockEE(Material.rock,NameRegistry.DMBlock).setHardness(500);
-    	EETorch = new BlockEETorch();
-    	ironband = new ItemEE(NameRegistry.IronBand);
-    	Repair = new ItemRepairCharm();
-    	AlchBag = new ItemAlchemyBag();
-    	AlchChest = new BlockAlchChest();
-    	Klein = new ItemKleinStar();
-    	LavaOrb = new ItemLavaOrb();
-    	WaterOrb = new ItemWaterOrb();
-    	Randomizer = new ItemMobRandomizer();
-    	BHR = new ItemBlackHoleRing();
-    	ArchAngel = new ItemArchangelSmite();
-    	RM = new ItemEE("RM");
-    	EMCCollector = new BlockEMCCollector();
-    	EMCCollectorMk2 = new BlockEMCCollectorMk2();
-    	EMCCollectorMk3 = new BlockEMCCollectorMk3();
-    	EMCCharger = new BlockEMCCharger();
-    	FuelBurner = new BlockFuelBurner(false);
-    	FuelBurnerOn = new BlockFuelBurner(true);
-    	RMBlock = new BlockEE(Material.rock,NameRegistry.RMBlock).setHardness(800);
-    	Aggregator = new BlockAggregator();
-    	Locus = new BlockLocus();
-    	NovaTNT = new BlockNovaTNT();
-    	cAlchChest = new BlockColoredAlchChest();
-    	destCatal = new ItemDestructionCatalyst();
-    	miniumStone = new ItemMiniumStone();
-    }
     public void initArmors()
     {
     	DMHelmet = new ItemDMArmor(EnumArmorType.HEAD);
@@ -531,6 +448,8 @@ public class EELimited {
     public void preInit(FMLPreInitializationEvent e)
     {
     	suggestedConfig = e.getSuggestedConfigurationFile();
+    	EEItems.loadConfig(e);
+    	EEBlocks.loadConfig(e);
     }
     public int convertCountToTick(int count)
     {
@@ -605,13 +524,34 @@ public class EELimited {
     }
     public void registerHarvestLevel()
     {
-    	DMPickaxe.setHarvestLevel("pickaxe",10);
-    	DMShovel.setHarvestLevel("shovel",10);
-    	RMPickaxe.setHarvestLevel("pickaxe", 11);
-    	DMBlock.setHarvestLevel("pickaxe",10);
-    	AlchChest.setHarvestLevel("pickaxe",2);
-    	cAlchChest.setHarvestLevel("pickaxe",2);
-    	RMBlock.setHarvestLevel("pickaxe", 11);
+    	if(DMPickaxe != null)
+    	{
+    		DMPickaxe.setHarvestLevel("pickaxe",10);
+    	}
+    	if(DMShovel != null)
+    	{
+    		DMShovel.setHarvestLevel("shovel",10);
+    	}
+    	if(RMPickaxe != null)
+    	{
+    		RMPickaxe.setHarvestLevel("pickaxe", 11);
+    	}
+    	if(DMBlock != null)
+    	{
+    		DMBlock.setHarvestLevel("pickaxe",10);
+    	}
+    	if(AlchChest != null)
+    	{
+    		AlchChest.setHarvestLevel("pickaxe",2);
+    	}
+    	if(cAlchChest != null)
+    	{
+    		cAlchChest.setHarvestLevel("pickaxe",2);
+    	}
+    	if(cAlchChest != null)
+    	{
+    		RMBlock.setHarvestLevel("pickaxe", 11);
+    	}
     }
     public void loadConfig()
     {
@@ -631,10 +571,21 @@ public class EELimited {
     }
     public void registerAchievements()
     {
-    	getPhil = new Achievement("getPhil","getPhil",0,0,Phil,AchievementList.portal).registerStat();
-    	getDM = new Achievement("getDM","getDM",2,1,DM,getPhil).registerStat();
-    	AchievementPage page = new AchievementPage("EELimited",getPhil,getDM);
-    	AchievementPage.registerAchievementPage(page);
+    	if(Phil != null)
+    	{
+    		List<Achievement> achievements = new ArrayList<Achievement>();
+    		AchievementPage page;
+
+    		getPhil = new Achievement("getPhil","getPhil",0,0,Phil,AchievementList.portal).registerStat();
+    		achievements.add(getPhil);
+    		if(DM != null)
+    		{
+        		getDM = new Achievement("getDM","getDM",2,1,DM,getPhil).registerStat();
+        		achievements.add(getDM);
+    		}
+    		page = new AchievementPage("EELimited",achievements.toArray(new Achievement[1]));
+    		AchievementPage.registerAchievementPage(page);
+    	}
     }
     /*
      * Addons
@@ -859,22 +810,41 @@ public class EELimited {
      */
     public static void addRecipe(IRecipe recipe)
     {
-        GameRegistry.addRecipe(recipe);
+    	if(recipe.getRecipeOutput() != null)
+    	{
+    		GameRegistry.addRecipe(recipe);
+    	}
     }
     public static void addRecipe(ItemStack dest, Object...objs)
     {
+    	if(dest == null || EEProxy.containsNull(Arrays.asList(objs)))
+    	{
+    		return;
+    	}
         GameRegistry.addRecipe(dest, objs);
     }
     public static void addSRecipe(ItemStack dest, Object...objs)
     {
+    	if(dest == null || EEProxy.containsNull(Arrays.asList(objs)))
+    	{
+    		return;
+    	}
         GameRegistry.addShapelessRecipe(dest, objs);
     }
     public static void addORecipe(ItemStack dest,Object...objs)
     {
+    	if(dest == null || EEProxy.containsNull(Arrays.asList(objs)))
+    	{
+    		return;
+    	}
     	addRecipe(new ShapedOreRecipe(dest,objs));
     }
     public static void addOSRecipe(ItemStack dest,Object...objs)
     {
+    	if(dest == null || EEProxy.containsNull(Arrays.asList(objs)))
+    	{
+    		return;
+    	}
     	addRecipe(new ShapelessOreRecipe(dest,objs));
     }
     /*
@@ -888,6 +858,10 @@ public class EELimited {
     }
     public static ItemStack gs(Object obj)
     {
+    	if(obj == null)
+    	{
+    		return null;
+    	}
         if (obj instanceof Item)
         {
             return new ItemStack((Item)obj);
@@ -953,6 +927,17 @@ public class EELimited {
 
         return gs(Cov, 1, 2);
     }
+    public static ItemStack getFixCov(ItemStack stack)
+    {
+    	for(Map.Entry<Item,ItemStack> entry : fixMap.entrySet())
+    	{
+    		if(stack.getItem() == entry.getKey())
+    		{
+    			return entry.getValue();
+    		}
+    	}
+    	return null;
+    }
     /*
      * util
      */
@@ -962,6 +947,10 @@ public class EELimited {
     }
     public void addFixRecipe(Level level, Item item, int amount)
     {
+    	if(EEItems.Cov == null)
+    	{
+    		return;
+    	}
         ItemStack cov = getCov(level);
         List<ItemStack> list = new ArrayList<ItemStack>();
         list.add(gs(item, 1, -1));
@@ -972,9 +961,14 @@ public class EELimited {
         }
 
         addRecipe(new FixRecipe(gs(item), list));
+        fixMap.put(item, changeAmount(getCov(level),amount));
     }
     public void addFixRecipe(Level level, ItemStack item, int amount)
     {
+    	if(EEItems.Cov == null)
+    	{
+    		return;
+    	}
         ItemStack cov = getCov(level);
         List<ItemStack> list = new ArrayList<ItemStack>();
         list.add(gs(item, 1, -1));
@@ -985,6 +979,7 @@ public class EELimited {
         }
 
         addRecipe(new FixRecipe(gs(item), list));
+        fixMap.put(item.getItem(),changeAmount(getCov(level),amount));
     }
     public static List<ItemStack> copy(List<ItemStack> list)
     {
@@ -1128,6 +1123,10 @@ public class EELimited {
     }
     public void addFixRecipe()
     {
+    	if(EEItems.Cov == null)
+    	{
+    		return;
+    	}
         addFixRecipe(LOW, Items.wooden_shovel, 1);
         addFixRecipe(LOW, Items.wooden_hoe, 2);
         addFixRecipe(LOW, Items.wooden_sword, 2);
@@ -1211,7 +1210,10 @@ public class EELimited {
     {
     	addRecipe(gs(DM), "FDF","DPD","FDF",'F',mobiusFuel,'D',Blocks.diamond_block, 'P', Phil);
     	addRecipe(gs(DM), "FDF","DPD","FDF",'F',Blocks.diamond_block,'D',mobiusFuel, 'P', Phil);
+    	addRecipe(gs(DM), "FDF","DPD","FDF",'F',mobiusFuel,'D',Blocks.diamond_block, 'P', miniumStone);
+    	addRecipe(gs(DM), "FDF","DPD","FDF",'F',Blocks.diamond_block,'D',mobiusFuel, 'P', miniumStone);
     	addRecipe(gs(NovaTNT,2),"TFT","FPF","TFT",'T',Blocks.tnt,'F',mobiusFuel,'P',Phil);
+    	addRecipe(gs(NovaTNT,2),"TFT","FPF","TFT",'T',Blocks.tnt,'F',mobiusFuel,'P',miniumStone);
     	addRecipe(gs(NovaTNT,6),"TFT","FPF","TFT",'T',Blocks.tnt,'F',mobiusFuel,'P',destCatal);
     	addExchange(gs(cAlchChest),AlchChest,gs(AlchBag,1,-1));
     	addExchange(gs(RM), DMBlock, 4);

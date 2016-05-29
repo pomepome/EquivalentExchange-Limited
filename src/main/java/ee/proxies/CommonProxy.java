@@ -1,5 +1,6 @@
 package ee.proxies;
 
+import ee.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class CommonProxy {

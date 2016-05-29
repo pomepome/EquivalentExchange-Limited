@@ -1,34 +1,30 @@
 package ee.gui.container;
 
-import java.util.List;
-
 import ee.features.EELimited;
+import ee.gui.InventoryMiniumWorkbench;
 import ee.gui.InventoryPhilWorkbench;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
-import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
 
-public class ContainerPhilWorkbench extends Container
+public class ContainerMiniumWorkbench extends Container
 {
-	private InventoryPhilWorkbench craftMatrix;
+	private InventoryMiniumWorkbench craftMatrix;
 	private IInventory craftResult = new InventoryCraftResult();
 	private World worldObj;
 
-	public ContainerPhilWorkbench(InventoryPlayer invPlayer)
+	public ContainerMiniumWorkbench(InventoryPlayer invPlayer)
 	{
 		worldObj = invPlayer.player.worldObj;
 
-		craftMatrix = new InventoryPhilWorkbench(this, invPlayer.player.worldObj);
+		craftMatrix = new InventoryMiniumWorkbench(this, invPlayer.player.worldObj);
 		
 		//CraftingResult
 		this.addSlotToContainer(new SlotCrafting(invPlayer.player, this.craftMatrix, this.craftResult, 0, 124, 35));

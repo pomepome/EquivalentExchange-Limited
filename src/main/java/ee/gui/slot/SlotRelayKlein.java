@@ -1,6 +1,6 @@
 package ee.gui.slot;
 
-import ee.features.EELimited;
+import ee.features.EEItems;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -20,6 +20,6 @@ public class SlotRelayKlein extends Slot
 			return false;
 		}
 		
-		return stack.getItem() == EELimited.Klein;
+		return stack.getItem() == EEItems.Klein;
 	}
 }

@@ -23,6 +23,7 @@ public class BlockEMCCollector extends BlockContainer
 		super(Material.rock);
 		this.setCreativeTab(EELimited.TabEE).setLightLevel(Constants.COLLECTOR_LIGHT_VALS[0]).setBlockName("EMCCollector").setBlockTextureName("stone").setHardness(1000f);
 		GameRegistry.registerBlock(this,"EMCCollector");
+		this.setLightLevel(0);
 	}
 	@Override
 	public TileEntity createNewTileEntity(World p_149915_1_, int p_149915_2_)

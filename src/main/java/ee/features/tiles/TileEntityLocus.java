@@ -35,7 +35,7 @@ public class TileEntityLocus extends TileDirection implements ISidedInventory
 
 		if(!canProcess())
 		{
-			currentBurnTime = getBurnTime();
+			currentBurnTime = 0;
 		}
 		else
 		{
@@ -87,6 +87,10 @@ public class TileEntityLocus extends TileDirection implements ISidedInventory
     }
 	public int getBurnTimeScaled(int scale)
 	{
+		if(currentBurnTime == 0)
+		{
+			return scale;
+		}
 		return currentBurnTime * scale / getBurnTime();
 	}
 	public void sortInventory()

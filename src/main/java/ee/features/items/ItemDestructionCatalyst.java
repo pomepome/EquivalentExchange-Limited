@@ -6,9 +6,11 @@ import com.google.common.collect.Lists;
 
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import ee.network.PacketHandler;
+import ee.network.PacketSound;
 import ee.network.PacketSpawnParticle;
 import ee.util.Coordinates;
 import ee.util.EEProxy;
+import ee.util.EnumSounds;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -75,7 +77,7 @@ public class ItemDestructionCatalyst extends ItemChargeable {
 					}
 
 			player.swingItem();
-			EEProxy.playSoundAtPlayer("ee:items.action", player, 1.0f, 1.0f);
+			EEProxy.playSoundAtPlayer(EnumSounds.ACTION.getPath(), player,1.0f,1.0f);
 		}
 
 		return stack;

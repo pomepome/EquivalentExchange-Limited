@@ -1,6 +1,7 @@
 package ee.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -39,7 +40,7 @@ public class PacketSpawnParticle implements IMessage, IMessageHandler<PacketSpaw
 	@Override
 	public IMessage onMessage(PacketSpawnParticle message, MessageContext ctx)
 	{
-		EELimited.proxy.getEntityPlayerInstance().worldObj.spawnParticle(message.particleName, message.x, message.y, message.z, message.velX, message.velY, message.velZ);
+		Minecraft.getMinecraft().theWorld.spawnParticle(message.particleName, message.x, message.y, message.z, message.velX, message.velY, message.velZ);
 		return null;
 	}
 

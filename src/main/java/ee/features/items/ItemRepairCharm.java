@@ -6,6 +6,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import ee.features.EELimited;
+import ee.features.Level;
 import ee.features.NameRegistry;
 import ee.features.PlayerTimers;
 import ee.util.EEProxy;
@@ -30,15 +32,23 @@ public class ItemRepairCharm extends ItemEEFunctional
 		}
 
 		EntityPlayer player = (EntityPlayer) entity;
-
-		PlayerTimers.activateRepair(player);
-
-		if (PlayerTimers.canRepair(player))
-		{
-			repairAllItems(player);
-		}
+		repairAllItems(player);
 	}
-
+	private boolean isRepairable(ItemStack stack)
+	{
+		ItemStack covStack = EELimited.getFixCov(stack);
+		int c = stack.getItemDamage();
+		int m = stack.getMaxDamage();
+		if(covStack.stackSize == 1)
+		{
+			return c == m - 1;
+		}
+		else if(c >= (m / covStack.stackSize))
+		{
+			return true;
+		}
+		return false;
+	}
 	public void repairAllItems(EntityPlayer player)
 	{
 		IInventory inv = player.inventory;
@@ -47,20 +57,21 @@ public class ItemRepairCharm extends ItemEEFunctional
 		{
 			ItemStack invStack = inv.getStackInSlot(i);
 
-			if (invStack == null || invStack.getItem() instanceof ItemEE || !invStack.getItem().isRepairable())
+			if (invStack == null || invStack.getItem() instanceof ItemEE)
 			{
 				continue;
 			}
 
-			if (invStack.equals(player.getCurrentEquippedItem()) && player.isSwingInProgress) {
-				//Don't repair item that is currently used by the player.
-				continue;
-			}
-
-			if (!invStack.getHasSubtypes() && invStack.getMaxDamage() != 0 && invStack.getItemDamage() > 0 && EEProxy.useResource(player,1,true))
+			if (!invStack.getHasSubtypes() && invStack.getMaxDamage() != 0 && invStack.getItemDamage() > 0)
 			{
-				invStack.setItemDamage(invStack.getItemDamage() - 1);
-				inv.markDirty();
+				ItemStack stack = EEProxy.normalizeStack(EELimited.getFixCov(invStack));
+				if(stack != null && isRepairable(invStack) && EEProxy.invContainsItem(player.inventory, stack))
+				{
+					EEProxy.decrItem(player.inventory, stack);
+					invStack.setItemDamage(0);
+					inv.setInventorySlotContents(i, invStack);
+					inv.markDirty();
+				}
 				continue;
 			}
 			if (invStack.hasTagCompound())

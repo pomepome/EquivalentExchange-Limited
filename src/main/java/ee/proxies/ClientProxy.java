@@ -6,7 +6,8 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import ee.addons.nei.NEIAddon;
-import ee.features.EELimited;
+import ee.features.EEBlocks;
+import ee.features.EEItems;
 import ee.features.KeyRegistry;
 import ee.features.entities.EntityLavaProjectile;
 import ee.features.entities.EntityMobRandomizer;
@@ -20,6 +21,7 @@ import ee.features.renderers.RenderNovaTNTPrimed;
 import ee.features.tiles.TileEntityAlchChest;
 import ee.features.tiles.TileEntityColoredAlchChest;
 import ee.network.KeyEvent;
+import ee.network.PacketHandler;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -34,13 +36,13 @@ public class ClientProxy extends CommonProxy
 	}
 	public void registerRenderers()
 	{
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(EELimited.AlchChest),new ChestItemRenderer());
+		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(EEBlocks.AlchChest),new ChestItemRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAlchChest.class,new ChestRenderer());
-		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(EELimited.cAlchChest),new ColoredChestItemRenderer());
+		MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(EEBlocks.cAlchChest),new ColoredChestItemRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityColoredAlchChest.class,new ColoredChestRenderer());
-		RenderingRegistry.registerEntityRenderingHandler(EntityLavaProjectile.class,new RenderSnowball(EELimited.LavaOrb));
-		RenderingRegistry.registerEntityRenderingHandler(EntityWaterProjectile.class,new RenderSnowball(EELimited.WaterOrb));
-		RenderingRegistry.registerEntityRenderingHandler(EntityMobRandomizer.class,new RenderSnowball(EELimited.Randomizer));
+		RenderingRegistry.registerEntityRenderingHandler(EntityLavaProjectile.class,new RenderSnowball(EEItems.LavaOrb));
+		RenderingRegistry.registerEntityRenderingHandler(EntityWaterProjectile.class,new RenderSnowball(EEItems.WaterOrb));
+		RenderingRegistry.registerEntityRenderingHandler(EntityMobRandomizer.class,new RenderSnowball(EEItems.Randomizer));
 		RenderingRegistry.registerEntityRenderingHandler(EntityNovaPrimed.class,new RenderNovaTNTPrimed());
 	}
 	public void registerKies()

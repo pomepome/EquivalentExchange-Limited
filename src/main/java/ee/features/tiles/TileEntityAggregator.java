@@ -5,6 +5,8 @@ import org.apache.logging.log4j.Logger;
 
 import ee.addons.bc.BCAddon;
 import ee.features.EELimited;
+import ee.network.PacketChatMessage;
+import ee.network.PacketHandler;
 import ee.util.AggregatorRegistry;
 import ee.util.EEProxy;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,13 +17,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileEntityAggregator extends TileDirection implements ISidedInventory
 {
 	ItemStack[] inventory;
 	public double progress;
+	public int savedLightValue;
 
 	private static final Logger log = LogManager.getLogger("EELimited|Aggregator");
 
@@ -48,6 +50,7 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 			}
 		}
 		progress = nbt.getDouble("progress");
+		savedLightValue = nbt.getInteger("light");
 	}
 
 	@Override
@@ -56,6 +59,7 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 		super.writeToNBT(nbt);
 
 		nbt.setDouble("progress", progress);
+		nbt.setInteger("light",savedLightValue);
 
 		NBTTagList list = new NBTTagList();
 		for (int i = 0; i < getSizeInventory(); i++)
@@ -73,7 +77,7 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 
 		nbt.setTag("Items", list);
 	}
-	public void putOutput()
+	public void extractProduct()
 	{
 		for(int i = 2;i < 6;i++)
 		{
@@ -114,12 +118,19 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 	}
 	public ItemStack getFirstFuel()
 	{
+		return getFirstFuel(true);
+	}
+	public ItemStack getFirstFuel(boolean removeTarget)
+	{
 		for(int i = 0;i < 4;i++)
 		{
 			if(inventory[i] != null)
 			{
 				ItemStack stack = inventory[i].copy();
-				inventory[i] = null;
+				if(removeTarget)
+				{
+					inventory[i] = null;
+				}
 				return stack;
 			}
 		}
@@ -143,16 +154,19 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 	{
 		super.updateEntity();
 
-		if(!canProcess())
+		if(worldObj.isRemote)
+		{
+			return;
+		}
+		getSunLevel();
+		gatherFuel();
+		if(inventory[4] == null)
 		{
 			progress = 0;
+			return;
 		}
-		else
+		else if(canProcess())
 		{
-			if(worldObj.isRemote)
-			{
-				return;
-			}
 			double multiplier = getMultiplierLight();
 			progress += AggregatorRegistry.get(inventory[4]) * multiplier;
 			if(progress >= getWorkTime())
@@ -161,10 +175,9 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 				process();
 			}
 		}
-		gatherFuel();
 		if(EELimited.autoEject)
 		{
-			putOutput();
+			extractProduct();
 		}
 		markDirty();
 	}
@@ -203,10 +216,17 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 		insertOutput();
 		return true;
 	}
+	public int getSunLevel()
+	{
+		if(!worldObj.isRemote)
+		{
+			savedLightValue = worldObj.getBlockLightValue(xCoord, yCoord + 1, zCoord);
+		}
+		return savedLightValue;
+	}
 	public double getMultiplierLight()
 	{
-		float i1 = worldObj.getSavedLightValue(EnumSkyBlock.Block, xCoord, yCoord + 1, zCoord);
-		return (double)i1 / 15;
+		return (double)getSunLevel() / 15;
 	}
 	private ItemStack[] getInputCopy()
 	{
@@ -292,7 +312,7 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 	@Override
 	public String getInventoryName()
 	{
-		return "aggregatot";
+		return "aggregator";
 	}
 
 	@Override

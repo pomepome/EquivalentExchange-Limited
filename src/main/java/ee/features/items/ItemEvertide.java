@@ -1,7 +1,7 @@
 package ee.features.items;
 
 import ee.features.Constants;
-import ee.features.EELimited;
+import ee.features.EEItems;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityWaterProjectile;
 import ee.features.items.interfaces.IProjectileShooter;
@@ -53,7 +53,7 @@ public class ItemEvertide extends ItemChargeable implements IProjectileShooter,I
 			}
 			else if (!world.isRemote)
 			{
-				if((b.getMaterial() == Material.lava) && bu == Blocks.air && EEProxy.getStackFromInv(player.inventory, new ItemStack(EELimited.Volc)) != null)
+				if((b.getMaterial() == Material.lava) && bu == Blocks.air && EEProxy.getStackFromInv(player.inventory, new ItemStack(EEItems.Volc)) != null)
 				{
 					return;
 				}
