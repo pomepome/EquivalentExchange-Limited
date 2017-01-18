@@ -1,5 +1,6 @@
 package ee.features.items;
 
+import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import ee.features.EEItems;
 import ee.features.EELimited;
 import ee.features.NameRegistry;
@@ -7,20 +8,29 @@ import ee.features.entities.EntityMobRandomizer;
 import ee.features.items.interfaces.IChargeable;
 import ee.features.items.interfaces.IExtraFunction;
 import ee.features.items.interfaces.IProjectileShooter;
+import ee.features.tiles.TileDirection;
 import ee.features.tiles.TileEmc;
-import ee.gui.BagData;
 import ee.gui.PhilData;
+import ee.network.PacketHandler;
+import ee.network.PacketSound;
+import ee.network.PacketSpawnParticle;
 import ee.util.EEProxy;
+import ee.util.EnumSounds;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
 
 public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFunction,IChargeable,IProjectileShooter
 {
-	
+
 	PhilData data;
-	
+
 	public ItemPhilosophersStone()
     {
         super(NameRegistry.Philo);
@@ -75,6 +85,35 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 	@Override
 	public void changeCharge(EntityPlayer player, ItemStack stack)
 	{
+		World w = player.worldObj;
+		MovingObjectPosition mop = this.getMovingObjectPositionFromPlayer(w, player, true);
+		if(mop != null && mop.typeOfHit == MovingObjectType.BLOCK)
+		{
+			int x = mop.blockX;
+			int y = mop.blockY;
+			int z = mop.blockZ;
+			TileEntity tile = w.getTileEntity(x, y, z);
+			if( tile != null && tile instanceof TileDirection)
+			{
+				TileDirection td = (TileDirection)tile;
+				td.setRelativeOrientation(player, true);
+				EEProxy.playSoundAtPlayer(EnumSounds.ACTION.getPath(), player, 1.0f, 1.0f);
+				PacketHandler.sendToAllAround(new PacketSpawnParticle("largesmoke", x, y + 1, z), new TargetPoint(w.provider.dimensionId, x, y + 1, z, 32));
+				return;
+			}
+			else if( tile != null && tile instanceof IInventory)
+			{
+				IInventory inv = (IInventory)tile;
+				int orientation = TileDirection.getRelativeOrientation(player);
+				if(w.getBlockMetadata(x, y, z) != orientation)
+				{
+					w.setBlockMetadataWithNotify(x, y, z, orientation, 2);
+					EEProxy.playSoundAtPlayer(EnumSounds.ACTION.getPath(), player,1.0f,1.0f);
+					PacketHandler.sendToAllAround(new PacketSpawnParticle("largesmoke", x, y + 1, z), new TargetPoint(w.provider.dimensionId, x, y + 1, z, 32));
+					return;
+				}
+			}
+		}
 		player.setCurrentItemOrArmor(0, new ItemStack(EEItems.PhilTool));
 	}
 	@Override
@@ -84,7 +123,7 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 	public static PhilData getPhilData(World world)
 	{
 		PhilData pData = null;
-		
+
 		pData = (PhilData)world.loadItemData(PhilData.class, "Phil");
 		if(pData == null)
 		{
@@ -92,7 +131,7 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 			pData.markDirty();
 			world.setItemData("Phil", pData);
 		}
-		
+
 		return pData;
 	}
 }

@@ -46,7 +46,7 @@ public class TileFuelBurner extends TileEmcProducer implements IInventory
 		}
 		if (numRequest > 0 && !this.isRequestingEmc())
 		{
-			double toSend = Math.min(100,getStoredEmc());
+			int toSend = Math.min(100,getStoredEmc());
 			this.sendEmcToRequesting(toSend / numRequest);
 			this.removeEmc(toSend);
 		}
@@ -166,5 +166,10 @@ public class TileFuelBurner extends TileEmcProducer implements IInventory
 	public boolean isBurning()
 	{
 		return getStoredEmc() > 0;
+	}
+	@Override
+	public int getSendingEmc()
+	{
+		return (int)Math.min(100,getStoredEmc());
 	}
 }

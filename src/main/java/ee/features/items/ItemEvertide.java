@@ -4,6 +4,7 @@ import ee.features.Constants;
 import ee.features.EEItems;
 import ee.features.NameRegistry;
 import ee.features.entities.EntityWaterProjectile;
+import ee.features.items.interfaces.IPedestalItem;
 import ee.features.items.interfaces.IProjectileShooter;
 import ee.util.EEProxy;
 import net.minecraft.block.Block;
@@ -15,12 +16,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class ItemEvertide extends ItemChargeable implements IProjectileShooter,IFluidContainerItem
+public class ItemEvertide extends ItemChargeable implements IPedestalItem,IProjectileShooter,IFluidContainerItem
 {
 	public void onUpdate(ItemStack par1ItemStack, World world, Entity par3Entity, int par4, boolean par5)
     {
@@ -184,5 +186,15 @@ public class ItemEvertide extends ItemChargeable implements IProjectileShooter,I
 	public FluidStack drain(ItemStack container, int maxDrain, boolean doDrain)
 	{
 		return new FluidStack(FluidRegistry.WATER,1000);
+	}
+
+	@Override
+	public void updateInPedestal(World world, int x, int y, int z)
+	{
+		if(!world.isRemote)
+		{
+			WorldInfo info = world.getWorldInfo();
+			info.setRaining(true);
+		}
 	}
 }

@@ -13,6 +13,7 @@ import ee.addons.extrautil.AddonExtraUtilities;
 import ee.features.EEItems;
 import ee.features.EELimited;
 import ee.features.PlayerTimers;
+import ee.features.renderers.PedestalRenderer;
 import ee.util.Timer1s;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,11 +22,14 @@ import net.minecraft.item.ItemStack;
 public class CommonHandler
 {
 	public static boolean hasStarted = false;
+
 	@SubscribeEvent
 	public void onPlayerUpdate(TickEvent.PlayerTickEvent e) throws Exception
 	{
 		PlayerChecks.update();
 		Timer1s.Tick();
+		PedestalRenderer.itemRenderCount += 0.2f;
+		PedestalRenderer.itemRenderCountSlow += 0.005f;
 		EntityPlayer p = e.player;
 		if(!hasStarted)
 		{

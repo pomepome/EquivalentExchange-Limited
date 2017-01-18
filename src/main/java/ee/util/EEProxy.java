@@ -62,14 +62,17 @@ import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
@@ -78,7 +81,11 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -1137,7 +1144,7 @@ public class EEProxy
 
     public static void playSoundAtPlayer(String var0, EntityPlayer var1, float var2, float var3)
     {
-        playSound(var1.worldObj,var0, (float)var1.posX, (float)var1.posY, (float)var1.posZ, var2, var3);
+        var1.worldObj.playSoundAtEntity(var1, var0, var2, var3);
     }
     public static Side getSide()
     {
@@ -1381,7 +1388,48 @@ public class EEProxy
 			else return AxisAlignedBB.getBoundingBox(coords.x - 1, coords.y - 1, coords.z, coords.x + 1, coords.y + 1, coords.z + depth);
 		}
 	}
+	public static void igniteNearby(World world, EntityPlayer player)
+	{
+		for (int x = (int) (player.posX - 8); x <= player.posX + 8; x++)
+			for (int y = (int) (player.posY - 5); y <= player.posY + 5; y++)
+				for (int z = (int) (player.posZ - 8); z <= player.posZ + 8; z++)
+					if (world.rand.nextInt(128) == 0 && world.isAirBlock(x, y, z))
+					{
+						checkedPlaceBlock(((EntityPlayerMP) player), x, y, z, Blocks.fire, 0);
+					}
+	}
+	public static boolean hasBreakPermission(EntityPlayerMP player, int x, int y, int z)
+	{
+		return hasEditPermission(player, x, y, z)
+				&& !ForgeHooks.onBlockBreakEvent(player.worldObj, player.theItemInWorldManager.getGameType(), player, x, y, z).isCanceled();
+	}
 
+	public static boolean hasEditPermission(EntityPlayerMP player, int x, int y, int z)
+	{
+		return player.canPlayerEdit(x, y, z, player.worldObj.getBlockMetadata(x, y, z), null)
+				&& !MinecraftServer.getServer().isBlockProtected(player.worldObj, x, y, z, player);
+	}
+	public static boolean checkedPlaceBlock(EntityPlayerMP player, int x, int y, int z, Block toPlace, int toPlaceMeta)
+	{
+		if (!hasEditPermission(player, x, y, z))
+		{
+			return false;
+		}
+		World world = player.worldObj;
+		BlockSnapshot before = BlockSnapshot.getBlockSnapshot(world, x, y, z);
+		world.setBlock(x, y, z, toPlace);
+		world.setBlockMetadataWithNotify(x, y, z, toPlaceMeta, 3);
+		BlockEvent.PlaceEvent evt = new BlockEvent.PlaceEvent(before, Blocks.air, player); // Todo verify can use air here
+		MinecraftForge.EVENT_BUS.post(evt);
+		if (evt.isCanceled())
+		{
+			world.restoringBlockSnapshots = true;
+			before.restore(true, false);
+			world.restoringBlockSnapshots = false;
+			return false;
+		}
+		return true;
+	}
 	/**
 	 * Gets an AABB for AOE digging operations. The charge increases only the breadth of the box.
 	 * Y level remains constant. As such, a direction hit is unneeded.
@@ -1389,5 +1437,22 @@ public class EEProxy
 	public static AxisAlignedBB getFlatYBox(Coordinates coords, int offset)
 	{
 		return AxisAlignedBB.getBoundingBox(coords.x - offset, coords.y, coords.z - offset, coords.x + offset, coords.y, coords.z + offset);
+	}
+	public static List<TileEntity> getTileEntitiesWithinAABB(World world, AxisAlignedBB bBox)
+	{
+		List<TileEntity> list = Lists.newArrayList();
+
+		for (int i = (int) bBox.minX; i <= bBox.maxX; i++)
+			for (int j = (int) bBox.minY; j <= bBox.maxY; j++)
+				for (int k = (int) bBox.minZ; k <= bBox.maxZ; k++)
+				{
+					TileEntity tile = world.getTileEntity(i, j, k);
+					if (tile != null)
+					{
+						list.add(tile);
+					}
+				}
+
+		return list;
 	}
 }

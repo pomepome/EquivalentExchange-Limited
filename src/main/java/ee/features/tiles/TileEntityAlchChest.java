@@ -4,6 +4,7 @@ import java.util.List;
 
 import ee.features.EEBlocks;
 import ee.features.EEItems;
+import ee.features.EELimited;
 import ee.features.items.ItemEE;
 import ee.network.PacketAlchChestUpdate;
 import ee.network.PacketChatMessage;
@@ -307,9 +308,12 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 						List<EntityItem> itemList = this.worldObj.getEntitiesWithinAABB(EntityItem.class, box);
 						for (EntityItem item : itemList)
 						{
-							if (getDistanceFrom(item.posX, item.posY, item.posZ) <= 1.0f)
+							if (getDistanceFrom(item.posX, item.posY, item.posZ) <= 4.0f)
 							{
-								PacketHandler.sendToServer(new PacketChatMessage("Picked up "+ item.getEntityItem().getDisplayName()));
+								if(EELimited.Debug)
+								{
+									PacketHandler.sendToServer(new PacketChatMessage("Picked up "+ item.getEntityItem().getDisplayName()));
+								}
 								if (EEProxy.hasSpace(this, item.getEntityItem()))
 								{
 									ItemStack remain = EEProxy.pushStackInInv(this, item.getEntityItem());
@@ -327,9 +331,9 @@ public class TileEntityAlchChest extends TileDirection implements IInventory
 								double d3 = (this.zCoord - item.posZ);
 								double d4 = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3);
 
-								item.motionX += d1 / d4 * 0.03D;
-								item.motionY += d2 / d4 * 0.03D;
-								item.motionZ += d3 / d4 * 0.03D;
+								item.motionX += d1 / d4 * 0.2D;
+								item.motionY += d2 / d4 * 0.2D;
+								item.motionZ += d3 / d4 * 0.2D;
 							}
 						}
 					}

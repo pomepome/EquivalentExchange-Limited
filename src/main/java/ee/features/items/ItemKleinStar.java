@@ -78,6 +78,10 @@ public class ItemKleinStar extends ItemEE
     	{
     		nbt.setInteger("EMC",nbt.getInteger("MaxEMC"));
     	}
+    	if(nbt.getInteger("MaxEMC") == 0)
+    	{
+    		return 1;
+    	}
     	return 1 - ((double)nbt.getInteger("EMC") / (double)nbt.getInteger("MaxEMC"));
     }
 	public int getMaxEMC(int damage)

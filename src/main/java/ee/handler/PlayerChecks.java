@@ -18,6 +18,7 @@ import ee.util.EEProxy;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 
 public class PlayerChecks
@@ -38,7 +39,7 @@ public class PlayerChecks
 				{
 					EEProxy.setEntityImmuneToFire(player, false);
 				}
-
+				ItemBucket b;
 				fireChecks.remove(i);
 				EELimited.instance.log.debug("Removed " + player.getCommandSenderName() + " from fire checks.");
 			}

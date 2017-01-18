@@ -41,6 +41,9 @@ item.RM.name=Redmatter
 item.RMPickaxe.name=Redmatter Pickaxe
 item.destCatal.name=Destruction Catalyst
 item.MiniumStone.name=Minium Stone
+item.ignition.name=Ring of Ignition
+item.timeWatch.name=Watch of Flowing Time
+item.bodyStone.name=Body Stone
 
 #Klein Star names
 item.Klein_0.name=Klein Star Ein
@@ -66,6 +69,8 @@ tile.locus.name=Darkmatter Locus
 tile.AlchChest_colored.name=Color Filtered Alchemical Chest
 tile.novaTNT.name=Nova Catalyst
 
+tile.ee_dmPedestal.name=Darkmatter Pedestal
+
 #Achievements
 achievement.getPhil=Take the first step!
 achievement.getPhil.desc=Make a Philosopher's stone
@@ -85,3 +90,16 @@ item.RMArmor_head.name=Redmatter Helmet
 item.RMArmor_chest.name=Redmatter Chestplate
 item.RMArmor_legs.name=Redmatter Leggings
 item.RMArmor_feet.name=Redmatter Boots
+
+#Time Watch
+timewatch.normal=Time is now flowing as usual.
+timewatch.forward=Time is now forwarding faster.
+timewatch.reverse=Time is now backwarding.
+timewatch.stop=Time has stopped.
+timewatch.failed=Failed to activate.
+
+#Inventory Operator
+operator.remove=Remove
+operator.copy=Copy
+operator.desc.remove=Mode has changed to remove mode.
+operator.desc.copy=Mode has changed to copy mode.

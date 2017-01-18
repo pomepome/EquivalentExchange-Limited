@@ -1,44 +1,7 @@
 package ee.features;
 
-import static ee.features.EEBlocks.Aggregator;
-import static ee.features.EEBlocks.AlchChest;
-import static ee.features.EEBlocks.DMBlock;
-import static ee.features.EEBlocks.EETorch;
-import static ee.features.EEBlocks.EMCCharger;
-import static ee.features.EEBlocks.EMCCollector;
-import static ee.features.EEBlocks.EMCCollectorMk2;
-import static ee.features.EEBlocks.EMCCollectorMk3;
-import static ee.features.EEBlocks.FuelBurner;
-import static ee.features.EEBlocks.Locus;
-import static ee.features.EEBlocks.NovaTNT;
-import static ee.features.EEBlocks.RMBlock;
-import static ee.features.EEBlocks.cAlchChest;
-import static ee.features.EEItems.AlchBag;
-import static ee.features.EEItems.AlchCoal;
-import static ee.features.EEItems.ArchAngel;
-import static ee.features.EEItems.BHR;
-import static ee.features.EEItems.Cov;
-import static ee.features.EEItems.DM;
-import static ee.features.EEItems.DMAxe;
-import static ee.features.EEItems.DMHoe;
-import static ee.features.EEItems.DMPickaxe;
-import static ee.features.EEItems.DMShears;
-import static ee.features.EEItems.DMShovel;
-import static ee.features.EEItems.DMSword;
-import static ee.features.EEItems.Ever;
-import static ee.features.EEItems.Klein;
-import static ee.features.EEItems.NIron;
-import static ee.features.EEItems.Phil;
-import static ee.features.EEItems.PhilTool;
-import static ee.features.EEItems.RM;
-import static ee.features.EEItems.RMPickaxe;
-import static ee.features.EEItems.Repair;
-import static ee.features.EEItems.Swift;
-import static ee.features.EEItems.Volc;
-import static ee.features.EEItems.destCatal;
-import static ee.features.EEItems.ironband;
-import static ee.features.EEItems.miniumStone;
-import static ee.features.EEItems.mobiusFuel;
+import static ee.features.EEBlocks.*;
+import static ee.features.EEItems.*;
 import static ee.features.Level.HIGH;
 import static ee.features.Level.LOW;
 import static ee.features.Level.MIDDLE;
@@ -85,6 +48,7 @@ import ee.features.items.armors.ItemRMArmor;
 import ee.features.recipes.FixRecipe;
 import ee.features.recipes.KleinChargeRecipe;
 import ee.features.recipes.KleinUpgradeRecipe;
+import ee.features.tiles.DMPedestalTile;
 import ee.features.tiles.TileEMCCharger;
 import ee.features.tiles.TileEMCCollector;
 import ee.features.tiles.TileEMCCollectorMk2;
@@ -136,7 +100,7 @@ import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
-@Mod(modid = "EELimitedR",name = "EELimitedR",version = "beta 1.0.3",dependencies="after:WailaHarvestability;after:NotEnoughItems")
+@Mod(modid = "EELimitedR",name = "EELimitedR",version = "1.0.6",dependencies="after:WailaHarvestability;after:NotEnoughItems")
 public class EELimited {
 
 	public static EELimited instance;
@@ -167,11 +131,13 @@ public class EELimited {
     public static final int LOCUS = 7;
     public static final int ALCH_COLORED = 8;
     public static final int MINIUM_CRAFT = 9;
+    public static final int PEDESTAL = 10;
     /**
      * Render IDs
      */
     public static final int RENDER_CHEST = RenderingRegistry.getNextAvailableRenderId();
     public static final int RENDER_COLORED_CHEST = RenderingRegistry.getNextAvailableRenderId();
+    public static final int RENDER_PEDESTAL = RenderingRegistry.getNextAvailableRenderId();
     /**
      * Entity IDs
      */
@@ -189,6 +155,7 @@ public class EELimited {
     public static boolean disableResource;
     public static boolean autoEject;
     public static boolean keepPhilInventory;
+    public static int pedIgnitionCooldown;
     /**
      * Klein star damages
      */
@@ -273,6 +240,7 @@ public class EELimited {
     	GameRegistry.registerTileEntity(TileEntityAggregator.class,"Aggregator");
     	GameRegistry.registerTileEntity(TileEntityLocus.class,"Locus");
     	GameRegistry.registerTileEntity(TileEntityColoredAlchChest.class,"ColoredAlchChest");
+    	GameRegistry.registerTileEntity(DMPedestalTile.class, "DMPedestal");
     	if(Hard)
     	{
     		removeRecipes();
@@ -338,6 +306,8 @@ public class EELimited {
     {
     	LocusRegistry.registerFuelValue(gs(AlchCoal), 64);
     	LocusRegistry.registerFuelValue(gs(mobiusFuel), 176);
+    	LocusRegistry.registerFuelValue(gs(DM),114000 / 4);
+    	LocusRegistry.registerFuelValue(gs(RM),114000);
     	LocusRegistry.registerDest(gs(DMBlock),114000);
     	LocusRegistry.registerDest(gs(RMBlock),114000 * 4);
     }
@@ -404,7 +374,21 @@ public class EELimited {
     			addRecipe(new KleinChargeRecipe(gs(Klein,1,i),list,EMC*j));
     		}
     	}
-    	fuelMap.put(fuel,EMC);
+    	if(!isFuel(fuel))
+    	{
+    		fuelMap.put(fuel,EMC);
+    	}
+    }
+    public boolean isFuel(ItemStack item)
+    {
+    	for(ItemStack is : fuelMap.keySet())
+    	{
+    		if(is.getItem() == item.getItem())
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
     }
     public void addKleinUpgradeRecipe()
     {
@@ -567,6 +551,7 @@ public class EELimited {
     	autoEject = config.getBoolean("autoEject","misc",true,"If this option is true,Aggregator and Locus will eject their output automatically.(BuildCraft pipe and chests)");
     	cutDown = config.getBoolean("Cut Down","misc",true,"cut down from root");
     	keepPhilInventory = config.getBoolean("keepPhilCraftingInventory", "inventory", true, "wether Philosopher's stone's crafting inventory keeps their contents or not.");
+    	pedIgnitionCooldown = config.getInt("pedIgnitionCooldown", "pedestal", 20, -1, 200, "cooldown for ignition rings in pedestal");
     	config.save();
     }
     public void registerAchievements()
@@ -730,12 +715,15 @@ public class EELimited {
     	}
     	return is1.getItem().equals(is2.getItem());
     }
-    public static boolean removeSmeltingRecipe(Object aInput) {
-		if (aInput != null) {
+    public static boolean removeSmeltingRecipe(Object aInput)
+    {
+		if (aInput != null)
+		{
 			if(aInput instanceof ItemStack)
 			{
 				for (Object tInput : FurnaceRecipes.smelting().getSmeltingList().keySet()) {
-					if (areStacksEqual((ItemStack)aInput, (ItemStack)tInput)) {
+					if (areStacksEqual((ItemStack)aInput, (ItemStack)tInput))
+					{
 						FurnaceRecipes.smelting().getSmeltingList().remove(tInput);
 						return true;
 					}
@@ -1187,6 +1175,9 @@ public class EELimited {
         addRecipe(gs(Swift), "DFD", "FBF", "DFD", 'D', DM, 'F', Items.feather, 'B', ironband);
         addRecipe(gs(Repair),"HML","SPS","LMH",'H',getCov(HIGH),'M',getCov(MIDDLE),'L',getCov(LOW),'S',Items.string,'P',Items.paper);
         addRecipe(gs(Repair),"HML","SPS","LMH",'L',getCov(HIGH),'M',getCov(MIDDLE),'H',getCov(LOW),'S',Items.string,'P',Items.paper);
+        addRecipe(gs(ignitionRing),"FMF","DRD","FMF",'F',Items.flint_and_steel,'M',mobiusFuel,'R',ironband,'D',DM);
+        addRecipe(gs(DMPedestal),"RDR","RDR","DDD",'R',RM,'D',DMBlock);
+        addRecipe(gs(timeWatch),"DOD","GCG","DOD",'D',DM,'O',Blocks.obsidian,'G',Blocks.glowstone,'C',Items.clock);
     }
     public void addCovalenceRecipe()
     {

@@ -34,10 +34,10 @@ public class TileDirection extends TileEntity
 		this.orientation = ForgeDirection.getOrientation(orientation);
 	}
 
-	public void setRelativeOrientation(EntityLivingBase ent, boolean sendPacket)
+	public static int getRelativeOrientation(EntityLivingBase entity)
 	{
 		int direction = 0;
-		int facing = MathHelper.floor_double(ent.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+		int facing = MathHelper.floor_double(entity.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
 
 		if (facing == 0)
 		{
@@ -55,6 +55,13 @@ public class TileDirection extends TileEntity
 		{
 			direction = ForgeDirection.WEST.ordinal();
 		}
+
+		return direction;
+	}
+
+	public void setRelativeOrientation(EntityLivingBase ent, boolean sendPacket)
+	{
+		int direction = getRelativeOrientation(ent);
 
 		setOrientation(direction);
 

@@ -36,9 +36,14 @@ public class TileEMCCollector extends TileEmcProducer
 		}
 		if (numRequest > 0 && !this.isRequestingEmc())
 		{
-			double toSend = Math.min(5,getStoredEmc());
+			int toSend = (int)Math.min(5,getStoredEmc());
 			this.sendEmcToRequesting(toSend / numRequest);
 			this.removeEmc(toSend);
 		}
+	}
+	@Override
+	public int getSendingEmc()
+	{
+		return (int) getStoredEmc();
 	}
 }

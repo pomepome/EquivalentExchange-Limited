@@ -14,31 +14,31 @@ public class PacketTableSync implements IMessage, IMessageHandler<PacketTableSyn
 	private int x;
 	private int y;
 	private int z;
-	
+
 	public PacketTableSync() {}
-	
-	public PacketTableSync(double emc, int x, int y, int z) 
+
+	public PacketTableSync(double emc, int x, int y, int z)
 	{
 		this.emc = emc;
 		this.x = x;
 		this.y = y;
 		this.z = z;
 	}
-	
+
 	@Override
-	public IMessage onMessage(PacketTableSync pkt, MessageContext ctx) 
+	public IMessage onMessage(PacketTableSync pkt, MessageContext ctx)
 	{
 		TileEntity tile = Minecraft.getMinecraft().theWorld.getTileEntity(pkt.x, pkt.y, pkt.z);
 		if (tile instanceof TileEmc)
 		{
-			((TileEmc) tile).setEmcValue(pkt.emc);
+			((TileEmc) tile).setEmcValue((int)pkt.emc);
 		}
-		
+
 		return null;
 	}
 
 	@Override
-	public void fromBytes(ByteBuf buf) 
+	public void fromBytes(ByteBuf buf)
 	{
 		emc = buf.readDouble();
 		x = buf.readInt();
@@ -47,7 +47,7 @@ public class PacketTableSync implements IMessage, IMessageHandler<PacketTableSyn
 	}
 
 	@Override
-	public void toBytes(ByteBuf buf) 
+	public void toBytes(ByteBuf buf)
 	{
 		buf.writeDouble(emc);
 		buf.writeInt(x);

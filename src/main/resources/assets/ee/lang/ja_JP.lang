@@ -38,6 +38,8 @@ item.RM.name=赤色物質
 item.RMPickaxe.name=赤色物質のツルハシ
 item.destCatal.name=破壊の触媒
 item.MiniumStone.name=鉛丹石
+item.timeWatch.name=時流計
+item.bodyStone.name=体の石
 
 #Klein Star names
 item.Klein_0.name=クラインの星(Ⅰ)
@@ -72,3 +74,16 @@ achievement.getPhil=最初の一歩!
 achievement.getPhil.desc=賢者の石を作る
 achievement.getDM=不可視な物質
 achievement.getDM.desc=暗黒物質を作る
+
+#Time Watch
+timewatch.normal=時間は通常通り流れている
+timewatch.forward=時間は速く流れている
+timewatch.reverse=時間は逆行している
+timewatch.stop=時間は停止した
+timewatch.failed=起動に失敗した
+
+#Inventory Operator
+operator.remove=削除
+operator.copy=複製
+operator.desc.remove=削除モードに切り替えました
+operator.desc.copy=複製モードに切り替えました

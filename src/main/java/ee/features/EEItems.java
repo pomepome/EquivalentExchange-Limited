@@ -8,6 +8,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import ee.features.items.ItemAlchemyBag;
 import ee.features.items.ItemArchangelSmite;
 import ee.features.items.ItemBlackHoleRing;
+import ee.features.items.ItemBodyStone;
 import ee.features.items.ItemCovalenceDust;
 import ee.features.items.ItemDMAxe;
 import ee.features.items.ItemDMHoe;
@@ -18,12 +19,15 @@ import ee.features.items.ItemDMSword;
 import ee.features.items.ItemDestructionCatalyst;
 import ee.features.items.ItemEE;
 import ee.features.items.ItemEvertide;
+import ee.features.items.ItemIgnitionRing;
+import ee.features.items.ItemInventoryOperator;
 import ee.features.items.ItemKleinStar;
 import ee.features.items.ItemMiniumStone;
 import ee.features.items.ItemPhilosophersStone;
 import ee.features.items.ItemRMPickaxe;
 import ee.features.items.ItemRepairCharm;
 import ee.features.items.ItemSwiftwolfsRing;
+import ee.features.items.ItemTimeWatch;
 import ee.features.items.ItemVolcanite;
 import ee.features.items.entities.ItemLavaOrb;
 import ee.features.items.entities.ItemMobRandomizer;
@@ -33,11 +37,11 @@ import net.minecraftforge.common.config.Configuration;
 
 public class EEItems
 {
-	
+
 	public static boolean isConfigLoaded;
 	private static Map<String,Boolean> loadedConfigList = new HashMap<String, Boolean>();
 	private static Configuration config;
-	
+
     /**
      * Items
      */
@@ -68,6 +72,11 @@ public class EEItems
     public static Item RMPickaxe;
     public static Item destCatal;
     public static Item miniumStone;
+    public static Item ignitionRing;
+    public static Item timeWatch;
+    public static Item bodyStone;
+
+    public static Item inventoryOperator;
 
     /**
      * Projectiles
@@ -75,7 +84,7 @@ public class EEItems
     public static Item LavaOrb;
     public static Item WaterOrb;
     public static Item Randomizer;
-    
+
     public static void init()
     {
     	if(isItemEnabled("PhilosophersStone"))
@@ -176,6 +185,22 @@ public class EEItems
     	if(isItemEnabled("MiniumStone"))
     	{
     		miniumStone = new ItemMiniumStone();
+    	}
+    	if(isItemEnabled("IgnitionRing"))
+    	{
+    		ignitionRing = new ItemIgnitionRing();
+    	}
+    	if(isItemEnabled("timeWatch"))
+    	{
+    		timeWatch = new ItemTimeWatch();
+    	}
+    	if(isItemEnabled("bodyStone"))
+    	{
+    		bodyStone = new ItemBodyStone();
+    	}
+    	if(isItemEnabled("inventoryOperator"))
+    	{
+    		inventoryOperator = new ItemInventoryOperator();
     	}
     }
     public static void loadConfig(FMLPreInitializationEvent event)

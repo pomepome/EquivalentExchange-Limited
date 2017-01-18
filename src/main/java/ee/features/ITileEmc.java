@@ -1,35 +1,35 @@
 package ee.features;
 
-public interface ITileEmc 
+public interface ITileEmc
 {
 	/**
 	 * Set the EMC value of this Tile Entity
 	 * @param value The EMC amount to set
 	 */
-	void setEmc(double value);
+	void setEmc(int value);
 
 	/**
 	 * Add EMC to this Tile Entity
 	 * @param value The EMC amount to add
 	 */
-	void addEmc(double value);
-	
+	void addEmc(int value);
+
 	/**
 	 * Remove EMC from the tile entity.<br>
 	 * @param value The EMC amount to remove
 	 */
-	void removeEmc(double value);
-	
+	void removeEmc(int value);
+
 	/**
 	 * @return The stored EMC in this TileEntity
 	 */
-	double getStoredEmc();
-	
+	int getStoredEmc();
+
 	/**
 	 * @return Whether or not the EMC buffer is full.
 	 */
 	boolean hasMaxedEmc();
-	
+
 	/**
 	 * If this returns true, the Tile Entity will accept EMC from any valid provider.<br>
 	 * EMC will be received only on the server side.

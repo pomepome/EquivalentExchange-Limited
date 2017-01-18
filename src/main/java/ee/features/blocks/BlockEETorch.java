@@ -423,9 +423,9 @@ public class BlockEETorch extends BlockEE
 
             if (var12 <= Math.pow(6.0D, 4.0D))
             {
-                double var14 = -(var6 * 0.019999999552965164D / var12) * Math.pow(6.0D, 3.0D);
-                double var16 = -(var8 * 0.019999999552965164D / var12) * Math.pow(6.0D, 3.0D);
-                double var18 = -(var10 * 0.019999999552965164D / var12) * Math.pow(6.0D, 3.0D);
+                double var14 = -(var6 * 0.019999999552965164D / var12) * Math.pow(6.0D, 3.0D) * 1.2d;
+                double var16 = -(var8 * 0.019999999552965164D / var12) * Math.pow(6.0D, 3.0D) * 0.7d;
+                double var18 = -(var10 * 0.019999999552965164D / var12) * Math.pow(6.0D, 3.0D) * 1.2d;
 
                 if (var14 > 0.0D)
                 {

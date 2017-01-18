@@ -52,7 +52,7 @@ public abstract class TileEmcProducer extends TileEmc
 
 			if (tile instanceof ITileEmc)
 			{
-				((ITileEmc) tile).addEmc(emc);
+				((ITileEmc) tile).addEmc((int)emc);
 			}
 		}
 	}
@@ -81,6 +81,7 @@ public abstract class TileEmcProducer extends TileEmc
 			}
 		}
 	}
+	public abstract int getSendingEmc();
 	/*
 	public void sendRelayBonus()
 	{

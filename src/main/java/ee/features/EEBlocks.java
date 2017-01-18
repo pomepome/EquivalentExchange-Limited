@@ -23,6 +23,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import ee.features.blocks.BlockAggregator;
 import ee.features.blocks.BlockAlchChest;
 import ee.features.blocks.BlockColoredAlchChest;
+import ee.features.blocks.BlockDMPedestal;
 import ee.features.blocks.BlockEE;
 import ee.features.blocks.BlockEETorch;
 import ee.features.blocks.BlockLocus;
@@ -55,6 +56,7 @@ import ee.features.items.ItemVolcanite;
 import ee.features.items.entities.ItemLavaOrb;
 import ee.features.items.entities.ItemMobRandomizer;
 import ee.features.items.entities.ItemWaterOrb;
+import ee.features.tiles.DMPedestalTile;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
@@ -62,11 +64,11 @@ import net.minecraftforge.common.config.Configuration;
 
 public class EEBlocks
 {
-	
+
 	public static boolean isConfigLoaded;
 	private static Map<String,Boolean> loadedConfigList = new HashMap<String, Boolean>();
 	private static Configuration config;
-	
+
 
     /**
      * Blocks
@@ -85,7 +87,8 @@ public class EEBlocks
     public static Block RMBlock;
     public static Block NovaTNT;
     public static Block cAlchChest;
-    
+    public static Block DMPedestal;
+
     public static void init()
     {
     	if(isItemEnabled("AlchemicalChest"))
@@ -141,6 +144,10 @@ public class EEBlocks
        	{
     		cAlchChest = new BlockColoredAlchChest();
        	}
+    	if(isItemEnabled("DMPedestal"))
+    	{
+    		DMPedestal = new BlockDMPedestal();
+    	}
     }
     public static void loadConfig(FMLPreInitializationEvent event)
     {

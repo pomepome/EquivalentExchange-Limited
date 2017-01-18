@@ -3,6 +3,7 @@ package ee.handler;
 import cpw.mods.fml.common.network.IGuiHandler;
 import ee.features.EELimited;
 import ee.features.items.ItemAlchemyBag;
+import ee.features.tiles.DMPedestalTile;
 import ee.features.tiles.TileEMCCharger;
 import ee.features.tiles.TileEntityAggregator;
 import ee.features.tiles.TileEntityAlchChest;
@@ -16,6 +17,7 @@ import ee.gui.GuiEMCCharger;
 import ee.gui.GuiFuelBurner;
 import ee.gui.GuiLocus;
 import ee.gui.GuiMiniumWorkbench;
+import ee.gui.GuiPedestal;
 import ee.gui.GuiPhilWorkbench;
 import ee.gui.InventoryAlchBag;
 import ee.gui.container.ContainerAggregator;
@@ -26,6 +28,7 @@ import ee.gui.container.ContainerColoredAlchChest;
 import ee.gui.container.ContainerFuelBurner;
 import ee.gui.container.ContainerLocus;
 import ee.gui.container.ContainerMiniumWorkbench;
+import ee.gui.container.ContainerPedestal;
 import ee.gui.container.ContainerPhilWorkbench;
 import ee.network.PacketChatMessage;
 import ee.network.PacketHandler;
@@ -103,6 +106,14 @@ public class GuiHandler implements IGuiHandler {
 				return new ContainerColoredAlchChest(player.inventory,(TileEntityColoredAlchChest)alch);
 			}
 		}
+		if(ID == EELimited.PEDESTAL)
+		{
+			TileEntity ped = world.getTileEntity(x, y, z);
+			if(ped instanceof DMPedestalTile)
+			{
+				return new ContainerPedestal(player.inventory, (DMPedestalTile)ped);
+			}
+		}
 		return null;
 	}
 
@@ -172,6 +183,14 @@ public class GuiHandler implements IGuiHandler {
 			if(alch instanceof TileEntityColoredAlchChest)
 			{
 				return new GuiColoredAlchChest(player.inventory,(TileEntityColoredAlchChest)alch);
+			}
+		}
+		if(ID == EELimited.PEDESTAL)
+		{
+			TileEntity ped = world.getTileEntity(x, y, z);
+			if(ped instanceof DMPedestalTile)
+			{
+				return new GuiPedestal(player.inventory, (DMPedestalTile)ped);
 			}
 		}
 		return null;

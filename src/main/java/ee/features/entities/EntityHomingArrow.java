@@ -41,7 +41,9 @@ public class EntityHomingArrow extends EntityArrow
 		super.onUpdate();
 		if(EELimited.Debug && this.isInGround())
 		{
-			System.out.println("GROUNDDDDDDD!!!!!");
+			worldObj.removeEntity(this);
+			this.setDead();
+			return;
 		}
 		AxisAlignedBB box = this.boundingBox;
 		if (target == null && !isInGround())
@@ -79,7 +81,7 @@ public class EntityHomingArrow extends EntityArrow
 		}
 		else if (!isInGround())
 		{
-			if (target.getHealth() == 0)
+			if (target.getHealth() <= 0)
 			{
 				AxisAlignedBB bBox = box.expand(12, 12, 12);
 				List<EntityLivingBase> list = this.worldObj.getEntitiesWithinAABB(EntityLivingBase.class, bBox);
@@ -101,7 +103,7 @@ public class EntityHomingArrow extends EntityArrow
 					}
 				}
 
-				if (target == null)
+				if (target == null || target.getHealth() <= 0)
 				{
 					worldObj.removeEntity(this);
 					return;

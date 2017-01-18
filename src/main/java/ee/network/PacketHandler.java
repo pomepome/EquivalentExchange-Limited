@@ -1,6 +1,7 @@
 package ee.network;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.Packet;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
@@ -25,6 +26,7 @@ public class PacketHandler
 			HANDLER.registerMessage(PacketOrientationSync.class,PacketOrientationSync.class,getNextID(),Side.CLIENT);
 			HANDLER.registerMessage(PacketSpawnParticle.class,PacketSpawnParticle.class,getNextID(),Side.CLIENT);
 			HANDLER.registerMessage(PacketSetFlying.class,PacketSetFlying.class,getNextID(),Side.CLIENT);
+			HANDLER.registerMessage(PacketPedestalSync.class, PacketPedestalSync.class, getNextID(), Side.CLIENT);
 		}
 	}
 	public static int getNextID()
@@ -74,5 +76,9 @@ public class PacketHandler
 	public static void sendToDimension(IMessage msg, int dimension)
 	{
 		HANDLER.sendToDimension(msg, dimension);
+	}
+	public static Packet getMCPacket(IMessage message)
+	{
+		return HANDLER.getPacketFrom(message);
 	}
 }

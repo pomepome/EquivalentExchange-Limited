@@ -6,6 +6,7 @@ import ee.features.NameRegistry;
 import ee.features.entities.EntityLavaProjectile;
 import ee.features.items.interfaces.IChargeable;
 import ee.features.items.interfaces.IExtraFunction;
+import ee.features.items.interfaces.IPedestalItem;
 import ee.features.items.interfaces.IProjectileShooter;
 import ee.handler.PlayerChecks;
 import ee.util.EEProxy;
@@ -18,10 +19,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.IFluidHandler;
 
-public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraFunction,IProjectileShooter
+public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraFunction,IProjectileShooter,IPedestalItem
 {
 	private int[] ranges = new int[]{};
 
@@ -218,5 +220,17 @@ public class ItemVolcanite extends ItemChargeable implements IChargeable,IExtraF
 		player.worldObj.spawnEntityInWorld(new EntityLavaProjectile(player.worldObj, player));
 		player.worldObj.playSoundAtEntity(player, "ee:items.transmute",1.0F,1.0F);
 		return true;
+	}
+
+	@Override
+	public void updateInPedestal(World world, int x, int y, int z)
+	{
+		if(!world.isRemote)
+		{
+			WorldInfo info = world.getWorldInfo();
+			info.setRainTime(0);
+			info.setRaining(false);
+			info.setThundering(false);
+		}
 	}
 }

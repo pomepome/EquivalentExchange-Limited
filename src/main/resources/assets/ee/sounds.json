@@ -1,7 +1,7 @@
 {
 	"items.charge":
 	{
-		"category":"player",
+		"category":"master",
 		"sounds":
 		[
 			"items/charge"
@@ -9,7 +9,7 @@
 	},
 	"items.action":
 	{
-		"category":"player",
+		"category":"master",
 		"sounds":
 		[
 			"items/action"
@@ -17,7 +17,7 @@
 	},
 	"items.uncharge":
 	{
-		"category":"player",
+		"category":"master",
 		"sounds":
 		[
 		 	"items/uncharge"
@@ -26,7 +26,7 @@
 	},
 	"items.transmute":
 	{
-		"category":"player",
+		"category":"master",
 		"sounds":
 		[
 		 	"items/transmute"
@@ -35,7 +35,7 @@
 	},
 	"items.heal":
 	{
-		"category":"player",
+		"category":"master",
 		"sounds":
 		[
 		 	"items/heal"

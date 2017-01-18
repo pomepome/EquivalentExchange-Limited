@@ -69,9 +69,9 @@ public class ContainerLocus extends Container
             {
                 icrafting.sendProgressBarUpdate(this, 0, this.tile.procTime);
             }
-            if(this.lastBurn != this.tile.currentBurnTime)
+            if (this.lastBurn != tile.currentBurnTime)
             {
-            	icrafting.sendProgressBarUpdate(this, 1, this.tile.currentBurnTime);
+            	icrafting.sendProgressBarUpdate(this, 1, tile.currentBurnTime);
             }
         }
 
@@ -84,11 +84,11 @@ public class ContainerLocus extends Container
     {
         if (ID == 0)
         {
-            this.tile.procTime = value;
+        	tile.procTime = value;
         }
-        if(ID == 1)
+        if (ID == 1)
         {
-        	this.tile.currentBurnTime = value;
+        	tile.currentBurnTime = value;
         }
     }
 	@Override
@@ -103,11 +103,6 @@ public class ContainerLocus extends Container
 
 		ItemStack stack = slot.getStack();
 		ItemStack newStack = stack.copy();
-
-		if(EELimited.Debug && !player.worldObj.isRemote)
-		{
-			EEProxy.chatToPlayer(player, slotIndex + "");
-		}
 
 		if (slotIndex > 10&&slotIndex <= 37)
 		{

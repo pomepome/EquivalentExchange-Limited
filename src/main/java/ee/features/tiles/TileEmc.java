@@ -12,7 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public abstract class TileEmc extends TileEntity implements ITileEmc
 {
-	private double emc;
+	private int EMC;
 	private final int maxAmount;
 
 	public TileEmc()
@@ -26,28 +26,28 @@ public abstract class TileEmc extends TileEntity implements ITileEmc
 	}
 
 	@Override
-	public void setEmc(double value)
+	public void setEmc(int value)
 	{
-		this.emc = value <= maxAmount ? value : maxAmount;
+		this.EMC = value <= maxAmount ? value : maxAmount;
 	}
 
 	@Override
-	public void addEmc(double amount)
+	public void addEmc(int amount)
 	{
-		emc += amount;
+		EMC += amount;
 
-		if (emc > maxAmount)
+		if (EMC > maxAmount)
 		{
-			emc = maxAmount;
+			EMC = maxAmount;
 		}
-		else if (emc < 0)
+		else if (EMC < 0)
 		{
-			emc = 0;
+			EMC = 0;
 		}
 		this.markDirty();
 	}
 
-	public void addEmcWithPKT(double amount)
+	public void addEmcWithPKT(int amount)
 	{
 		addEmc(amount);
 
@@ -60,18 +60,18 @@ public abstract class TileEmc extends TileEntity implements ITileEmc
 	}
 
 	@Override
-	public void removeEmc(double amount)
+	public void removeEmc(int amount)
 	{
-		emc -= amount;
+		EMC -= amount;
 
-		if (emc < 0)
+		if (EMC < 0)
 		{
-			emc = 0;
+			EMC = 0;
 		}
 		this.markDirty();
 	}
 
-	public void removeEmcWithPKT(double amount)
+	public void removeEmcWithPKT(int amount)
 	{
 		removeEmc(amount);
 
@@ -91,9 +91,9 @@ public abstract class TileEmc extends TileEntity implements ITileEmc
 	}
 
 	@Override
-	public double getStoredEmc()
+	public int getStoredEmc()
 	{
-		return emc;
+		return EMC;
 	}
 
 	public int getMaxEmc()
@@ -104,16 +104,16 @@ public abstract class TileEmc extends TileEntity implements ITileEmc
 	@Override
 	public boolean hasMaxedEmc()
 	{
-		return emc >= maxAmount;
+		return EMC >= maxAmount;
 	}
 
-	public void setEmcValue(double value)
+	public void setEmcValue(int value)
 	{
-		emc = value;
+		EMC = value;
 		this.markDirty();
 	}
 
-	public void setEmcValueWithPKT(double value)
+	public void setEmcValueWithPKT(int value)
 	{
 		setEmcValue(value);
 
@@ -123,19 +123,19 @@ public abstract class TileEmc extends TileEntity implements ITileEmc
 	public void readFromNBT(NBTTagCompound nbt)
 	{
 		super.readFromNBT(nbt);
-		this.setEmcValue(nbt.getDouble("EMC"));
+		this.setEmcValue(nbt.getInteger("EMC"));
 	}
 	@Override
 	public void writeToNBT(NBTTagCompound nbt)
 	{
 		super.writeToNBT(nbt);
-		nbt.setDouble("EMC", this.getStoredEmc());
+		nbt.setInteger("EMC", this.getStoredEmc());
 	}
 	public void sendUpdatePKT()
 	{
 		if (this.worldObj != null && !this.worldObj.isRemote)
 		{
-			PacketHandler.sendToAllAround(new PacketTableSync(emc, this.xCoord, this.yCoord, this.zCoord),new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, xCoord, yCoord, zCoord, 64));
+			PacketHandler.sendToAllAround(new PacketTableSync(EMC, this.xCoord, this.yCoord, this.zCoord),new NetworkRegistry.TargetPoint(worldObj.provider.dimensionId, xCoord, yCoord, zCoord, 64));
 		}
 	}
 	public boolean isRequestingEmc()
