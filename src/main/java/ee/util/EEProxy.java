@@ -604,7 +604,7 @@ public class EEProxy
 		{
 			ItemStack invStack = inv.getStackInSlot(i);
 
-			if (invStack == null)
+			if (invStack == null && inv.isItemValidForSlot(i, stack))
 			{
 				inv.setInventorySlotContents(i, stack);
 				return null;
@@ -612,7 +612,8 @@ public class EEProxy
 
 			if (areItemStacksEqual(stack, invStack) && invStack.stackSize < invStack.getMaxStackSize())
 			{
-				int remaining = invStack.getMaxStackSize() - invStack.stackSize;
+				int max = Math.max(inv.getInventoryStackLimit(), invStack.getMaxStackSize());
+				int remaining = max - invStack.stackSize;
 
 				if (remaining >= stack.stackSize)
 				{

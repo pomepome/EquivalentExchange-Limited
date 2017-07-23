@@ -156,6 +156,7 @@ public class EELimited {
     public static boolean autoEject;
     public static boolean keepPhilInventory;
     public static int pedIgnitionCooldown;
+
     /**
      * Klein star damages
      */

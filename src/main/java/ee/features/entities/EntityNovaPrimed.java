@@ -3,11 +3,14 @@ package ee.features.entities;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ee.features.EELimited;
 import ee.network.PacketHandler;
 import ee.network.PacketSpawnParticle;
+import ee.util.EEProxy;
 import ee.util.MiningExplosion;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -51,7 +54,17 @@ public class EntityNovaPrimed extends Entity
 				this.setDead();
 
 				if (!this.worldObj.isRemote)
+				{
 					this.explode();
+				}
+
+				if(EELimited.Debug && entity instanceof EntityPlayer)
+				{
+					double newX = (double)((int)(posX * 10)) / 10;
+					double newY = (double)((int)(posZ * 10)) / 10;
+					double newZ = (double)((int)(posZ * 10)) / 10;
+					EEProxy.chatToPlayer((EntityPlayer)entity, "Nova exploded at {" + newX + "," + newY + "," + newZ + "}");
+				}
 			}
 		}
 

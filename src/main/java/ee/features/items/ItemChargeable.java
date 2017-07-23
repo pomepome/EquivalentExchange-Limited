@@ -13,13 +13,13 @@ public class ItemChargeable extends ItemEE implements IChargeable {
 	{
 		super(name);
 		numCharges = numCharge;
-		this.setMaxStackSize(1).setContainerItem(this);
+		this.setMaxStackSize(1);
 	}
 	public ItemChargeable(String name,int numCharge,int damage)
 	{
 		super(name,damage);
 		numCharges = numCharge;
-		this.setMaxStackSize(1).setContainerItem(this);
+		this.setMaxStackSize(1);
 	}
 	@Override
     public boolean showDurabilityBar(ItemStack stack)

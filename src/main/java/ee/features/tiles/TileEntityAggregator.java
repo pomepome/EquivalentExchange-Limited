@@ -19,7 +19,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileEntityAggregator extends TileDirection implements ISidedInventory
+public class TileEntityAggregator extends TileEntity implements ISidedInventory
 {
 	ItemStack[] inventory;
 	public double progress;
@@ -106,10 +106,9 @@ public class TileEntityAggregator extends TileDirection implements ISidedInvento
 			{
 				for(int j = 5;i < 10;i++)
 				{
-					IInventory inv = (IInventory)tile;
 					if(inventory[j] != null)
 					{
-						ItemStack stack = EEProxy.pushStackInInv(inv, inventory[j].copy());
+						ItemStack stack = EEProxy.pushStackInInv((IInventory)tile, inventory[j].copy());
 						inventory[j] = stack;
 					}
 				}

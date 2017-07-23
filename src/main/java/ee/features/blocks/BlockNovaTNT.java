@@ -51,7 +51,7 @@ public class BlockNovaTNT extends BlockEE
     {
         if (world.isBlockIndirectlyGettingPowered(x, y, z))
         {
-            this.detonate(world, x, y, z, null);
+            this.detonate(world, x, y, z, world.getClosestPlayer(x, y, z, 100000 * 100000));
             world.setBlockToAir(x, y, z);
         }
     }

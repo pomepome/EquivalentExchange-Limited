@@ -22,6 +22,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityPiston;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
@@ -101,9 +102,8 @@ public class ItemPhilosophersStone extends ItemEEFunctional implements IExtraFun
 				PacketHandler.sendToAllAround(new PacketSpawnParticle("largesmoke", x, y + 1, z), new TargetPoint(w.provider.dimensionId, x, y + 1, z, 32));
 				return;
 			}
-			else if( tile != null && tile instanceof IInventory)
+			else if( tile != null && (tile instanceof IInventory || tile instanceof TileEntityPiston))
 			{
-				IInventory inv = (IInventory)tile;
 				int orientation = TileDirection.getRelativeOrientation(player);
 				if(w.getBlockMetadata(x, y, z) != orientation)
 				{
